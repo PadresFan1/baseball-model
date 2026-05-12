@@ -1,0 +1,67 @@
+BASEBALL MODEL - NOTES & FUTURE TO DO LIST
+===========================================
+Last Updated: May 10, 2026
+
+CURRENT STATUS
+--------------
+- Basic Poisson model working with rolling 7/15 day windows
+- Starter RA9 integrated with 55/45 starter/bullpen split
+- Odds API connected with caching
+- Edge detection working with 3% threshold
+- Starter warning system working
+
+IMMEDIATE TO DO
+---------------
+- Add minimum innings threshold (15 IP) before trusting starter RA9
+- Add RA9 cap (7.00) to prevent extreme values
+- Build Excel output
+- Build email automation
+- Set up Windows Task Scheduler for 9am, 12pm, 4pm MST runs
+- Build results tracker for yesterday's picks
+- Figure out how to save this project to Github
+
+FUTURE ENHANCEMENTS
+-------------------
+- Add GB%/FB% pitcher tendency profile
+- Add park factors per stadium
+- Add weather/wind conditions
+- Add platoon splits (lefty/righty matchups)
+- Add bullpen availability based on recent usage
+- Add individual reliever matchup logic vs opposing lineup
+- Add confirmed lineup integration from MLB API
+- Add last 3 starts weighting for starters (50/30/20)
+
+PRESEASON / APRIL CONSIDERATIONS
+---------------------------------
+- No rolling window data available at season start
+- Use FanGraphs ZiPS or Steamer projections as starting lambda
+- Gradually shift weight from projections to actual results through April
+- By May rolling windows should have enough data to take over
+- Download projected team offense and pitching from FanGraphs preseason
+
+PLAYOFF CONSIDERATIONS
+----------------------
+- Build separate playoff mode with different weights
+- Starters pitch deeper or get pulled earlier
+- Bullpen usage flips completely - closers pitch multiple innings
+- Off days allow aces on short rest and best arms more frequently
+- Small sample sizes again - only 5-15 playoff games
+- Home field and crowd factor more heavily
+- Manager tendencies become more important
+
+DATA SOURCES
+------------
+- FanGraphs: team offense and pitching (manual download for now)
+- MLB Stats API: daily game logs, probable starters, schedules
+- The Odds API: live moneylines (500 free credits/month)
+- Future: FanGraphs individual pitcher stats (GB%, FB%, splits)
+- Future: Weather API for wind/conditions
+- Future: FanGraphs preseason projections (ZiPS/Steamer)
+
+KNOWN LIMITATIONS
+-----------------
+- Team level pitching rolls don't account for who's actually pitching
+- Early season data has small sample size issues
+- Playoffs require different model entirely
+- Starters not posted until morning of game day
+- Model runs 3x daily: 9am, 12pm, 4pm MST
