@@ -18,7 +18,15 @@ IMMEDIATE TO DO
 - Build email automation
 - Set up Windows Task Scheduler for 9am, 12pm, 4pm MST runs
 - Build results tracker for yesterday's picks
-- Figure out how to save this project to Github
+
+PUSHING UPDATES TO GITHUB
+-------------------
+git add .
+git commit -m "Updated notes with Git commit workflow"
+git push
+
+replace the text after -m in line two with whatever the update was
+-m is a message that will note what is new with the new update
 
 FUTURE ENHANCEMENTS
 -------------------
