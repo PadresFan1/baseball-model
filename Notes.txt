@@ -18,6 +18,7 @@ IMMEDIATE TO DO
 - Build email automation
 - Set up Windows Task Scheduler for 9am, 12pm, 4pm MST runs
 - Build results tracker for yesterday's picks
+- Upload project to GITHUB - DONE 5/11
 
 PUSHING UPDATES TO GITHUB
 -------------------
@@ -31,6 +32,7 @@ replace the text after -m in line two with whatever the update was
 FUTURE ENHANCEMENTS
 -------------------
 - Add GB%/FB% pitcher tendency profile
+- Add wrc+, woba, and other advanced metrics
 - Add park factors per stadium
 - Add weather/wind conditions
 - Add platoon splits (lefty/righty matchups)
@@ -38,6 +40,18 @@ FUTURE ENHANCEMENTS
 - Add individual reliever matchup logic vs opposing lineup
 - Add confirmed lineup integration from MLB API
 - Add last 3 starts weighting for starters (50/30/20)
+
+OUTPUT FORMAT UPDATE
+---------------------
+- Each game shows date, projected scores, total
+- Two indented lines per game: moneyline and O/U
+- 💰 = moneyline edge found
+- 📊 = O/U edge found  
+- ➖ = no edge on that market
+- ✅ at game level if ANY edge found
+- ❌ at game level if no edges found on either market
+- ⚠️ for starter warnings (unchanged)
+
 
 PRESEASON / APRIL CONSIDERATIONS
 ---------------------------------

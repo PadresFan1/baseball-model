@@ -1,0 +1,101 @@
+date,time,away_team,home_team,away_odds,home_odds,away_score,home_score
+05 Nov 2022,,Philadelphia Phillies,Houston Astros,+135,-156,1,4
+03 Nov 2022,,Houston Astros,Philadelphia Phillies,-156,+135,3,2
+02 Nov 2022,,Houston Astros,Philadelphia Phillies,-105,-116,5,0
+01 Nov 2022,,Houston Astros,Philadelphia Phillies,-125,+104,0,7
+29 Oct 2022,,Philadelphia Phillies,Houston Astros,,,2,5
+28 Oct 2022,,Philadelphia Phillies,Houston Astros,+145,-167,6,5
+23 Oct 2022,,Houston Astros,New York Yankees,+100,-120,6,5
+23 Oct 2022,,San Diego Padres,Philadelphia Phillies,+120,-141,3,4
+22 Oct 2022,,San Diego Padres,Philadelphia Phillies,-105,-116,6,10
+22 Oct 2022,,Houston Astros,New York Yankees,+125,-147,5,0
+21 Oct 2022,,San Diego Padres,Philadelphia Phillies,-125,+104,2,4
+20 Oct 2022,,New York Yankees,Houston Astros,+120,-141,2,3
+19 Oct 2022,,New York Yankees,Houston Astros,+165,-185,2,4
+19 Oct 2022,,Philadelphia Phillies,San Diego Padres,+100,-120,5,8
+18 Oct 2022,,Philadelphia Phillies,San Diego Padres,+100,-120,2,0
+18 Oct 2022,,Cleveland Guardians,New York Yankees,+154,-175,1,5
+16 Oct 2022,,New York Yankees,Cleveland Guardians,-161,+140,4,2
+15 Oct 2022,,Los Angeles Dodgers,San Diego Padres,-120,+100,3,5
+15 Oct 2022,,New York Yankees,Cleveland Guardians,-120,+100,5,6
+15 Oct 2022,,Houston Astros,Seattle Mariners,-120,+100,1,0
+15 Oct 2022,,Atlanta Braves,Philadelphia Phillies,-135,+114,3,8
+14 Oct 2022,,Los Angeles Dodgers,San Diego Padres,-125,+104,1,2
+14 Oct 2022,,Atlanta Braves,Philadelphia Phillies,-125,+104,1,9
+14 Oct 2022,,Cleveland Guardians,New York Yankees,+135,-156,4,2
+13 Oct 2022,,Seattle Mariners,Houston Astros,+129,-152,2,4
+12 Oct 2022,,San Diego Padres,Los Angeles Dodgers,+165,-185,5,3
+12 Oct 2022,,Philadelphia Phillies,Atlanta Braves,+125,-147,0,3
+11 Oct 2022,,San Diego Padres,Los Angeles Dodgers,+204,-250,3,5
+11 Oct 2022,,Cleveland Guardians,New York Yankees,+175,-213,1,4
+11 Oct 2022,,Seattle Mariners,Houston Astros,+195,-238,7,8
+11 Oct 2022,,Philadelphia Phillies,Atlanta Braves,+175,-213,7,6
+09 Oct 2022,,San Diego Padres,New York Mets,+120,-141,6,0
+08 Oct 2022,,Philadelphia Phillies,St.Louis Cardinals,-120,+100,2,0
+08 Oct 2022,,San Diego Padres,New York Mets,+154,-175,3,7
+08 Oct 2022,,Seattle Mariners,Toronto Blue Jays,+154,-175,10,9
+08 Oct 2022,,Tampa Bay Rays,Cleveland Guardians,-111,-111,0,1
+07 Oct 2022,,San Diego Padres,New York Mets,+150,-172,7,1
+07 Oct 2022,,Seattle Mariners,Toronto Blue Jays,+110,-132,4,0
+07 Oct 2022,,Philadelphia Phillies,St.Louis Cardinals,-111,-111,6,3
+07 Oct 2022,,Tampa Bay Rays,Cleveland Guardians,+110,-132,1,2
+05 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+260,-323,1,6
+05 Oct 2022,,Arizona Diamondbacks,Milwaukee Brewers,+145,-167,4,2
+05 Oct 2022,,Atlanta Braves,Miami Marlins,+104,-125,9,12
+05 Oct 2022,,Tampa Bay Rays,Boston Red Sox,+125,-147,3,6
+05 Oct 2022,,Chicago Cubs,Cincinnati Reds,-132,+110,15,2
+05 Oct 2022,,Kansas City Royals,Cleveland Guardians,+160,-182,2,9
+05 Oct 2022,,Detroit Tigers,Seattle Mariners,+125,-147,4,5
+05 Oct 2022,,Philadelphia Phillies,Houston Astros,+175,-213,2,3
+05 Oct 2022,,Washington Nationals,New York Mets,+129,-152,2,9
+05 Oct 2022,,San Francisco Giants,San Diego Padres,+120,-141,8,1
+05 Oct 2022,,Minnesota Twins,Chicago White Sox,+104,-125,10,1
+05 Oct 2022,,Toronto Blue Jays,Baltimore Orioles,+129,-152,5,1
+05 Oct 2022,,New York Yankees,Texas Rangers,-111,-111,2,4
+05 Oct 2022,,St.Louis Cardinals,Pittsburgh Pirates,+110,-132,3,5
+05 Oct 2022,,Los Angeles Angels,Athletics,-233,+190,2,3
+05 Oct 2022,,Toronto Blue Jays,Baltimore Orioles,+140,-161,4,5
+04 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+290,-370,5,2
+04 Oct 2022,,Los Angeles Angels,Athletics,-250,+204,1,2
+04 Oct 2022,,San Francisco Giants,San Diego Padres,+129,-152,2,6
+04 Oct 2022,,Minnesota Twins,Chicago White Sox,+114,-135,3,8
+04 Oct 2022,,Philadelphia Phillies,Houston Astros,+165,-185,0,10
+04 Oct 2022,,Arizona Diamondbacks,Milwaukee Brewers,-120,-185,0,3
+04 Oct 2022,,Tampa Bay Rays,Boston Red Sox,-116,-105,0,6
+04 Oct 2022,,Washington Nationals,New York Mets,,,0,8
+04 Oct 2022,,Atlanta Braves,Miami Marlins,-175,+154,2,1
+04 Oct 2022,,Chicago Cubs,Cincinnati Reds,-120,+100,2,3
+04 Oct 2022,,St.Louis Cardinals,Pittsburgh Pirates,-125,+104,8,7
+04 Oct 2022,,Kansas City Royals,Cleveland Guardians,+165,-185,3,5
+04 Oct 2022,,Washington Nationals,New York Mets,,,2,4
+03 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+300,-385,2,1
+03 Oct 2022,,Los Angeles Angels,Athletics,-135,+114,4,5
+03 Oct 2022,,Detroit Tigers,Seattle Mariners,+215,-263,4,3
+03 Oct 2022,,San Francisco Giants,San Diego Padres,+165,-185,4,7
+03 Oct 2022,,Minnesota Twins,Chicago White Sox,+110,-132,2,3
+03 Oct 2022,,Philadelphia Phillies,Houston Astros,+100,-120,3,0
+03 Oct 2022,,Arizona Diamondbacks,Milwaukee Brewers,-116,-105,5,6
+03 Oct 2022,,Tampa Bay Rays,Boston Red Sox,-116,-105,3,4
+03 Oct 2022,,Toronto Blue Jays,Baltimore Orioles,-116,-105,5,1
+03 Oct 2022,,New York Yankees,Texas Rangers,-152,+129,3,1
+03 Oct 2022,,Atlanta Braves,Miami Marlins,-156,+135,0,4
+03 Oct 2022,,Chicago Cubs,Cincinnati Reds,+100,-120,1,3
+03 Oct 2022,,St.Louis Cardinals,Pittsburgh Pirates,-156,+135,2,3
+03 Oct 2022,,Kansas City Royals,Cleveland Guardians,+167,-192,5,2
+02 Oct 2022,,New York Mets,Atlanta Braves,+110,-132,3,5
+02 Oct 2022,,Athletics,Seattle Mariners,+210,-250,10,3
+02 Oct 2022,,Chicago White Sox,San Diego Padres,+140,-161,2,1
+02 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+220,-270,4,1
+02 Oct 2022,,Texas Rangers,Los Angeles Angels,+104,-125,3,8
+02 Oct 2022,,Arizona Diamondbacks,San Francisco Giants,+114,-135,3,4
+02 Oct 2022,,Cincinnati Reds,Chicago Cubs,+165,-185,1,8
+02 Oct 2022,,Pittsburgh Pirates,St.Louis Cardinals,+165,-185,7,5
+02 Oct 2022,,Tampa Bay Rays,Houston Astros,+145,-167,1,3
+02 Oct 2022,,Miami Marlins,Milwaukee Brewers,+154,-175,4,3
+02 Oct 2022,,Kansas City Royals,Cleveland Guardians,+195,-238,5,7
+02 Oct 2022,,Boston Red Sox,Toronto Blue Jays,+179,-222,3,6
+02 Oct 2022,,Baltimore Orioles,New York Yankees,+110,-132,3,1
+02 Oct 2022,,Philadelphia Phillies,Washington Nationals,-270,+220,8,1
+02 Oct 2022,,Minnesota Twins,Detroit Tigers,-116,-105,2,5
+01 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+240,-303,4,6
+01 Oct 2022,,Texas Rangers,Los Angeles Angels,+120,-141,2,3

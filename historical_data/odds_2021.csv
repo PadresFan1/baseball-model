@@ -1,0 +1,2426 @@
+date,time,away_team,home_team,away_odds,home_odds,away_score,home_score
+02 Nov 2021,,Atlanta Braves,Houston Astros,,,7,0
+31 Oct 2021,,Houston Astros,Atlanta Braves,,,9,5
+30 Oct 2021,,Houston Astros,Atlanta Braves,,,2,3
+29 Oct 2021,,Houston Astros,Atlanta Braves,+104,-135,0,2
+27 Oct 2021,,Atlanta Braves,Houston Astros,-105,-125,2,7
+26 Oct 2021,,Atlanta Braves,Houston Astros,+104,-135,6,2
+23 Oct 2021,,Los Angeles Dodgers,Atlanta Braves,-156,+125,2,4
+22 Oct 2021,,Boston Red Sox,Houston Astros,-111,-120,0,5
+21 Oct 2021,,Atlanta Braves,Los Angeles Dodgers,+110,-141,2,11
+20 Oct 2021,,Atlanta Braves,Los Angeles Dodgers,+195,-244,9,2
+20 Oct 2021,,Houston Astros,Boston Red Sox,+100,-132,9,1
+19 Oct 2021,,Houston Astros,Boston Red Sox,+110,-141,9,2
+19 Oct 2021,,Atlanta Braves,Los Angeles Dodgers,+150,-182,5,6
+18 Oct 2021,,Houston Astros,Boston Red Sox,-105,-125,3,12
+17 Oct 2021,,Los Angeles Dodgers,Atlanta Braves,-182,+150,4,5
+16 Oct 2021,,Los Angeles Dodgers,Atlanta Braves,-116,-116,2,3
+16 Oct 2021,,Boston Red Sox,Houston Astros,-105,-125,9,5
+15 Oct 2021,,Boston Red Sox,Houston Astros,+125,-156,4,5
+14 Oct 2021,,Los Angeles Dodgers,San Francisco Giants,-116,-116,2,1
+12 Oct 2021,,San Francisco Giants,Los Angeles Dodgers,+160,-192,2,7
+12 Oct 2021,,Milwaukee Brewers,Atlanta Braves,+135,-167,4,5
+12 Oct 2021,,Houston Astros,Chicago White Sox,-111,-111,10,1
+11 Oct 2021,,San Francisco Giants,Los Angeles Dodgers,+175,-222,1,0
+11 Oct 2021,,Tampa Bay Rays,Boston Red Sox,-116,-116,5,6
+11 Oct 2021,,Milwaukee Brewers,Atlanta Braves,-111,-120,0,3
+10 Oct 2021,,Houston Astros,Chicago White Sox,+100,-132,6,12
+10 Oct 2021,,Tampa Bay Rays,Boston Red Sox,-105,-125,4,6
+09 Oct 2021,,Los Angeles Dodgers,San Francisco Giants,-135,+104,9,2
+09 Oct 2021,,Atlanta Braves,Milwaukee Brewers,+100,-132,3,0
+08 Oct 2021,,Los Angeles Dodgers,San Francisco Giants,-120,-111,0,4
+08 Oct 2021,,Boston Red Sox,Tampa Bay Rays,+120,-152,14,6
+08 Oct 2021,,Atlanta Braves,Milwaukee Brewers,+150,-182,1,2
+08 Oct 2021,,Chicago White Sox,Houston Astros,-116,-116,4,9
+07 Oct 2021,,Boston Red Sox,Tampa Bay Rays,+140,-172,0,5
+07 Oct 2021,,Chicago White Sox,Houston Astros,+110,-141,1,6
+06 Oct 2021,,St.Louis Cardinals,Los Angeles Dodgers,+190,-238,1,3
+05 Oct 2021,,New York Yankees,Boston Red Sox,-141,+110,2,6
+03 Oct 2021,,New York Mets,Atlanta Braves,+145,-175,0,5
+03 Oct 2021,,Chicago Cubs,St.Louis Cardinals,+140,-172,3,2
+03 Oct 2021,,Colorado Rockies,Arizona Diamondbacks,-111,-120,4,5
+03 Oct 2021,,Athletics,Houston Astros,+135,-167,6,7
+03 Oct 2021,,Detroit Tigers,Chicago White Sox,+215,-270,5,2
+03 Oct 2021,,Minnesota Twins,Kansas City Royals,-120,-111,7,3
+03 Oct 2021,,Los Angeles Angels,Seattle Mariners,+145,-175,7,3
+03 Oct 2021,,Milwaukee Brewers,Los Angeles Dodgers,+225,-294,3,10
+03 Oct 2021,,Philadelphia Phillies,Miami Marlins,-116,-116,4,5
+03 Oct 2021,,Baltimore Orioles,Toronto Blue Jays,+290,-385,4,12
+03 Oct 2021,,Boston Red Sox,Washington Nationals,-222,+175,7,5
+03 Oct 2021,,Cleveland Guardians,Texas Rangers,-111,-120,6,0
+03 Oct 2021,,Tampa Bay Rays,New York Yankees,+104,-135,0,1
+03 Oct 2021,,Cincinnati Reds,Pittsburgh Pirates,-167,+135,6,3
+03 Oct 2021,,San Diego Padres,San Francisco Giants,+185,-233,4,11
+02 Oct 2021,,Los Angeles Angels,Seattle Mariners,+165,-200,4,6
+02 Oct 2021,,Milwaukee Brewers,Los Angeles Dodgers,+120,-152,3,8
+02 Oct 2021,,Colorado Rockies,Arizona Diamondbacks,+114,-147,2,11
+02 Oct 2021,,New York Mets,Atlanta Braves,+100,-132,5,6
+02 Oct 2021,,Chicago Cubs,St.Louis Cardinals,+154,-185,6,5
+02 Oct 2021,,Athletics,Houston Astros,+145,-175,4,10
+02 Oct 2021,,Detroit Tigers,Chicago White Sox,+229,-286,4,5
+02 Oct 2021,,Minnesota Twins,Kansas City Royals,+104,-135,4,0
+02 Oct 2021,,Cleveland Guardians,Texas Rangers,-156,+125,2,7
+02 Oct 2021,,Cincinnati Reds,Pittsburgh Pirates,-156,+125,6,8
+02 Oct 2021,,Philadelphia Phillies,Miami Marlins,-135,+104,1,3
+02 Oct 2021,,Boston Red Sox,Washington Nationals,-161,+129,5,3
+02 Oct 2021,,San Diego Padres,San Francisco Giants,+135,-167,3,2
+02 Oct 2021,,Baltimore Orioles,Toronto Blue Jays,+220,-286,1,10
+02 Oct 2021,,Tampa Bay Rays,New York Yankees,+114,-135,12,2
+01 Oct 2021,,Los Angeles Angels,Seattle Mariners,+135,-167,2,1
+01 Oct 2021,,Milwaukee Brewers,Los Angeles Dodgers,+185,-233,6,8
+01 Oct 2021,,San Diego Padres,San Francisco Giants,+175,-222,0,3
+01 Oct 2021,,Colorado Rockies,Arizona Diamondbacks,-125,-105,9,7
+01 Oct 2021,,Chicago Cubs,St.Louis Cardinals,+170,-213,3,4
+01 Oct 2021,,Athletics,Houston Astros,+110,-141,8,6
+01 Oct 2021,,Detroit Tigers,Chicago White Sox,+220,-286,1,8
+01 Oct 2021,,Minnesota Twins,Kansas City Royals,-125,-105,6,11
+01 Oct 2021,,Cleveland Guardians,Texas Rangers,-120,-111,9,6
+01 Oct 2021,,New York Mets,Atlanta Braves,-105,-125,4,3
+01 Oct 2021,,Philadelphia Phillies,Miami Marlins,-125,-105,5,0
+01 Oct 2021,,Baltimore Orioles,Toronto Blue Jays,+290,-385,4,6
+01 Oct 2021,,Boston Red Sox,Washington Nationals,-213,+170,4,2
+01 Oct 2021,,Tampa Bay Rays,New York Yankees,+104,-135,4,3
+01 Oct 2021,,Cincinnati Reds,Pittsburgh Pirates,-213,+170,2,9
+30 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+200,-250,3,8
+30 Sep 2021,,Arizona Diamondbacks,San Francisco Giants,+185,-233,4,5
+30 Sep 2021,,Cleveland Guardians,Kansas City Royals,-161,+129,6,1
+30 Sep 2021,,Detroit Tigers,Minnesota Twins,+154,-185,10,7
+30 Sep 2021,,Philadelphia Phillies,Atlanta Braves,+129,-161,3,5
+30 Sep 2021,,Tampa Bay Rays,Houston Astros,+125,-156,2,3
+30 Sep 2021,,Miami Marlins,New York Mets,+175,-222,3,12
+30 Sep 2021,,New York Yankees,Toronto Blue Jays,+120,-152,6,2
+30 Sep 2021,,Boston Red Sox,Baltimore Orioles,-233,+185,2,6
+30 Sep 2021,,Chicago Cubs,Pittsburgh Pirates,-185,+154,9,0
+30 Sep 2021,,Los Angeles Angels,Texas Rangers,-156,+125,6,7
+30 Sep 2021,,Milwaukee Brewers,St.Louis Cardinals,-105,-125,3,4
+29 Sep 2021,,Athletics,Seattle Mariners,-111,-120,2,4
+29 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+260,-345,9,11
+29 Sep 2021,,Arizona Diamondbacks,San Francisco Giants,+220,-286,0,1
+29 Sep 2021,,Cincinnati Reds,Chicago White Sox,+160,-192,1,6
+29 Sep 2021,,Cleveland Guardians,Kansas City Royals,-125,-105,5,10
+29 Sep 2021,,Tampa Bay Rays,Houston Astros,+120,-152,7,0
+29 Sep 2021,,Los Angeles Angels,Texas Rangers,-152,+129,7,2
+29 Sep 2021,,Milwaukee Brewers,St.Louis Cardinals,-105,-116,4,0
+29 Sep 2021,,Detroit Tigers,Minnesota Twins,+154,-185,2,5
+29 Sep 2021,,Philadelphia Phillies,Atlanta Braves,+129,-161,2,7
+29 Sep 2021,,Miami Marlins,New York Mets,+150,-182,3,2
+29 Sep 2021,,New York Yankees,Toronto Blue Jays,-125,-105,5,6
+29 Sep 2021,,Boston Red Sox,Baltimore Orioles,-244,+200,6,0
+29 Sep 2021,,Chicago Cubs,Pittsburgh Pirates,-132,+100,3,2
+29 Sep 2021,,Washington Nationals,Colorado Rockies,+100,-132,5,10
+28 Sep 2021,,Athletics,Seattle Mariners,-120,-111,2,4
+28 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+160,-192,1,2
+28 Sep 2021,,Arizona Diamondbacks,San Francisco Giants,+215,-270,4,6
+28 Sep 2021,,Washington Nationals,Colorado Rockies,+110,-141,1,3
+28 Sep 2021,,Cincinnati Reds,Chicago White Sox,+150,-182,1,7
+28 Sep 2021,,Cleveland Guardians,Kansas City Royals,+100,-132,4,6
+28 Sep 2021,,Tampa Bay Rays,Houston Astros,+110,-141,3,4
+28 Sep 2021,,Los Angeles Angels,Texas Rangers,-125,-105,2,5
+28 Sep 2021,,Milwaukee Brewers,St.Louis Cardinals,-125,-105,2,6
+28 Sep 2021,,Detroit Tigers,Minnesota Twins,+125,-156,2,3
+28 Sep 2021,,Philadelphia Phillies,Atlanta Braves,-105,-125,1,2
+28 Sep 2021,,New York Yankees,Toronto Blue Jays,+104,-135,7,2
+28 Sep 2021,,Boston Red Sox,Baltimore Orioles,-286,+220,2,4
+28 Sep 2021,,Chicago Cubs,Pittsburgh Pirates,-116,-116,6,8
+28 Sep 2021,,Miami Marlins,New York Mets,,,2,5
+27 Sep 2021,,Athletics,Seattle Mariners,+100,-132,4,13
+27 Sep 2021,,Washington Nationals,Colorado Rockies,+140,-172,5,4
+27 Sep 2021,,Chicago White Sox,Detroit Tigers,-156,+125,8,7
+27 Sep 2021,,Pittsburgh Pirates,Cincinnati Reds,+145,-175,1,13
+27 Sep 2021,,Kansas City Royals,Cleveland Guardians,+150,-182,3,8
+26 Sep 2021,,New York Yankees,Boston Red Sox,-116,-116,6,3
+26 Sep 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-294,+225,3,0
+26 Sep 2021,,Atlanta Braves,San Diego Padres,+100,-132,4,3
+26 Sep 2021,,Houston Astros,Athletics,-125,-105,3,4
+26 Sep 2021,,Seattle Mariners,Los Angeles Angels,+104,-135,5,1
+26 Sep 2021,,San Francisco Giants,Colorado Rockies,-172,+140,6,2
+26 Sep 2021,,St.Louis Cardinals,Chicago Cubs,-156,+125,4,2
+26 Sep 2021,,New York Mets,Milwaukee Brewers,+135,-167,4,8
+26 Sep 2021,,Toronto Blue Jays,Minnesota Twins,-182,+150,5,2
+26 Sep 2021,,Chicago White Sox,Cleveland Guardians,-161,+129,5,2
+26 Sep 2021,,Washington Nationals,Cincinnati Reds,+154,-185,2,9
+26 Sep 2021,,Miami Marlins,Tampa Bay Rays,+220,-286,2,3
+26 Sep 2021,,Texas Rangers,Baltimore Orioles,+104,-135,7,4
+26 Sep 2021,,Pittsburgh Pirates,Philadelphia Phillies,+190,-238,6,0
+26 Sep 2021,,Kansas City Royals,Detroit Tigers,-116,-116,2,1
+25 Sep 2021,,Seattle Mariners,Los Angeles Angels,-147,+114,1,14
+25 Sep 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-270,+215,2,7
+25 Sep 2021,,San Francisco Giants,Colorado Rockies,-152,+120,7,2
+25 Sep 2021,,Atlanta Braves,San Diego Padres,-132,+100,10,8
+25 Sep 2021,,Chicago White Sox,Cleveland Guardians,-213,+170,0,6
+25 Sep 2021,,New York Mets,Milwaukee Brewers,+170,-213,1,2
+25 Sep 2021,,Washington Nationals,Cincinnati Reds,+104,-135,6,7
+25 Sep 2021,,Toronto Blue Jays,Minnesota Twins,-192,+160,6,1
+25 Sep 2021,,Texas Rangers,Baltimore Orioles,-105,-125,2,3
+25 Sep 2021,,Kansas City Royals,Detroit Tigers,+104,-135,1,5
+25 Sep 2021,,Miami Marlins,Tampa Bay Rays,+165,-200,3,7
+25 Sep 2021,,New York Yankees,Boston Red Sox,-111,-120,5,3
+25 Sep 2021,,Houston Astros,Athletics,-120,-111,1,2
+25 Sep 2021,,Pittsburgh Pirates,Philadelphia Phillies,+225,-294,0,3
+25 Sep 2021,,St.Louis Cardinals,Chicago Cubs,-156,+125,8,5
+24 Sep 2021,,Atlanta Braves,San Diego Padres,-132,+110,4,0
+24 Sep 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-238,+190,4,2
+24 Sep 2021,,Houston Astros,Athletics,+104,-135,2,14
+24 Sep 2021,,Seattle Mariners,Los Angeles Angels,-135,+104,6,5
+24 Sep 2021,,San Diego Padres,Atlanta Braves,,,6,5
+24 Sep 2021,,San Francisco Giants,Colorado Rockies,-213,+170,7,2
+24 Sep 2021,,New York Mets,Milwaukee Brewers,+114,-147,1,5
+24 Sep 2021,,Toronto Blue Jays,Minnesota Twins,-167,+135,1,3
+24 Sep 2021,,St.Louis Cardinals,Chicago Cubs,,,12,4
+24 Sep 2021,,New York Yankees,Boston Red Sox,-125,-105,8,3
+24 Sep 2021,,Chicago White Sox,Cleveland Guardians,-125,-105,1,0
+24 Sep 2021,,Washington Nationals,Cincinnati Reds,+140,-172,7,8
+24 Sep 2021,,Kansas City Royals,Detroit Tigers,-116,-116,3,1
+24 Sep 2021,,Miami Marlins,Tampa Bay Rays,+210,-263,0,8
+24 Sep 2021,,Texas Rangers,Baltimore Orioles,-116,-116,8,5
+24 Sep 2021,,Pittsburgh Pirates,Philadelphia Phillies,+195,-244,6,8
+23 Sep 2021,,Houston Astros,Los Angeles Angels,-167,+135,2,3
+23 Sep 2021,,Toronto Blue Jays,Minnesota Twins,-147,+114,2,7
+23 Sep 2021,,Texas Rangers,Baltimore Orioles,-135,+104,0,3
+23 Sep 2021,,Pittsburgh Pirates,Philadelphia Phillies,+225,-294,6,12
+23 Sep 2021,,Washington Nationals,Cincinnati Reds,+170,-213,3,2
+23 Sep 2021,,San Francisco Giants,San Diego Padres,-125,-105,6,7
+23 Sep 2021,,Atlanta Braves,Arizona Diamondbacks,-213,+170,4,6
+23 Sep 2021,,Seattle Mariners,Athletics,+140,-172,6,5
+23 Sep 2021,,Los Angeles Dodgers,Colorado Rockies,-270,+215,7,5
+23 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,-105,-125,8,5
+23 Sep 2021,,Chicago White Sox,Cleveland Guardians,,,7,2
+22 Sep 2021,,San Francisco Giants,San Diego Padres,-116,-116,8,6
+22 Sep 2021,,Atlanta Braves,Arizona Diamondbacks,-175,+145,9,2
+22 Sep 2021,,Seattle Mariners,Athletics,+125,-156,4,1
+22 Sep 2021,,Houston Astros,Los Angeles Angels,-222,+175,9,5
+22 Sep 2021,,Los Angeles Dodgers,Colorado Rockies,-213,+170,5,10
+22 Sep 2021,,Minnesota Twins,Chicago Cubs,-120,-111,5,4
+22 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+104,-135,10,2
+22 Sep 2021,,New York Mets,Boston Red Sox,+154,-185,5,12
+22 Sep 2021,,Baltimore Orioles,Philadelphia Phillies,+280,-370,3,4
+22 Sep 2021,,Texas Rangers,New York Yankees,+225,-294,3,7
+22 Sep 2021,,Washington Nationals,Miami Marlins,+110,-141,7,5
+22 Sep 2021,,Toronto Blue Jays,Tampa Bay Rays,-116,-116,1,7
+21 Sep 2021,,San Francisco Giants,San Diego Padres,-111,-120,6,5
+21 Sep 2021,,Seattle Mariners,Athletics,+110,-141,5,2
+21 Sep 2021,,Atlanta Braves,Arizona Diamondbacks,-156,+125,6,1
+21 Sep 2021,,Houston Astros,Los Angeles Angels,-200,+165,10,5
+21 Sep 2021,,Los Angeles Dodgers,Colorado Rockies,-227,+179,5,4
+21 Sep 2021,,Minnesota Twins,Chicago Cubs,+100,-132,9,5
+21 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+170,-213,2,1
+21 Sep 2021,,New York Mets,Boston Red Sox,+110,-141,3,6
+21 Sep 2021,,Toronto Blue Jays,Tampa Bay Rays,-116,-116,4,2
+21 Sep 2021,,Baltimore Orioles,Philadelphia Phillies,+175,-222,2,3
+21 Sep 2021,,Texas Rangers,New York Yankees,+220,-286,1,7
+21 Sep 2021,,Pittsburgh Pirates,Cincinnati Reds,+190,-238,6,2
+21 Sep 2021,,Washington Nationals,Miami Marlins,+120,-152,7,1
+21 Sep 2021,,Kansas City Royals,Cleveland Guardians,+129,-161,1,4
+21 Sep 2021,,Chicago White Sox,Detroit Tigers,-172,+140,3,5
+20 Sep 2021,,Atlanta Braves,Arizona Diamondbacks,-185,+154,11,4
+20 Sep 2021,,Seattle Mariners,Athletics,+150,-182,4,2
+20 Sep 2021,,Houston Astros,Los Angeles Angels,-244,+195,10,0
+20 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+165,-200,5,2
+20 Sep 2021,,Toronto Blue Jays,Tampa Bay Rays,-141,+110,4,6
+20 Sep 2021,,Baltimore Orioles,Philadelphia Phillies,+175,-222,2,0
+20 Sep 2021,,Texas Rangers,New York Yankees,+225,-294,3,4
+20 Sep 2021,,Chicago White Sox,Detroit Tigers,-244,+195,3,4
+20 Sep 2021,,Pittsburgh Pirates,Cincinnati Reds,+160,-182,5,9
+20 Sep 2021,,Washington Nationals,Miami Marlins,-120,-111,7,8
+20 Sep 2021,,Kansas City Royals,Cleveland Guardians,,,7,2
+19 Sep 2021,,Philadelphia Phillies,New York Mets,+110,-141,2,3
+19 Sep 2021,,Athletics,Los Angeles Angels,-147,+114,3,2
+19 Sep 2021,,Atlanta Braves,San Francisco Giants,+104,-135,3,0
+19 Sep 2021,,Chicago White Sox,Texas Rangers,-222,+175,7,2
+19 Sep 2021,,San Diego Padres,St.Louis Cardinals,-105,-125,7,8
+19 Sep 2021,,Arizona Diamondbacks,Houston Astros,+170,-213,6,7
+19 Sep 2021,,Chicago Cubs,Milwaukee Brewers,+190,-238,6,4
+19 Sep 2021,,Seattle Mariners,Kansas City Royals,-132,+100,7,1
+19 Sep 2021,,Baltimore Orioles,Boston Red Sox,+250,-333,6,8
+19 Sep 2021,,Los Angeles Dodgers,Cincinnati Reds,-213,+170,8,5
+19 Sep 2021,,Detroit Tigers,Tampa Bay Rays,+229,-303,2,0
+19 Sep 2021,,Pittsburgh Pirates,Miami Marlins,+179,-227,5,6
+19 Sep 2021,,Minnesota Twins,Toronto Blue Jays,+195,-244,3,5
+19 Sep 2021,,Cleveland Guardians,New York Yankees,+265,-357,11,1
+19 Sep 2021,,Colorado Rockies,Washington Nationals,-116,-116,0,3
+18 Sep 2021,,Athletics,Los Angeles Angels,-132,+100,3,1
+18 Sep 2021,,Atlanta Braves,San Francisco Giants,-116,-116,0,2
+18 Sep 2021,,Chicago Cubs,Milwaukee Brewers,+270,-370,4,6
+18 Sep 2021,,Philadelphia Phillies,New York Mets,-120,-111,5,3
+18 Sep 2021,,San Diego Padres,St.Louis Cardinals,+104,-135,2,3
+18 Sep 2021,,Arizona Diamondbacks,Houston Astros,+229,-303,6,4
+18 Sep 2021,,Seattle Mariners,Kansas City Royals,-105,-125,1,8
+18 Sep 2021,,Chicago White Sox,Texas Rangers,-263,+210,1,2
+18 Sep 2021,,Pittsburgh Pirates,Miami Marlins,+104,-135,6,3
+18 Sep 2021,,Detroit Tigers,Tampa Bay Rays,+160,-192,4,3
+18 Sep 2021,,Colorado Rockies,Washington Nationals,+104,-135,6,0
+18 Sep 2021,,Minnesota Twins,Toronto Blue Jays,+145,-175,2,6
+18 Sep 2021,,Los Angeles Dodgers,Cincinnati Reds,-238,+190,5,1
+18 Sep 2021,,Baltimore Orioles,Boston Red Sox,+229,-303,3,9
+18 Sep 2021,,Cleveland Guardians,New York Yankees,+165,-200,11,3
+17 Sep 2021,,Atlanta Braves,San Francisco Giants,+145,-175,5,6
+17 Sep 2021,,Athletics,Los Angeles Angels,-141,+110,5,4
+17 Sep 2021,,San Diego Padres,St.Louis Cardinals,+104,-135,2,8
+17 Sep 2021,,Arizona Diamondbacks,Houston Astros,+195,-244,3,4
+17 Sep 2021,,Chicago Cubs,Milwaukee Brewers,+195,-244,5,8
+17 Sep 2021,,Seattle Mariners,Kansas City Royals,-125,-105,6,2
+17 Sep 2021,,Chicago White Sox,Texas Rangers,-213,+170,8,0
+17 Sep 2021,,Baltimore Orioles,Boston Red Sox,+265,-357,1,7
+17 Sep 2021,,Los Angeles Dodgers,Cincinnati Reds,-175,+145,1,3
+17 Sep 2021,,Detroit Tigers,Tampa Bay Rays,+179,-227,4,7
+17 Sep 2021,,Pittsburgh Pirates,Miami Marlins,+129,-161,2,1
+17 Sep 2021,,Philadelphia Phillies,New York Mets,-141,+110,4,3
+17 Sep 2021,,Minnesota Twins,Toronto Blue Jays,+185,-233,7,3
+17 Sep 2021,,Cleveland Guardians,New York Yankees,+165,-200,0,8
+17 Sep 2021,,Colorado Rockies,Washington Nationals,-125,-105,9,8
+16 Sep 2021,,Houston Astros,Texas Rangers,-172,+140,12,1
+16 Sep 2021,,Detroit Tigers,Tampa Bay Rays,+170,-213,2,5
+16 Sep 2021,,Chicago Cubs,Philadelphia Phillies,+129,-161,8,17
+16 Sep 2021,,New York Yankees,Baltimore Orioles,-244,+195,2,3
+16 Sep 2021,,San Diego Padres,San Francisco Giants,+154,-185,7,4
+16 Sep 2021,,Athletics,Kansas City Royals,-132,+100,7,2
+16 Sep 2021,,Los Angeles Angels,Chicago White Sox,+150,-182,9,3
+16 Sep 2021,,Cincinnati Reds,Pittsburgh Pirates,-172,+140,1,0
+16 Sep 2021,,Colorado Rockies,Atlanta Braves,+145,-167,,
+15 Sep 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+300,-400,3,5
+15 Sep 2021,,San Diego Padres,San Francisco Giants,-116,-116,9,6
+15 Sep 2021,,Athletics,Kansas City Royals,-147,+114,12,10
+15 Sep 2021,,Los Angeles Angels,Chicago White Sox,+185,-233,3,2
+15 Sep 2021,,Houston Astros,Texas Rangers,-200,+165,7,2
+15 Sep 2021,,Cleveland Guardians,Minnesota Twins,-105,-125,12,3
+15 Sep 2021,,Colorado Rockies,Atlanta Braves,+179,-227,3,2
+15 Sep 2021,,St.Louis Cardinals,New York Mets,+145,-175,11,4
+15 Sep 2021,,New York Yankees,Baltimore Orioles,-167,+135,4,3
+15 Sep 2021,,Chicago Cubs,Philadelphia Phillies,+170,-213,5,6
+15 Sep 2021,,Cincinnati Reds,Pittsburgh Pirates,-141,+110,4,5
+15 Sep 2021,,Boston Red Sox,Seattle Mariners,-132,+100,9,4
+15 Sep 2021,,Tampa Bay Rays,Toronto Blue Jays,+145,-175,3,6
+15 Sep 2021,,Milwaukee Brewers,Detroit Tigers,-250,+204,1,4
+15 Sep 2021,,Miami Marlins,Washington Nationals,-132,+100,8,6
+14 Sep 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+220,-286,4,8
+14 Sep 2021,,Boston Red Sox,Seattle Mariners,-147,+114,8,4
+14 Sep 2021,,San Diego Padres,San Francisco Giants,+170,-213,1,6
+14 Sep 2021,,Athletics,Kansas City Royals,-172,+140,7,10
+14 Sep 2021,,Los Angeles Angels,Chicago White Sox,+225,-294,3,9
+14 Sep 2021,,Houston Astros,Texas Rangers,-213,+170,1,8
+14 Sep 2021,,Cleveland Guardians,Minnesota Twins,+100,-132,3,6
+14 Sep 2021,,Colorado Rockies,Atlanta Braves,+129,-161,5,4
+14 Sep 2021,,St.Louis Cardinals,New York Mets,+150,-182,7,6
+14 Sep 2021,,Tampa Bay Rays,Toronto Blue Jays,+114,-147,2,0
+14 Sep 2021,,New York Yankees,Baltimore Orioles,-370,+270,7,2
+14 Sep 2021,,Chicago Cubs,Philadelphia Phillies,+165,-200,6,3
+14 Sep 2021,,Miami Marlins,Washington Nationals,+125,-156,2,8
+14 Sep 2021,,Milwaukee Brewers,Detroit Tigers,-227,+179,0,1
+14 Sep 2021,,Cincinnati Reds,Pittsburgh Pirates,-172,+140,5,6
+14 Sep 2021,,Cleveland Guardians,Minnesota Twins,+104,-135,3,1
+13 Sep 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+240,-323,1,5
+13 Sep 2021,,Boston Red Sox,Seattle Mariners,-135,+104,4,5
+13 Sep 2021,,San Diego Padres,San Francisco Giants,-120,-111,1,9
+13 Sep 2021,,Houston Astros,Texas Rangers,-200,+165,15,1
+13 Sep 2021,,St.Louis Cardinals,New York Mets,-120,-111,7,0
+13 Sep 2021,,Tampa Bay Rays,Toronto Blue Jays,+120,-152,1,8
+13 Sep 2021,,Miami Marlins,Washington Nationals,-120,-111,3,0
+13 Sep 2021,,Minnesota Twins,New York Yankees,+154,-185,5,6
+12 Sep 2021,,New York Yankees,New York Mets,-105,-125,6,7
+12 Sep 2021,,Arizona Diamondbacks,Seattle Mariners,+154,-175,5,4
+12 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+145,-175,0,8
+12 Sep 2021,,Texas Rangers,Athletics,+160,-192,4,3
+12 Sep 2021,,San Francisco Giants,Chicago Cubs,-233,+185,6,5
+12 Sep 2021,,Cincinnati Reds,St.Louis Cardinals,-135,+104,0,2
+12 Sep 2021,,Kansas City Royals,Minnesota Twins,+140,-172,5,3
+12 Sep 2021,,Boston Red Sox,Chicago White Sox,+145,-175,1,2
+12 Sep 2021,,Los Angeles Angels,Houston Astros,+235,-312,1,3
+12 Sep 2021,,Miami Marlins,Atlanta Braves,+229,-303,3,5
+12 Sep 2021,,Milwaukee Brewers,Cleveland Guardians,-120,-111,11,1
+12 Sep 2021,,Toronto Blue Jays,Baltimore Orioles,-227,+179,22,7
+12 Sep 2021,,Colorado Rockies,Philadelphia Phillies,+229,-303,5,4
+12 Sep 2021,,Washington Nationals,Pittsburgh Pirates,-135,+104,6,2
+12 Sep 2021,,Tampa Bay Rays,Detroit Tigers,-156,+125,7,8
+11 Sep 2021,,Arizona Diamondbacks,Seattle Mariners,+150,-182,7,3
+11 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+185,-233,4,5
+11 Sep 2021,,New York Yankees,New York Mets,-120,-111,8,7
+11 Sep 2021,,Miami Marlins,Atlanta Braves,+220,-286,6,4
+11 Sep 2021,,Cincinnati Reds,St.Louis Cardinals,-147,+125,4,6
+11 Sep 2021,,Boston Red Sox,Chicago White Sox,+150,-182,9,8
+11 Sep 2021,,Los Angeles Angels,Houston Astros,+190,-233,4,2
+11 Sep 2021,,Kansas City Royals,Minnesota Twins,+140,-161,2,9
+11 Sep 2021,,Washington Nationals,Pittsburgh Pirates,-147,+114,7,10
+11 Sep 2021,,Milwaukee Brewers,Cleveland Guardians,-213,+170,3,0
+11 Sep 2021,,Tampa Bay Rays,Detroit Tigers,-161,+129,7,2
+11 Sep 2021,,Colorado Rockies,Philadelphia Phillies,+185,-233,1,6
+11 Sep 2021,,Toronto Blue Jays,Baltimore Orioles,-270,+215,11,10
+11 Sep 2021,,Texas Rangers,Athletics,+175,-222,8,6
+11 Sep 2021,,San Francisco Giants,Chicago Cubs,-238,+190,15,4
+10 Sep 2021,,Arizona Diamondbacks,Seattle Mariners,+129,-161,4,5
+10 Sep 2021,,San Diego Padres,Los Angeles Dodgers,+129,-161,0,3
+10 Sep 2021,,Texas Rangers,Athletics,+154,-185,5,10
+10 Sep 2021,,Cincinnati Reds,St.Louis Cardinals,-132,+100,4,2
+10 Sep 2021,,Boston Red Sox,Chicago White Sox,+129,-161,3,4
+10 Sep 2021,,Los Angeles Angels,Houston Astros,+170,-213,5,10
+10 Sep 2021,,Kansas City Royals,Minnesota Twins,+110,-141,6,4
+10 Sep 2021,,Miami Marlins,Atlanta Braves,+160,-192,2,6
+10 Sep 2021,,Milwaukee Brewers,Cleveland Guardians,-147,+114,10,3
+10 Sep 2021,,Tampa Bay Rays,Detroit Tigers,-167,+135,4,10
+10 Sep 2021,,New York Yankees,New York Mets,-132,+100,3,10
+10 Sep 2021,,Toronto Blue Jays,Baltimore Orioles,-333,+250,3,6
+10 Sep 2021,,Colorado Rockies,Philadelphia Phillies,+125,-156,11,2
+10 Sep 2021,,Washington Nationals,Pittsburgh Pirates,-105,-125,3,4
+10 Sep 2021,,San Francisco Giants,Chicago Cubs,-152,+120,6,1
+09 Sep 2021,,Washington Nationals,Atlanta Braves,+185,-233,6,7
+09 Sep 2021,,Kansas City Royals,Baltimore Orioles,-105,-125,6,0
+09 Sep 2021,,Colorado Rockies,Philadelphia Phillies,+160,-192,4,3
+09 Sep 2021,,Toronto Blue Jays,New York Yankees,-105,-125,6,4
+09 Sep 2021,,New York Mets,Miami Marlins,-185,+154,2,3
+09 Sep 2021,,Minnesota Twins,Cleveland Guardians,+140,-172,1,4
+09 Sep 2021,,Chicago White Sox,Athletics,,,1,3
+09 Sep 2021,,Los Angeles Dodgers,St.Louis Cardinals,-161,+140,1,2
+08 Sep 2021,,Chicago White Sox,Athletics,+140,-172,1,5
+08 Sep 2021,,Los Angeles Angels,San Diego Padres,+229,-303,5,8
+08 Sep 2021,,Los Angeles Dodgers,St.Louis Cardinals,-135,+104,4,5
+08 Sep 2021,,Cincinnati Reds,Chicago Cubs,-125,-105,1,4
+08 Sep 2021,,Philadelphia Phillies,Milwaukee Brewers,+140,-172,3,4
+08 Sep 2021,,Washington Nationals,Atlanta Braves,+179,-227,4,2
+08 Sep 2021,,Tampa Bay Rays,Boston Red Sox,-105,-125,1,2
+08 Sep 2021,,Kansas City Royals,Baltimore Orioles,-135,+104,8,9
+08 Sep 2021,,Toronto Blue Jays,New York Yankees,+104,-135,6,3
+08 Sep 2021,,New York Mets,Miami Marlins,-120,-111,1,2
+08 Sep 2021,,Detroit Tigers,Pittsburgh Pirates,+104,-135,5,1
+08 Sep 2021,,Minnesota Twins,Cleveland Guardians,-105,-125,3,0
+08 Sep 2021,,Texas Rangers,Arizona Diamondbacks,+125,-156,8,5
+08 Sep 2021,,San Francisco Giants,Colorado Rockies,-147,+114,7,4
+08 Sep 2021,,Seattle Mariners,Houston Astros,+145,-175,8,5
+07 Sep 2021,,Los Angeles Angels,San Diego Padres,+280,-370,4,0
+07 Sep 2021,,Texas Rangers,Arizona Diamondbacks,+150,-182,3,1
+07 Sep 2021,,Chicago White Sox,Athletics,+104,-135,6,3
+07 Sep 2021,,San Francisco Giants,Colorado Rockies,-250,+204,12,3
+07 Sep 2021,,Seattle Mariners,Houston Astros,+150,-182,4,5
+07 Sep 2021,,Los Angeles Dodgers,St.Louis Cardinals,-156,+125,7,2
+07 Sep 2021,,Cincinnati Reds,Chicago Cubs,-156,+125,4,3
+07 Sep 2021,,Philadelphia Phillies,Milwaukee Brewers,-111,-120,0,10
+07 Sep 2021,,Washington Nationals,Atlanta Braves,+220,-286,5,8
+07 Sep 2021,,Tampa Bay Rays,Boston Red Sox,-111,-120,12,7
+07 Sep 2021,,Kansas City Royals,Baltimore Orioles,-132,+100,3,7
+07 Sep 2021,,Toronto Blue Jays,New York Yankees,+204,-250,5,1
+07 Sep 2021,,New York Mets,Miami Marlins,-182,+150,9,4
+07 Sep 2021,,Detroit Tigers,Pittsburgh Pirates,-111,-120,2,3
+07 Sep 2021,,Minnesota Twins,Cleveland Guardians,+104,-135,3,0
+06 Sep 2021,,Texas Rangers,Los Angeles Angels,+120,-141,4,0
+06 Sep 2021,,Seattle Mariners,Houston Astros,+179,-227,2,11
+06 Sep 2021,,Minnesota Twins,Cleveland Guardians,-135,+104,5,2
+06 Sep 2021,,Los Angeles Dodgers,St.Louis Cardinals,-227,+179,5,1
+06 Sep 2021,,San Francisco Giants,Colorado Rockies,-147,+114,10,5
+06 Sep 2021,,Cincinnati Reds,Chicago Cubs,-172,+140,3,4
+06 Sep 2021,,Philadelphia Phillies,Milwaukee Brewers,+114,-147,12,0
+06 Sep 2021,,Detroit Tigers,Pittsburgh Pirates,-141,+110,3,6
+06 Sep 2021,,Tampa Bay Rays,Boston Red Sox,+120,-152,11,10
+06 Sep 2021,,Kansas City Royals,Baltimore Orioles,-120,-111,3,2
+06 Sep 2021,,New York Mets,Washington Nationals,-132,+100,3,4
+06 Sep 2021,,Toronto Blue Jays,New York Yankees,+110,-141,8,0
+05 Sep 2021,,Los Angeles Dodgers,San Francisco Giants,-200,+165,4,6
+05 Sep 2021,,Seattle Mariners,Arizona Diamondbacks,-135,+104,10,4
+05 Sep 2021,,Houston Astros,San Diego Padres,-116,-116,3,4
+05 Sep 2021,,Texas Rangers,Los Angeles Angels,+104,-135,7,3
+05 Sep 2021,,Atlanta Braves,Colorado Rockies,-222,+175,9,2
+05 Sep 2021,,Pittsburgh Pirates,Chicago Cubs,+120,-152,8,11
+05 Sep 2021,,Chicago White Sox,Kansas City Royals,-161,+129,0,6
+05 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+195,-244,5,6
+05 Sep 2021,,Cleveland Guardians,Boston Red Sox,+110,-141,11,5
+05 Sep 2021,,Detroit Tigers,Cincinnati Reds,+190,-238,4,1
+05 Sep 2021,,Philadelphia Phillies,Miami Marlins,-116,-116,4,3
+05 Sep 2021,,Minnesota Twins,Tampa Bay Rays,+179,-227,6,5
+05 Sep 2021,,Athletics,Toronto Blue Jays,+179,-227,0,8
+05 Sep 2021,,Baltimore Orioles,New York Yankees,+265,-357,8,7
+05 Sep 2021,,New York Mets,Washington Nationals,-135,+104,13,6
+04 Sep 2021,,Texas Rangers,Los Angeles Angels,+129,-161,1,4
+04 Sep 2021,,Los Angeles Dodgers,San Francisco Giants,-172,+140,6,1
+04 Sep 2021,,Houston Astros,San Diego Padres,-111,-120,2,10
+04 Sep 2021,,Seattle Mariners,Arizona Diamondbacks,-147,+114,8,5
+04 Sep 2021,,Atlanta Braves,Colorado Rockies,-120,-111,6,7
+04 Sep 2021,,Chicago White Sox,Kansas City Royals,-156,+125,10,7
+04 Sep 2021,,Detroit Tigers,Cincinnati Reds,+165,-200,4,7
+04 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+100,-132,0,4
+04 Sep 2021,,Philadelphia Phillies,Miami Marlins,-135,+104,2,3
+04 Sep 2021,,Cleveland Guardians,Boston Red Sox,+165,-200,3,4
+04 Sep 2021,,Minnesota Twins,Tampa Bay Rays,+185,-233,4,11
+04 Sep 2021,,Athletics,Toronto Blue Jays,+150,-182,8,10
+04 Sep 2021,,Pittsburgh Pirates,Chicago Cubs,+129,-161,6,7
+04 Sep 2021,,Baltimore Orioles,New York Yankees,+290,-385,4,3
+04 Sep 2021,,New York Mets,Washington Nationals,-172,+140,11,9
+03 Sep 2021,,Houston Astros,San Diego Padres,-132,+100,6,3
+03 Sep 2021,,Los Angeles Dodgers,San Francisco Giants,-125,-105,2,3
+03 Sep 2021,,Seattle Mariners,Arizona Diamondbacks,-120,-111,6,5
+03 Sep 2021,,Texas Rangers,Los Angeles Angels,+154,-185,2,3
+03 Sep 2021,,Atlanta Braves,Colorado Rockies,-152,+120,3,4
+03 Sep 2021,,Chicago White Sox,Kansas City Royals,-161,+140,2,7
+03 Sep 2021,,St.Louis Cardinals,Milwaukee Brewers,+120,-141,15,4
+03 Sep 2021,,Philadelphia Phillies,Miami Marlins,-156,+125,3,10
+03 Sep 2021,,Cleveland Guardians,Boston Red Sox,+145,-175,5,8
+03 Sep 2021,,Detroit Tigers,Cincinnati Reds,+150,-182,15,5
+03 Sep 2021,,Minnesota Twins,Tampa Bay Rays,+170,-213,3,5
+03 Sep 2021,,Athletics,Toronto Blue Jays,+129,-161,10,11
+03 Sep 2021,,Baltimore Orioles,New York Yankees,+200,-250,3,4
+03 Sep 2021,,New York Mets,Washington Nationals,-147,+114,6,2
+03 Sep 2021,,Pittsburgh Pirates,Chicago Cubs,+125,-156,5,6
+02 Sep 2021,,Atlanta Braves,Colorado Rockies,-161,+129,6,5
+02 Sep 2021,,Cleveland Guardians,Kansas City Royals,-120,-111,4,2
+02 Sep 2021,,Pittsburgh Pirates,Chicago Cubs,+104,-135,5,6
+02 Sep 2021,,Boston Red Sox,Tampa Bay Rays,+140,-172,4,0
+02 Sep 2021,,Miami Marlins,New York Mets,+125,-156,3,4
+02 Sep 2021,,Milwaukee Brewers,San Francisco Giants,+154,-185,1,5
+02 Sep 2021,,Athletics,Detroit Tigers,-222,+175,8,6
+02 Sep 2021,,Philadelphia Phillies,Washington Nationals,-172,+140,7,6
+01 Sep 2021,,Atlanta Braves,Los Angeles Dodgers,+185,-233,3,4
+01 Sep 2021,,Milwaukee Brewers,San Francisco Giants,+160,-192,5,2
+01 Sep 2021,,Chicago Cubs,Minnesota Twins,+154,-185,3,0
+01 Sep 2021,,Pittsburgh Pirates,Chicago White Sox,+309,-400,3,6
+01 Sep 2021,,Cleveland Guardians,Kansas City Royals,+104,-135,5,3
+01 Sep 2021,,Athletics,Detroit Tigers,-185,+154,6,8
+01 Sep 2021,,Boston Red Sox,Tampa Bay Rays,-105,-125,3,2
+01 Sep 2021,,Baltimore Orioles,Toronto Blue Jays,+210,-263,4,5
+01 Sep 2021,,New York Yankees,Los Angeles Angels,-294,+225,4,1
+01 Sep 2021,,St.Louis Cardinals,Cincinnati Reds,+145,-175,2,12
+01 Sep 2021,,Houston Astros,Seattle Mariners,-141,+110,0,1
+01 Sep 2021,,San Diego Padres,Arizona Diamondbacks,-227,+179,3,8
+01 Sep 2021,,Colorado Rockies,Texas Rangers,-152,+120,9,5
+01 Sep 2021,,St.Louis Cardinals,Cincinnati Reds,+100,-132,5,4
+31 Aug 2021,,Atlanta Braves,Los Angeles Dodgers,+170,-213,2,3
+31 Aug 2021,,Houston Astros,Seattle Mariners,-172,+140,0,4
+31 Aug 2021,,Milwaukee Brewers,San Francisco Giants,-141,+110,6,2
+31 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-175,+145,3,0
+31 Aug 2021,,New York Yankees,Los Angeles Angels,-213,+170,4,6
+31 Aug 2021,,Chicago Cubs,Minnesota Twins,+129,-161,3,1
+31 Aug 2021,,Pittsburgh Pirates,Chicago White Sox,+290,-385,2,4
+31 Aug 2021,,Cleveland Guardians,Kansas City Royals,+104,-135,7,2
+31 Aug 2021,,Colorado Rockies,Texas Rangers,-135,+104,3,4
+31 Aug 2021,,Athletics,Detroit Tigers,-125,-105,9,3
+31 Aug 2021,,Boston Red Sox,Tampa Bay Rays,+135,-167,5,8
+31 Aug 2021,,Miami Marlins,New York Mets,+154,-185,1,3
+31 Aug 2021,,Baltimore Orioles,Toronto Blue Jays,+260,-345,4,2
+31 Aug 2021,,Philadelphia Phillies,Washington Nationals,+110,-141,12,6
+31 Aug 2021,,Miami Marlins,New York Mets,,,5,6
+30 Aug 2021,,Atlanta Braves,Los Angeles Dodgers,+175,-222,3,5
+30 Aug 2021,,Houston Astros,Seattle Mariners,-167,+135,4,3
+30 Aug 2021,,Milwaukee Brewers,San Francisco Giants,-152,+120,3,1
+30 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-185,+154,7,5
+30 Aug 2021,,New York Yankees,Los Angeles Angels,-213,+170,7,8
+30 Aug 2021,,Colorado Rockies,Texas Rangers,-156,+125,3,4
+30 Aug 2021,,Boston Red Sox,Tampa Bay Rays,+125,-156,1,6
+30 Aug 2021,,Baltimore Orioles,Toronto Blue Jays,+280,-370,3,7
+30 Aug 2021,,Philadelphia Phillies,Washington Nationals,-156,+125,7,4
+30 Aug 2021,,St.Louis Cardinals,Cincinnati Reds,+179,-227,3,1
+30 Aug 2021,,Minnesota Twins,Detroit Tigers,-141,+110,3,2
+29 Aug 2021,,New York Yankees,Athletics,-161,+129,1,3
+29 Aug 2021,,Colorado Rockies,Los Angeles Dodgers,+200,-250,5,0
+29 Aug 2021,,Kansas City Royals,Seattle Mariners,+140,-172,3,4
+29 Aug 2021,,Houston Astros,Texas Rangers,-227,+179,2,13
+29 Aug 2021,,Chicago Cubs,Chicago White Sox,+210,-263,1,13
+29 Aug 2021,,Milwaukee Brewers,Minnesota Twins,-161,+129,6,2
+29 Aug 2021,,San Francisco Giants,Atlanta Braves,+110,-132,0,9
+29 Aug 2021,,Boston Red Sox,Cleveland Guardians,-161,+129,5,7
+29 Aug 2021,,Cincinnati Reds,Miami Marlins,-213,+170,1,2
+29 Aug 2021,,Toronto Blue Jays,Detroit Tigers,-185,+154,2,1
+29 Aug 2021,,Washington Nationals,New York Mets,+160,-182,4,9
+29 Aug 2021,,Arizona Diamondbacks,Philadelphia Phillies,+154,-185,4,7
+29 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-263,+215,12,8
+29 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-161,+140,3,4
+28 Aug 2021,,Colorado Rockies,Los Angeles Dodgers,+215,-270,2,5
+28 Aug 2021,,San Diego Padres,Los Angeles Angels,-135,+104,2,10
+28 Aug 2021,,San Francisco Giants,Atlanta Braves,-116,-116,5,0
+28 Aug 2021,,Chicago Cubs,Chicago White Sox,+265,-357,7,0
+28 Aug 2021,,Milwaukee Brewers,Minnesota Twins,-156,+125,4,6
+28 Aug 2021,,Washington Nationals,New York Mets,+190,-238,3,5
+28 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-167,+135,4,3
+28 Aug 2021,,Houston Astros,Texas Rangers,-263,+210,5,2
+28 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-192,+160,13,0
+28 Aug 2021,,Cincinnati Reds,Miami Marlins,-116,-116,1,6
+28 Aug 2021,,Toronto Blue Jays,Detroit Tigers,-213,+170,3,2
+28 Aug 2021,,Arizona Diamondbacks,Philadelphia Phillies,+154,-185,0,7
+28 Aug 2021,,Kansas City Royals,Seattle Mariners,+135,-167,4,2
+28 Aug 2021,,New York Yankees,Athletics,+104,-135,2,3
+28 Aug 2021,,Boston Red Sox,Cleveland Guardians,-147,+114,5,3
+27 Aug 2021,,Colorado Rockies,Los Angeles Dodgers,+220,-286,4,2
+27 Aug 2021,,Kansas City Royals,Seattle Mariners,+150,-182,8,7
+27 Aug 2021,,New York Yankees,Athletics,-175,+145,8,2
+27 Aug 2021,,San Diego Padres,Los Angeles Angels,-213,+170,5,0
+27 Aug 2021,,Chicago Cubs,Chicago White Sox,+175,-222,13,17
+27 Aug 2021,,Milwaukee Brewers,Minnesota Twins,-152,+120,0,2
+27 Aug 2021,,Houston Astros,Texas Rangers,-192,+160,5,4
+27 Aug 2021,,San Francisco Giants,Atlanta Braves,+104,-135,5,6
+27 Aug 2021,,Boston Red Sox,Cleveland Guardians,-175,+145,4,3
+27 Aug 2021,,Cincinnati Reds,Miami Marlins,-141,+110,6,0
+27 Aug 2021,,Toronto Blue Jays,Detroit Tigers,-182,+150,1,2
+27 Aug 2021,,Washington Nationals,New York Mets,+175,-213,2,1
+27 Aug 2021,,Arizona Diamondbacks,Philadelphia Phillies,+215,-270,6,7
+27 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-238,+190,6,3
+27 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-175,+145,4,3
+26 Aug 2021,,Kansas City Royals,Seattle Mariners,+140,-172,6,4
+26 Aug 2021,,New York Yankees,Athletics,-135,+104,7,6
+26 Aug 2021,,Los Angeles Dodgers,San Diego Padres,-147,+114,4,0
+26 Aug 2021,,Minnesota Twins,Boston Red Sox,+225,-294,2,12
+26 Aug 2021,,Texas Rangers,Cleveland Guardians,+135,-167,6,10
+26 Aug 2021,,Washington Nationals,Miami Marlins,-111,-120,5,7
+26 Aug 2021,,San Francisco Giants,New York Mets,-120,-111,3,2
+26 Aug 2021,,Arizona Diamondbacks,Philadelphia Phillies,+114,-147,8,7
+26 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-172,+140,7,11
+26 Aug 2021,,Chicago White Sox,Toronto Blue Jays,-116,-116,10,7
+26 Aug 2021,,Cincinnati Reds,Milwaukee Brewers,-120,-111,5,1
+26 Aug 2021,,Los Angeles Angels,Baltimore Orioles,-120,-111,1,13
+25 Aug 2021,,Los Angeles Dodgers,San Diego Padres,-152,+120,5,3
+25 Aug 2021,,Cincinnati Reds,Milwaukee Brewers,+129,-161,1,4
+25 Aug 2021,,Minnesota Twins,Boston Red Sox,+135,-167,9,6
+25 Aug 2021,,Texas Rangers,Cleveland Guardians,+170,-213,2,7
+25 Aug 2021,,Washington Nationals,Miami Marlins,-116,-116,3,4
+25 Aug 2021,,San Francisco Giants,New York Mets,-111,-120,3,2
+25 Aug 2021,,Chicago White Sox,Toronto Blue Jays,-111,-120,1,3
+25 Aug 2021,,Arizona Diamondbacks,Pittsburgh Pirates,-116,-116,5,2
+25 Aug 2021,,Los Angeles Angels,Baltimore Orioles,-238,+190,6,10
+25 Aug 2021,,Tampa Bay Rays,Philadelphia Phillies,+129,-161,7,4
+25 Aug 2021,,Colorado Rockies,Chicago Cubs,,,13,10
+25 Aug 2021,,Colorado Rockies,Chicago Cubs,-141,+110,2,5
+25 Aug 2021,,Kansas City Royals,Houston Astros,+215,-270,5,6
+25 Aug 2021,,Detroit Tigers,St.Louis Cardinals,-105,-125,2,3
+24 Aug 2021,,Los Angeles Dodgers,San Diego Padres,-152,+120,5,2
+24 Aug 2021,,Cincinnati Reds,Milwaukee Brewers,+175,-222,4,7
+24 Aug 2021,,Kansas City Royals,Houston Astros,+220,-286,0,4
+24 Aug 2021,,Detroit Tigers,St.Louis Cardinals,+200,-250,4,3
+24 Aug 2021,,New York Yankees,Atlanta Braves,+114,-147,5,4
+24 Aug 2021,,Minnesota Twins,Boston Red Sox,+185,-233,9,11
+24 Aug 2021,,Texas Rangers,Cleveland Guardians,+145,-175,7,3
+24 Aug 2021,,Washington Nationals,Miami Marlins,-111,-120,5,1
+24 Aug 2021,,San Francisco Giants,New York Mets,+104,-135,8,0
+24 Aug 2021,,Chicago White Sox,Toronto Blue Jays,+104,-135,5,2
+24 Aug 2021,,Arizona Diamondbacks,Pittsburgh Pirates,-120,-111,2,4
+24 Aug 2021,,Los Angeles Angels,Baltimore Orioles,-135,+104,14,8
+24 Aug 2021,,Tampa Bay Rays,Philadelphia Phillies,-125,-105,3,1
+24 Aug 2021,,Seattle Mariners,Athletics,+129,-161,5,1
+23 Aug 2021,,Seattle Mariners,Athletics,+120,-152,5,3
+23 Aug 2021,,Kansas City Royals,Houston Astros,+204,-250,7,1
+23 Aug 2021,,Colorado Rockies,Chicago Cubs,+100,-132,4,6
+23 Aug 2021,,New York Yankees,Atlanta Braves,-116,-116,5,1
+23 Aug 2021,,Chicago White Sox,Toronto Blue Jays,-111,-120,1,2
+23 Aug 2021,,Arizona Diamondbacks,Pittsburgh Pirates,-105,-125,5,6
+23 Aug 2021,,Texas Rangers,Boston Red Sox,+229,-303,4,8
+22 Aug 2021,,Los Angeles Angels,Cleveland Guardians,-105,-125,0,3
+22 Aug 2021,,New York Mets,Los Angeles Dodgers,+150,-182,7,2
+22 Aug 2021,,San Francisco Giants,Athletics,-120,-111,2,1
+22 Aug 2021,,Philadelphia Phillies,San Diego Padres,+135,-167,7,4
+22 Aug 2021,,Arizona Diamondbacks,Colorado Rockies,+154,-185,8,4
+22 Aug 2021,,Kansas City Royals,Chicago Cubs,-111,-120,9,1
+22 Aug 2021,,Pittsburgh Pirates,St.Louis Cardinals,+200,-250,0,3
+22 Aug 2021,,Seattle Mariners,Houston Astros,+170,-213,6,3
+22 Aug 2021,,Washington Nationals,Milwaukee Brewers,+185,-233,3,7
+22 Aug 2021,,Chicago White Sox,Tampa Bay Rays,-105,-125,0,9
+22 Aug 2021,,Miami Marlins,Cincinnati Reds,+110,-141,1,3
+22 Aug 2021,,Detroit Tigers,Toronto Blue Jays,+220,-286,5,3
+22 Aug 2021,,Atlanta Braves,Baltimore Orioles,-175,+145,3,1
+21 Aug 2021,,Philadelphia Phillies,San Diego Padres,+135,-167,3,4
+21 Aug 2021,,Arizona Diamondbacks,Colorado Rockies,+129,-161,2,5
+21 Aug 2021,,Pittsburgh Pirates,St.Louis Cardinals,+179,-227,5,4
+21 Aug 2021,,Texas Rangers,Boston Red Sox,+270,-370,10,1
+21 Aug 2021,,Atlanta Braves,Baltimore Orioles,-185,+154,5,4
+21 Aug 2021,,Miami Marlins,Cincinnati Reds,+170,-213,4,7
+21 Aug 2021,,Los Angeles Angels,Cleveland Guardians,+110,-141,1,5
+21 Aug 2021,,Seattle Mariners,Houston Astros,+120,-152,1,15
+21 Aug 2021,,San Francisco Giants,Athletics,-125,-105,6,5
+21 Aug 2021,,New York Mets,Los Angeles Dodgers,+220,-286,3,4
+21 Aug 2021,,Washington Nationals,Milwaukee Brewers,+195,-244,6,9
+21 Aug 2021,,Detroit Tigers,Toronto Blue Jays,+210,-263,0,3
+21 Aug 2021,,Kansas City Royals,Chicago Cubs,+110,-141,4,2
+21 Aug 2021,,Chicago White Sox,Tampa Bay Rays,+129,-161,4,8
+21 Aug 2021,,Minnesota Twins,New York Yankees,+210,-263,1,7
+20 Aug 2021,,New York Mets,Los Angeles Dodgers,+204,-250,2,3
+20 Aug 2021,,Philadelphia Phillies,San Diego Padres,+175,-222,4,3
+20 Aug 2021,,San Francisco Giants,Athletics,-125,-105,1,4
+20 Aug 2021,,Arizona Diamondbacks,Colorado Rockies,+170,-213,4,9
+20 Aug 2021,,Pittsburgh Pirates,St.Louis Cardinals,+175,-222,4,0
+20 Aug 2021,,Seattle Mariners,Houston Astros,+154,-185,3,12
+20 Aug 2021,,Washington Nationals,Milwaukee Brewers,+154,-185,4,1
+20 Aug 2021,,Texas Rangers,Boston Red Sox,+235,-312,0,6
+20 Aug 2021,,Chicago White Sox,Tampa Bay Rays,-120,-111,7,5
+20 Aug 2021,,Miami Marlins,Cincinnati Reds,+154,-185,3,5
+20 Aug 2021,,Los Angeles Angels,Cleveland Guardians,-105,-125,1,9
+20 Aug 2021,,Detroit Tigers,Toronto Blue Jays,+220,-286,4,1
+20 Aug 2021,,Atlanta Braves,Baltimore Orioles,-270,+215,3,0
+20 Aug 2021,,Minnesota Twins,New York Yankees,+200,-250,2,10
+20 Aug 2021,,Kansas City Royals,Chicago Cubs,-116,-116,6,2
+19 Aug 2021,,New York Mets,Los Angeles Dodgers,+165,-200,1,4
+19 Aug 2021,,Milwaukee Brewers,St.Louis Cardinals,-222,+175,4,8
+19 Aug 2021,,Miami Marlins,Cincinnati Reds,+265,-357,1,6
+19 Aug 2021,,Minnesota Twins,New York Yankees,+204,-250,5,7
+19 Aug 2021,,Philadelphia Phillies,Arizona Diamondbacks,-233,+185,2,6
+19 Aug 2021,,Athletics,Chicago White Sox,+129,-161,5,4
+19 Aug 2021,,Houston Astros,Kansas City Royals,-182,+150,6,3
+19 Aug 2021,,Seattle Mariners,Texas Rangers,-147,+114,9,8
+19 Aug 2021,,Baltimore Orioles,Tampa Bay Rays,+309,-400,2,7
+19 Aug 2021,,Los Angeles Angels,Detroit Tigers,-120,-111,13,10
+18 Aug 2021,,Pittsburgh Pirates,Los Angeles Dodgers,+250,-333,0,9
+18 Aug 2021,,Philadelphia Phillies,Arizona Diamondbacks,-175,+145,2,4
+18 Aug 2021,,Athletics,Chicago White Sox,+185,-233,2,3
+18 Aug 2021,,Houston Astros,Kansas City Royals,-185,+154,2,3
+18 Aug 2021,,Seattle Mariners,Texas Rangers,-167,+135,3,1
+18 Aug 2021,,Milwaukee Brewers,St.Louis Cardinals,-135,+104,6,4
+18 Aug 2021,,Atlanta Braves,Miami Marlins,-250,+204,11,9
+18 Aug 2021,,Baltimore Orioles,Tampa Bay Rays,+280,-370,4,8
+18 Aug 2021,,Los Angeles Angels,Detroit Tigers,-135,+104,3,1
+18 Aug 2021,,Boston Red Sox,New York Yankees,-105,-125,2,5
+18 Aug 2021,,Toronto Blue Jays,Washington Nationals,-175,+145,5,8
+18 Aug 2021,,New York Mets,San Francisco Giants,+120,-152,6,2
+18 Aug 2021,,San Diego Padres,Colorado Rockies,-156,+125,5,7
+18 Aug 2021,,Cleveland Guardians,Minnesota Twins,-111,-120,7,8
+18 Aug 2021,,Chicago Cubs,Cincinnati Reds,,,7,1
+17 Aug 2021,,Pittsburgh Pirates,Los Angeles Dodgers,+260,-345,3,4
+17 Aug 2021,,New York Mets,San Francisco Giants,+129,-161,2,3
+17 Aug 2021,,Philadelphia Phillies,Arizona Diamondbacks,-161,+129,2,3
+17 Aug 2021,,San Diego Padres,Colorado Rockies,-116,-116,3,7
+17 Aug 2021,,Athletics,Chicago White Sox,-120,-111,0,9
+17 Aug 2021,,Cleveland Guardians,Minnesota Twins,+150,-182,3,1
+17 Aug 2021,,Houston Astros,Kansas City Royals,-182,+150,1,3
+17 Aug 2021,,Seattle Mariners,Texas Rangers,-141,+110,3,1
+17 Aug 2021,,Milwaukee Brewers,St.Louis Cardinals,-172,+140,2,0
+17 Aug 2021,,Atlanta Braves,Miami Marlins,-147,+114,2,0
+17 Aug 2021,,Baltimore Orioles,Tampa Bay Rays,+215,-270,0,10
+17 Aug 2021,,Chicago Cubs,Cincinnati Reds,+160,-192,2,1
+17 Aug 2021,,Los Angeles Angels,Detroit Tigers,+120,-152,8,2
+17 Aug 2021,,Boston Red Sox,New York Yankees,-116,-116,0,2
+17 Aug 2021,,Toronto Blue Jays,Washington Nationals,-213,+170,6,12
+17 Aug 2021,,Boston Red Sox,New York Yankees,-105,-125,3,5
+16 Aug 2021,,Pittsburgh Pirates,Los Angeles Dodgers,+215,-270,1,2
+16 Aug 2021,,New York Mets,San Francisco Giants,+190,-238,5,7
+16 Aug 2021,,San Diego Padres,Colorado Rockies,-141,+110,5,6
+16 Aug 2021,,Athletics,Chicago White Sox,-132,+100,2,5
+16 Aug 2021,,Cleveland Guardians,Minnesota Twins,+104,-135,4,5
+16 Aug 2021,,Houston Astros,Kansas City Royals,-161,+129,6,7
+16 Aug 2021,,Atlanta Braves,Miami Marlins,-172,+140,12,2
+16 Aug 2021,,Baltimore Orioles,Tampa Bay Rays,+220,-286,2,9
+16 Aug 2021,,Chicago Cubs,Cincinnati Reds,+179,-227,5,14
+16 Aug 2021,,Los Angeles Angels,New York Yankees,+229,-303,1,2
+15 Aug 2021,,Los Angeles Dodgers,New York Mets,-200,+165,14,4
+15 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-172,+140,8,2
+15 Aug 2021,,Toronto Blue Jays,Seattle Mariners,-120,-111,8,3
+15 Aug 2021,,Houston Astros,Los Angeles Angels,-213,+170,1,3
+15 Aug 2021,,Colorado Rockies,San Francisco Giants,+160,-192,2,5
+15 Aug 2021,,Athletics,Texas Rangers,-244,+195,4,7
+15 Aug 2021,,New York Yankees,Chicago White Sox,+150,-182,5,3
+15 Aug 2021,,St.Louis Cardinals,Kansas City Royals,-125,-105,7,2
+15 Aug 2021,,Tampa Bay Rays,Minnesota Twins,-161,+129,4,5
+15 Aug 2021,,Chicago Cubs,Miami Marlins,+120,-152,1,4
+15 Aug 2021,,Baltimore Orioles,Boston Red Sox,+240,-323,2,6
+15 Aug 2021,,Cleveland Guardians,Detroit Tigers,-135,+104,11,0
+15 Aug 2021,,Atlanta Braves,Washington Nationals,-161,+129,6,5
+15 Aug 2021,,Cincinnati Reds,Philadelphia Phillies,+114,-147,7,4
+15 Aug 2021,,Milwaukee Brewers,Pittsburgh Pirates,-213,+170,2,1
+14 Aug 2021,,Toronto Blue Jays,Seattle Mariners,-156,+125,3,9
+14 Aug 2021,,Houston Astros,Los Angeles Angels,-213,+175,8,2
+14 Aug 2021,,Colorado Rockies,San Francisco Giants,+167,-192,4,1
+14 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-244,+195,0,7
+14 Aug 2021,,New York Yankees,Chicago White Sox,+114,-147,7,5
+14 Aug 2021,,St.Louis Cardinals,Kansas City Royals,-105,-125,9,4
+14 Aug 2021,,Los Angeles Dodgers,New York Mets,-213,+170,2,1
+14 Aug 2021,,Tampa Bay Rays,Minnesota Twins,-116,-116,0,12
+14 Aug 2021,,Athletics,Texas Rangers,-250,+200,8,3
+14 Aug 2021,,Milwaukee Brewers,Pittsburgh Pirates,-222,+175,6,0
+14 Aug 2021,,Chicago Cubs,Miami Marlins,+140,-172,4,5
+14 Aug 2021,,Cleveland Guardians,Detroit Tigers,+110,-141,4,6
+14 Aug 2021,,Atlanta Braves,Washington Nationals,-175,+145,12,2
+14 Aug 2021,,Baltimore Orioles,Boston Red Sox,+265,-357,2,16
+14 Aug 2021,,Cincinnati Reds,Philadelphia Phillies,-141,+110,1,6
+14 Aug 2021,,Milwaukee Brewers,Pittsburgh Pirates,-222,+175,4,14
+13 Aug 2021,,Toronto Blue Jays,Seattle Mariners,-175,+145,2,3
+13 Aug 2021,,Colorado Rockies,San Francisco Giants,+190,-233,4,5
+13 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-192,+160,2,3
+13 Aug 2021,,Houston Astros,Los Angeles Angels,-167,+145,4,1
+13 Aug 2021,,St.Louis Cardinals,Kansas City Royals,-156,+125,6,0
+13 Aug 2021,,Tampa Bay Rays,Minnesota Twins,-175,+145,10,4
+13 Aug 2021,,Athletics,Texas Rangers,-172,+140,6,8
+13 Aug 2021,,Baltimore Orioles,Boston Red Sox,+225,-294,1,8
+13 Aug 2021,,Chicago Cubs,Miami Marlins,-105,-125,10,14
+13 Aug 2021,,Cleveland Guardians,Detroit Tigers,-135,+104,7,4
+13 Aug 2021,,Los Angeles Dodgers,New York Mets,-175,+145,6,5
+13 Aug 2021,,Atlanta Braves,Washington Nationals,-182,+160,4,2
+13 Aug 2021,,Cincinnati Reds,Philadelphia Phillies,+145,-175,6,1
+12 Aug 2021,,Colorado Rockies,San Francisco Giants,+170,-213,0,7
+12 Aug 2021,,San Diego Padres,Arizona Diamondbacks,-270,+215,3,12
+12 Aug 2021,,Toronto Blue Jays,Los Angeles Angels,-147,+114,3,6
+12 Aug 2021,,New York Yankees,Chicago White Sox,+154,-185,8,9
+12 Aug 2021,,Cincinnati Reds,Atlanta Braves,+140,-172,12,3
+12 Aug 2021,,Tampa Bay Rays,Boston Red Sox,-105,-125,8,1
+12 Aug 2021,,Texas Rangers,Seattle Mariners,+190,-238,1,3
+12 Aug 2021,,Detroit Tigers,Baltimore Orioles,+125,-156,6,4
+12 Aug 2021,,Washington Nationals,New York Mets,,,4,5
+12 Aug 2021,,Milwaukee Brewers,Chicago Cubs,-244,+195,17,4
+12 Aug 2021,,Athletics,Cleveland Guardians,-182,+150,17,0
+12 Aug 2021,,Los Angeles Dodgers,Philadelphia Phillies,-152,+120,1,2
+12 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-147,+114,7,6
+12 Aug 2021,,Washington Nationals,New York Mets,+200,-250,1,4
+11 Aug 2021,,Texas Rangers,Seattle Mariners,+175,-222,1,2
+11 Aug 2021,,Arizona Diamondbacks,San Francisco Giants,+235,-312,2,7
+11 Aug 2021,,Toronto Blue Jays,Los Angeles Angels,-192,+160,10,2
+11 Aug 2021,,Milwaukee Brewers,Chicago Cubs,-286,+220,10,0
+11 Aug 2021,,Cincinnati Reds,Atlanta Braves,+100,-132,6,8
+11 Aug 2021,,Athletics,Cleveland Guardians,-167,+145,6,3
+11 Aug 2021,,Tampa Bay Rays,Boston Red Sox,-111,-120,8,20
+11 Aug 2021,,Detroit Tigers,Baltimore Orioles,-120,-111,5,2
+11 Aug 2021,,Los Angeles Dodgers,Philadelphia Phillies,-135,+104,8,2
+11 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-182,+150,4,0
+11 Aug 2021,,Miami Marlins,San Diego Padres,+135,-167,7,0
+11 Aug 2021,,Washington Nationals,New York Mets,,,7,8
+11 Aug 2021,,Colorado Rockies,Houston Astros,+215,-270,1,5
+11 Aug 2021,,New York Yankees,Kansas City Royals,-141,+110,5,2
+11 Aug 2021,,Chicago White Sox,Minnesota Twins,-152,+120,0,1
+10 Aug 2021,,Miami Marlins,San Diego Padres,+210,-263,5,6
+10 Aug 2021,,Texas Rangers,Seattle Mariners,+179,-227,5,4
+10 Aug 2021,,Toronto Blue Jays,Los Angeles Angels,-182,+150,4,0
+10 Aug 2021,,Arizona Diamondbacks,San Francisco Giants,+210,-250,7,8
+10 Aug 2021,,Chicago White Sox,Minnesota Twins,-167,+135,3,4
+10 Aug 2021,,Colorado Rockies,Houston Astros,+160,-192,0,5
+10 Aug 2021,,New York Yankees,Kansas City Royals,-156,+125,4,8
+10 Aug 2021,,Milwaukee Brewers,Chicago Cubs,-161,+129,6,3
+10 Aug 2021,,Cincinnati Reds,Atlanta Braves,-105,-125,2,3
+10 Aug 2021,,Athletics,Cleveland Guardians,-152,+120,4,3
+10 Aug 2021,,Tampa Bay Rays,Boston Red Sox,+100,-132,8,4
+10 Aug 2021,,Detroit Tigers,Baltimore Orioles,-120,+100,9,4
+10 Aug 2021,,Los Angeles Dodgers,Philadelphia Phillies,-156,+125,5,0
+10 Aug 2021,,St.Louis Cardinals,Pittsburgh Pirates,-141,+110,4,1
+10 Aug 2021,,Los Angeles Angels,Toronto Blue Jays,+145,-175,6,3
+10 Aug 2021,,Milwaukee Brewers,Chicago Cubs,,,4,2
+09 Aug 2021,,Miami Marlins,San Diego Padres,+215,-270,3,8
+09 Aug 2021,,Chicago White Sox,Minnesota Twins,-233,+185,11,1
+09 Aug 2021,,New York Yankees,Kansas City Royals,-175,+145,8,6
+09 Aug 2021,,Cincinnati Reds,Cleveland Guardians,-185,+154,3,9
+08 Aug 2021,,Chicago White Sox,Chicago Cubs,-182,+150,9,3
+08 Aug 2021,,Arizona Diamondbacks,San Diego Padres,+185,-233,0,2
+08 Aug 2021,,Los Angeles Angels,Los Angeles Dodgers,+270,-370,2,8
+08 Aug 2021,,Texas Rangers,Athletics,+220,-286,3,6
+08 Aug 2021,,Miami Marlins,Colorado Rockies,+145,-175,8,13
+08 Aug 2021,,Kansas City Royals,St.Louis Cardinals,+110,-141,6,5
+08 Aug 2021,,Minnesota Twins,Houston Astros,+154,-185,7,5
+08 Aug 2021,,San Francisco Giants,Milwaukee Brewers,-111,-120,5,4
+08 Aug 2021,,Washington Nationals,Atlanta Braves,+175,-222,4,5
+08 Aug 2021,,Pittsburgh Pirates,Cincinnati Reds,+215,-270,2,3
+08 Aug 2021,,Detroit Tigers,Cleveland Guardians,+135,-156,5,7
+08 Aug 2021,,Boston Red Sox,Toronto Blue Jays,+165,-200,8,9
+08 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-185,+154,9,6
+08 Aug 2021,,New York Mets,Philadelphia Phillies,+154,-185,0,3
+08 Aug 2021,,Seattle Mariners,New York Yankees,+110,-141,2,0
+07 Aug 2021,,Los Angeles Angels,Los Angeles Dodgers,+300,-400,3,5
+07 Aug 2021,,Arizona Diamondbacks,San Diego Padres,+250,-333,2,6
+07 Aug 2021,,Miami Marlins,Colorado Rockies,+145,-175,4,7
+07 Aug 2021,,Washington Nationals,Atlanta Braves,+215,-270,3,2
+07 Aug 2021,,Kansas City Royals,St.Louis Cardinals,+129,-161,2,5
+07 Aug 2021,,Pittsburgh Pirates,Cincinnati Reds,+175,-222,3,11
+07 Aug 2021,,Detroit Tigers,Cleveland Guardians,+125,-156,2,1
+07 Aug 2021,,Minnesota Twins,Houston Astros,+204,-250,0,4
+07 Aug 2021,,San Francisco Giants,Milwaukee Brewers,+165,-200,9,6
+07 Aug 2021,,Boston Red Sox,Toronto Blue Jays,+140,-172,2,1
+07 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-244,+195,12,3
+07 Aug 2021,,New York Mets,Philadelphia Phillies,-105,-125,3,5
+07 Aug 2021,,Texas Rangers,Athletics,+200,-250,3,12
+07 Aug 2021,,Boston Red Sox,Toronto Blue Jays,+165,-200,0,1
+07 Aug 2021,,Chicago White Sox,Chicago Cubs,-213,+170,4,0
+07 Aug 2021,,Seattle Mariners,New York Yankees,+170,-213,4,5
+06 Aug 2021,,Arizona Diamondbacks,San Diego Padres,+190,-238,8,5
+06 Aug 2021,,Los Angeles Angels,Los Angeles Dodgers,+179,-227,4,3
+06 Aug 2021,,Texas Rangers,Athletics,+260,-345,1,4
+06 Aug 2021,,Miami Marlins,Colorado Rockies,+145,-175,2,14
+06 Aug 2021,,Kansas City Royals,St.Louis Cardinals,+154,-185,2,4
+06 Aug 2021,,Minnesota Twins,Houston Astros,+175,-222,5,4
+06 Aug 2021,,San Francisco Giants,Milwaukee Brewers,+125,-156,1,2
+06 Aug 2021,,Washington Nationals,Atlanta Braves,+179,-227,4,8
+06 Aug 2021,,Pittsburgh Pirates,Cincinnati Reds,+165,-200,0,10
+06 Aug 2021,,Detroit Tigers,Cleveland Guardians,+114,-147,1,6
+06 Aug 2021,,Boston Red Sox,Toronto Blue Jays,+125,-156,4,12
+06 Aug 2021,,Tampa Bay Rays,Baltimore Orioles,-156,+125,10,6
+06 Aug 2021,,New York Mets,Philadelphia Phillies,-105,-125,2,4
+06 Aug 2021,,Seattle Mariners,New York Yankees,+145,-175,2,3
+06 Aug 2021,,Chicago White Sox,Chicago Cubs,-222,+175,8,6
+05 Aug 2021,,Atlanta Braves,St.Louis Cardinals,-125,-105,8,4
+05 Aug 2021,,Kansas City Royals,Chicago White Sox,+170,-213,3,2
+05 Aug 2021,,Minnesota Twins,Houston Astros,+195,-244,5,3
+05 Aug 2021,,Pittsburgh Pirates,Cincinnati Reds,+200,-250,4,7
+05 Aug 2021,,Cleveland Guardians,Toronto Blue Jays,+170,-213,0,3
+05 Aug 2021,,Seattle Mariners,New York Yankees,+175,-222,3,5
+05 Aug 2021,,Philadelphia Phillies,Washington Nationals,-156,+125,7,6
+05 Aug 2021,,San Francisco Giants,Arizona Diamondbacks,-172,+140,5,4
+05 Aug 2021,,Chicago Cubs,Colorado Rockies,+125,-156,5,6
+05 Aug 2021,,Los Angeles Angels,Texas Rangers,-120,-111,5,0
+05 Aug 2021,,Boston Red Sox,Detroit Tigers,-135,+104,1,8
+05 Aug 2021,,New York Mets,Miami Marlins,-135,+104,2,4
+04 Aug 2021,,San Francisco Giants,Arizona Diamondbacks,-200,+165,7,1
+04 Aug 2021,,Houston Astros,Los Angeles Dodgers,+195,-244,5,7
+04 Aug 2021,,Chicago Cubs,Colorado Rockies,+160,-192,3,2
+04 Aug 2021,,Atlanta Braves,St.Louis Cardinals,-120,-111,7,4
+04 Aug 2021,,Kansas City Royals,Chicago White Sox,+235,-312,9,1
+04 Aug 2021,,Los Angeles Angels,Texas Rangers,-185,+154,2,1
+04 Aug 2021,,Boston Red Sox,Detroit Tigers,-156,+125,4,1
+04 Aug 2021,,New York Mets,Miami Marlins,-167,+135,5,3
+04 Aug 2021,,Cleveland Guardians,Toronto Blue Jays,+175,-222,6,8
+04 Aug 2021,,Baltimore Orioles,New York Yankees,+229,-303,3,10
+04 Aug 2021,,Philadelphia Phillies,Washington Nationals,-111,-120,9,5
+04 Aug 2021,,San Diego Padres,Athletics,+100,-132,4,5
+04 Aug 2021,,Pittsburgh Pirates,Milwaukee Brewers,+220,-286,2,4
+04 Aug 2021,,Seattle Mariners,Tampa Bay Rays,+135,-167,3,4
+04 Aug 2021,,Minnesota Twins,Cincinnati Reds,+204,-250,5,6
+03 Aug 2021,,Houston Astros,Los Angeles Dodgers,+150,-182,3,0
+03 Aug 2021,,San Francisco Giants,Arizona Diamondbacks,-185,+154,1,3
+03 Aug 2021,,Chicago Cubs,Colorado Rockies,+120,-152,6,13
+03 Aug 2021,,Atlanta Braves,St.Louis Cardinals,-147,+114,6,1
+03 Aug 2021,,Kansas City Royals,Chicago White Sox,+210,-263,1,7
+03 Aug 2021,,Pittsburgh Pirates,Milwaukee Brewers,+200,-250,8,5
+03 Aug 2021,,Los Angeles Angels,Texas Rangers,-135,+104,11,3
+03 Aug 2021,,Boston Red Sox,Detroit Tigers,-156,+125,2,4
+03 Aug 2021,,Minnesota Twins,Cincinnati Reds,+114,-147,7,5
+03 Aug 2021,,New York Mets,Miami Marlins,-200,+165,4,5
+03 Aug 2021,,Seattle Mariners,Tampa Bay Rays,+135,-167,4,2
+03 Aug 2021,,Cleveland Guardians,Toronto Blue Jays,+175,-222,2,7
+03 Aug 2021,,Baltimore Orioles,New York Yankees,+204,-250,1,13
+03 Aug 2021,,Philadelphia Phillies,Washington Nationals,-185,+154,5,4
+02 Aug 2021,,San Francisco Giants,Arizona Diamondbacks,-213,+170,11,8
+02 Aug 2021,,Pittsburgh Pirates,Milwaukee Brewers,+175,-222,2,6
+02 Aug 2021,,Los Angeles Angels,Texas Rangers,-111,-120,1,4
+02 Aug 2021,,New York Mets,Miami Marlins,-172,+140,3,6
+02 Aug 2021,,Seattle Mariners,Tampa Bay Rays,+175,-222,8,2
+02 Aug 2021,,Baltimore Orioles,New York Yankees,+229,-303,7,1
+02 Aug 2021,,Philadelphia Phillies,Washington Nationals,-132,+100,7,5
+02 Aug 2021,,Cleveland Guardians,Toronto Blue Jays,+215,-270,5,2
+01 Aug 2021,,Boston Red Sox,Tampa Bay Rays,+135,-167,2,3
+01 Aug 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-263,+210,13,0
+01 Aug 2021,,Colorado Rockies,San Diego Padres,+135,-167,1,8
+01 Aug 2021,,Athletics,Los Angeles Angels,-111,-120,8,3
+01 Aug 2021,,Houston Astros,San Francisco Giants,+100,-132,3,5
+01 Aug 2021,,Seattle Mariners,Texas Rangers,-156,+125,3,4
+01 Aug 2021,,Minnesota Twins,St.Louis Cardinals,+135,-167,3,7
+01 Aug 2021,,Cleveland Guardians,Chicago White Sox,+145,-175,1,2
+01 Aug 2021,,Milwaukee Brewers,Atlanta Braves,+145,-175,2,1
+01 Aug 2021,,Baltimore Orioles,Detroit Tigers,+125,-156,2,6
+01 Aug 2021,,Cincinnati Reds,New York Mets,+165,-200,7,1
+01 Aug 2021,,New York Yankees,Miami Marlins,-172,+140,3,1
+01 Aug 2021,,Kansas City Royals,Toronto Blue Jays,+215,-270,1,5
+01 Aug 2021,,Chicago Cubs,Washington Nationals,-111,-120,5,6
+01 Aug 2021,,Philadelphia Phillies,Pittsburgh Pirates,-167,+135,15,4
+31 Jul 2021,,Colorado Rockies,San Diego Padres,+175,-222,5,3
+31 Jul 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-182,+150,8,3
+31 Jul 2021,,Milwaukee Brewers,Atlanta Braves,-152,+120,1,8
+31 Jul 2021,,Minnesota Twins,St.Louis Cardinals,+104,-135,8,1
+31 Jul 2021,,Cleveland Guardians,Chicago White Sox,+129,-161,12,11
+31 Jul 2021,,Cincinnati Reds,New York Mets,+104,-135,4,5
+31 Jul 2021,,Seattle Mariners,Texas Rangers,-147,+114,4,5
+31 Jul 2021,,Chicago Cubs,Washington Nationals,+100,-132,6,3
+31 Jul 2021,,Philadelphia Phillies,Pittsburgh Pirates,-200,+165,2,3
+31 Jul 2021,,Baltimore Orioles,Detroit Tigers,-111,-120,5,2
+31 Jul 2021,,Boston Red Sox,Tampa Bay Rays,-111,-120,5,9
+31 Jul 2021,,New York Yankees,Miami Marlins,-147,+114,4,2
+31 Jul 2021,,Athletics,Los Angeles Angels,-152,+120,0,1
+31 Jul 2021,,Houston Astros,San Francisco Giants,-105,-125,6,8
+31 Jul 2021,,Kansas City Royals,Toronto Blue Jays,+215,-270,0,4
+30 Jul 2021,,Colorado Rockies,San Diego Padres,+175,-222,9,4
+30 Jul 2021,,Houston Astros,San Francisco Giants,+104,-135,9,6
+30 Jul 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-213,+170,5,6
+30 Jul 2021,,Athletics,Los Angeles Angels,-120,-111,2,0
+30 Jul 2021,,Minnesota Twins,St.Louis Cardinals,+129,-161,1,5
+30 Jul 2021,,Cleveland Guardians,Chicago White Sox,+210,-263,4,6
+30 Jul 2021,,Seattle Mariners,Texas Rangers,-167,+135,9,5
+30 Jul 2021,,Milwaukee Brewers,Atlanta Braves,-156,+125,9,5
+30 Jul 2021,,Baltimore Orioles,Detroit Tigers,+129,-161,4,3
+30 Jul 2021,,Boston Red Sox,Tampa Bay Rays,+114,-147,3,7
+30 Jul 2021,,Cincinnati Reds,New York Mets,+114,-147,6,2
+30 Jul 2021,,New York Yankees,Miami Marlins,-182,+150,3,1
+30 Jul 2021,,Kansas City Royals,Toronto Blue Jays,+200,-250,4,6
+30 Jul 2021,,Chicago Cubs,Washington Nationals,+110,-141,3,4
+30 Jul 2021,,Philadelphia Phillies,Pittsburgh Pirates,-141,+110,0,7
+29 Jul 2021,,Colorado Rockies,San Diego Padres,+235,-312,0,3
+29 Jul 2021,,Athletics,Los Angeles Angels,-161,+129,4,0
+29 Jul 2021,,Baltimore Orioles,Detroit Tigers,+129,-161,2,6
+29 Jul 2021,,Toronto Blue Jays,Boston Red Sox,-105,-125,13,1
+29 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-222,+175,12,0
+29 Jul 2021,,Los Angeles Dodgers,San Francisco Giants,-125,-105,0,5
+29 Jul 2021,,Washington Nationals,Philadelphia Phillies,+129,-161,8,11
+29 Jul 2021,,Cincinnati Reds,Chicago Cubs,-147,+114,7,4
+29 Jul 2021,,Chicago White Sox,Kansas City Royals,-185,+154,0,5
+29 Jul 2021,,New York Yankees,Tampa Bay Rays,-135,+104,0,14
+29 Jul 2021,,Atlanta Braves,New York Mets,+104,-135,6,3
+28 Jul 2021,,Colorado Rockies,Los Angeles Angels,+179,-227,7,8
+28 Jul 2021,,Arizona Diamondbacks,Texas Rangers,+100,-132,3,2
+28 Jul 2021,,Cincinnati Reds,Chicago Cubs,-125,-105,8,2
+28 Jul 2021,,Miami Marlins,Baltimore Orioles,+110,-141,7,8
+28 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-156,+125,7,3
+28 Jul 2021,,Toronto Blue Jays,Boston Red Sox,,,4,1
+27 Jul 2021,,Athletics,San Diego Padres,+135,-167,4,7
+27 Jul 2021,,Houston Astros,Seattle Mariners,-172,+140,8,6
+27 Jul 2021,,Los Angeles Dodgers,San Francisco Giants,-132,+100,1,2
+27 Jul 2021,,Colorado Rockies,Los Angeles Angels,+114,-147,12,3
+27 Jul 2021,,Chicago White Sox,Kansas City Royals,-156,+125,5,3
+27 Jul 2021,,Detroit Tigers,Minnesota Twins,+165,-200,6,5
+27 Jul 2021,,Arizona Diamondbacks,Texas Rangers,+125,-156,4,5
+27 Jul 2021,,Cincinnati Reds,Chicago Cubs,+145,-175,7,4
+27 Jul 2021,,Atlanta Braves,New York Mets,-156,+125,12,5
+27 Jul 2021,,New York Yankees,Tampa Bay Rays,+120,-152,4,3
+27 Jul 2021,,St.Louis Cardinals,Cleveland Guardians,-125,-105,4,2
+27 Jul 2021,,Miami Marlins,Baltimore Orioles,-135,+104,7,3
+27 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-161,+129,9,0
+27 Jul 2021,,Washington Nationals,Philadelphia Phillies,+100,-132,6,4
+26 Jul 2021,,Houston Astros,Seattle Mariners,-182,+150,8,11
+26 Jul 2021,,Colorado Rockies,Los Angeles Angels,+129,-161,2,6
+26 Jul 2021,,Atlanta Braves,New York Mets,,,0,1
+26 Jul 2021,,Chicago White Sox,Kansas City Royals,-125,-105,3,4
+26 Jul 2021,,Detroit Tigers,Minnesota Twins,+145,-175,5,6
+26 Jul 2021,,Cincinnati Reds,Chicago Cubs,+114,-147,5,6
+26 Jul 2021,,Toronto Blue Jays,Boston Red Sox,+120,-152,4,5
+26 Jul 2021,,Washington Nationals,Philadelphia Phillies,+110,-141,5,6
+26 Jul 2021,,Atlanta Braves,New York Mets,+160,-192,2,0
+25 Jul 2021,,Chicago White Sox,Milwaukee Brewers,+135,-167,3,1
+25 Jul 2021,,Athletics,Seattle Mariners,-141,+110,3,4
+25 Jul 2021,,Colorado Rockies,Los Angeles Dodgers,+154,-185,2,3
+25 Jul 2021,,Pittsburgh Pirates,San Francisco Giants,+175,-222,1,6
+25 Jul 2021,,Arizona Diamondbacks,Chicago Cubs,+154,-185,1,5
+25 Jul 2021,,Detroit Tigers,Kansas City Royals,-116,-116,1,6
+25 Jul 2021,,Texas Rangers,Houston Astros,+215,-270,1,3
+25 Jul 2021,,Los Angeles Angels,Minnesota Twins,+100,-132,6,2
+25 Jul 2021,,New York Yankees,Boston Red Sox,+114,-147,4,5
+25 Jul 2021,,St.Louis Cardinals,Cincinnati Reds,+145,-175,10,6
+25 Jul 2021,,Tampa Bay Rays,Cleveland Guardians,-175,+145,2,3
+25 Jul 2021,,San Diego Padres,Miami Marlins,-227,+179,3,9
+25 Jul 2021,,Toronto Blue Jays,New York Mets,-125,-105,4,5
+25 Jul 2021,,Atlanta Braves,Philadelphia Phillies,+140,-172,1,2
+25 Jul 2021,,Washington Nationals,Baltimore Orioles,-120,-111,4,5
+24 Jul 2021,,Colorado Rockies,Los Angeles Dodgers,+175,-222,0,1
+24 Jul 2021,,Pittsburgh Pirates,San Francisco Giants,+229,-303,10,2
+24 Jul 2021,,Chicago White Sox,Milwaukee Brewers,+104,-135,1,6
+24 Jul 2021,,Detroit Tigers,Kansas City Royals,+114,-147,8,9
+24 Jul 2021,,Texas Rangers,Houston Astros,+179,-227,1,4
+24 Jul 2021,,Los Angeles Angels,Minnesota Twins,+104,-135,2,1
+24 Jul 2021,,Washington Nationals,Baltimore Orioles,-141,+110,3,5
+24 Jul 2021,,San Diego Padres,Miami Marlins,-167,+135,2,3
+24 Jul 2021,,Atlanta Braves,Philadelphia Phillies,+104,-135,15,3
+24 Jul 2021,,New York Yankees,Boston Red Sox,+150,-182,4,3
+24 Jul 2021,,Arizona Diamondbacks,Chicago Cubs,+150,-182,7,3
+23 Jul 2021,,Athletics,Seattle Mariners,-132,+100,3,4
+23 Jul 2021,,Colorado Rockies,Los Angeles Dodgers,+260,-345,9,6
+23 Jul 2021,,Pittsburgh Pirates,San Francisco Giants,+165,-200,6,4
+23 Jul 2021,,Chicago White Sox,Milwaukee Brewers,+104,-135,1,7
+23 Jul 2021,,Detroit Tigers,Kansas City Royals,-111,-120,3,5
+23 Jul 2021,,Texas Rangers,Houston Astros,+175,-222,3,7
+23 Jul 2021,,Los Angeles Angels,Minnesota Twins,-116,-116,4,5
+23 Jul 2021,,New York Yankees,Boston Red Sox,-111,-120,2,6
+23 Jul 2021,,St.Louis Cardinals,Cincinnati Reds,+135,-167,5,6
+23 Jul 2021,,Tampa Bay Rays,Cleveland Guardians,-132,+100,10,5
+23 Jul 2021,,San Diego Padres,Miami Marlins,-152,+120,5,2
+23 Jul 2021,,Toronto Blue Jays,New York Mets,-111,-120,0,3
+23 Jul 2021,,Atlanta Braves,Philadelphia Phillies,+129,-161,1,5
+23 Jul 2021,,Washington Nationals,Baltimore Orioles,-132,+100,1,6
+23 Jul 2021,,Arizona Diamondbacks,Chicago Cubs,+110,-141,3,8
+22 Jul 2021,,Athletics,Seattle Mariners,-152,+120,4,1
+22 Jul 2021,,San Francisco Giants,Los Angeles Dodgers,+165,-200,5,3
+22 Jul 2021,,Los Angeles Angels,Minnesota Twins,-105,-125,3,2
+22 Jul 2021,,Chicago Cubs,St.Louis Cardinals,+100,-132,2,3
+22 Jul 2021,,New York Yankees,Boston Red Sox,+129,-161,4,5
+22 Jul 2021,,Tampa Bay Rays,Cleveland Guardians,-141,+110,5,4
+22 Jul 2021,,San Diego Padres,Miami Marlins,-161,+129,3,2
+22 Jul 2021,,Atlanta Braves,Philadelphia Phillies,-147,+114,7,2
+22 Jul 2021,,Texas Rangers,Detroit Tigers,+114,-147,5,7
+21 Jul 2021,,San Francisco Giants,Los Angeles Dodgers,+140,-172,4,2
+21 Jul 2021,,Chicago Cubs,St.Louis Cardinals,+110,-141,2,3
+21 Jul 2021,,Minnesota Twins,Chicago White Sox,+129,-161,7,2
+21 Jul 2021,,Cleveland Guardians,Houston Astros,+220,-286,5,4
+21 Jul 2021,,Texas Rangers,Detroit Tigers,+100,-132,2,4
+21 Jul 2021,,Boston Red Sox,Toronto Blue Jays,+179,-227,7,4
+21 Jul 2021,,Miami Marlins,Washington Nationals,+135,-167,3,1
+21 Jul 2021,,Philadelphia Phillies,New York Yankees,-116,-116,5,6
+21 Jul 2021,,Pittsburgh Pirates,Arizona Diamondbacks,+104,-135,4,6
+21 Jul 2021,,Seattle Mariners,Colorado Rockies,+125,-156,3,6
+21 Jul 2021,,Kansas City Royals,Milwaukee Brewers,+154,-185,6,3
+21 Jul 2021,,New York Mets,Cincinnati Reds,-141,+110,7,0
+21 Jul 2021,,San Diego Padres,Atlanta Braves,-125,-105,3,2
+21 Jul 2021,,Baltimore Orioles,Tampa Bay Rays,+200,-250,4,5
+20 Jul 2021,,San Francisco Giants,Los Angeles Dodgers,+120,-152,6,8
+20 Jul 2021,,Pittsburgh Pirates,Arizona Diamondbacks,-116,-116,6,11
+20 Jul 2021,,Seattle Mariners,Colorado Rockies,+154,-185,6,4
+20 Jul 2021,,Chicago Cubs,St.Louis Cardinals,-111,-120,7,6
+20 Jul 2021,,Minnesota Twins,Chicago White Sox,+114,-147,5,9
+20 Jul 2021,,Cleveland Guardians,Houston Astros,+185,-233,3,9
+20 Jul 2021,,San Diego Padres,Atlanta Braves,-175,+145,1,2
+20 Jul 2021,,Baltimore Orioles,Tampa Bay Rays,+170,-213,3,9
+20 Jul 2021,,New York Mets,Cincinnati Reds,+125,-156,3,4
+20 Jul 2021,,Texas Rangers,Detroit Tigers,-105,-125,1,4
+20 Jul 2021,,Miami Marlins,Washington Nationals,-116,-116,3,6
+20 Jul 2021,,Philadelphia Phillies,New York Yankees,-141,+110,4,6
+20 Jul 2021,,Kansas City Royals,Milwaukee Brewers,+135,-167,5,2
+20 Jul 2021,,Los Angeles Angels,Athletics,+129,-161,0,6
+19 Jul 2021,,San Francisco Giants,Los Angeles Dodgers,+104,-135,7,2
+19 Jul 2021,,Pittsburgh Pirates,Arizona Diamondbacks,-105,-125,2,4
+19 Jul 2021,,Los Angeles Angels,Athletics,-105,-125,1,4
+19 Jul 2021,,Chicago Cubs,St.Louis Cardinals,-125,-105,3,8
+19 Jul 2021,,Cleveland Guardians,Houston Astros,+195,-244,3,4
+19 Jul 2021,,Baltimore Orioles,Tampa Bay Rays,+229,-303,6,1
+19 Jul 2021,,New York Mets,Cincinnati Reds,-111,-120,15,11
+19 Jul 2021,,Texas Rangers,Detroit Tigers,-111,-120,0,14
+19 Jul 2021,,Boston Red Sox,Toronto Blue Jays,+104,-135,13,4
+19 Jul 2021,,Miami Marlins,Washington Nationals,+114,-147,1,18
+19 Jul 2021,,Minnesota Twins,Chicago White Sox,+200,-250,3,2
+18 Jul 2021,,Boston Red Sox,New York Yankees,+100,-132,1,9
+18 Jul 2021,,Chicago Cubs,Arizona Diamondbacks,-125,-105,4,6
+18 Jul 2021,,Cleveland Guardians,Athletics,+145,-175,4,2
+18 Jul 2021,,Seattle Mariners,Los Angeles Angels,+114,-147,7,4
+18 Jul 2021,,Texas Rangers,Toronto Blue Jays,+235,-312,0,10
+18 Jul 2021,,Los Angeles Dodgers,Colorado Rockies,-161,+129,5,6
+18 Jul 2021,,San Diego Padres,Washington Nationals,-111,-111,7,8
+18 Jul 2021,,San Francisco Giants,St.Louis Cardinals,-125,-105,1,2
+18 Jul 2021,,Baltimore Orioles,Kansas City Royals,+125,-156,5,0
+18 Jul 2021,,Houston Astros,Chicago White Sox,+114,-147,0,4
+18 Jul 2021,,Miami Marlins,Philadelphia Phillies,+204,-250,4,7
+18 Jul 2021,,Tampa Bay Rays,Atlanta Braves,-105,-125,7,5
+18 Jul 2021,,Milwaukee Brewers,Cincinnati Reds,-125,-105,8,0
+18 Jul 2021,,Minnesota Twins,Detroit Tigers,-135,+104,0,7
+18 Jul 2021,,Texas Rangers,Toronto Blue Jays,+195,-244,0,5
+18 Jul 2021,,Miami Marlins,Philadelphia Phillies,,,2,4
+18 Jul 2021,,New York Mets,Pittsburgh Pirates,-152,+120,7,6
+18 Jul 2021,,San Diego Padres,Washington Nationals,,,10,4
+17 Jul 2021,,Seattle Mariners,Los Angeles Angels,+114,-147,4,9
+17 Jul 2021,,Los Angeles Dodgers,Colorado Rockies,-263,+210,9,2
+17 Jul 2021,,Tampa Bay Rays,Atlanta Braves,-105,-125,0,9
+17 Jul 2021,,Boston Red Sox,New York Yankees,+110,-141,1,3
+17 Jul 2021,,Houston Astros,Chicago White Sox,-111,-120,1,10
+17 Jul 2021,,San Francisco Giants,St.Louis Cardinals,-125,-105,1,3
+17 Jul 2021,,Baltimore Orioles,Kansas City Royals,+129,-161,8,4
+17 Jul 2021,,Milwaukee Brewers,Cincinnati Reds,-147,+114,7,4
+17 Jul 2021,,New York Mets,Pittsburgh Pirates,-175,+145,7,9
+17 Jul 2021,,Chicago Cubs,Arizona Diamondbacks,-135,+104,4,2
+17 Jul 2021,,Cleveland Guardians,Athletics,+150,-182,3,2
+17 Jul 2021,,Minnesota Twins,Detroit Tigers,-141,+110,0,1
+16 Jul 2021,,Chicago Cubs,Arizona Diamondbacks,-167,+135,5,1
+16 Jul 2021,,Cleveland Guardians,Athletics,+165,-200,4,5
+16 Jul 2021,,Seattle Mariners,Los Angeles Angels,+100,-120,6,5
+16 Jul 2021,,Los Angeles Dodgers,Colorado Rockies,-286,+220,10,4
+16 Jul 2021,,San Francisco Giants,St.Louis Cardinals,-111,-120,7,2
+16 Jul 2021,,Baltimore Orioles,Kansas City Royals,+135,-167,2,9
+16 Jul 2021,,Houston Astros,Chicago White Sox,-135,+104,7,1
+16 Jul 2021,,Tampa Bay Rays,Atlanta Braves,+104,-135,7,6
+16 Jul 2021,,Milwaukee Brewers,Cincinnati Reds,+104,-135,11,6
+16 Jul 2021,,Texas Rangers,Toronto Blue Jays,+220,-286,2,10
+16 Jul 2021,,Boston Red Sox,New York Yankees,-120,-111,4,0
+16 Jul 2021,,New York Mets,Pittsburgh Pirates,-172,+140,1,4
+16 Jul 2021,,San Diego Padres,Washington Nationals,-156,+125,24,8
+16 Jul 2021,,Miami Marlins,Philadelphia Phillies,-135,+104,2,5
+13 Jul 2021,,American League,National League,-111,-120,5,2
+11 Jul 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+265,-333,4,7
+11 Jul 2021,,Colorado Rockies,San Diego Padres,+165,-200,3,1
+11 Jul 2021,,Los Angeles Angels,Seattle Mariners,-105,-125,7,1
+11 Jul 2021,,Washington Nationals,San Francisco Giants,+170,-213,1,3
+11 Jul 2021,,Athletics,Texas Rangers,-152,+120,4,1
+11 Jul 2021,,Cincinnati Reds,Milwaukee Brewers,+150,-182,3,1
+11 Jul 2021,,Detroit Tigers,Minnesota Twins,+200,-250,9,12
+11 Jul 2021,,New York Yankees,Houston Astros,+110,-141,7,8
+11 Jul 2021,,Atlanta Braves,Miami Marlins,+110,-141,4,7
+11 Jul 2021,,Philadelphia Phillies,Boston Red Sox,+170,-213,5,4
+11 Jul 2021,,Pittsburgh Pirates,New York Mets,+185,-233,6,5
+11 Jul 2021,,Toronto Blue Jays,Tampa Bay Rays,-141,+110,3,1
+11 Jul 2021,,Chicago White Sox,Baltimore Orioles,-182,+150,7,5
+10 Jul 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+260,-345,1,22
+10 Jul 2021,,Colorado Rockies,San Diego Padres,+175,-222,3,0
+10 Jul 2021,,Los Angeles Angels,Seattle Mariners,-116,-116,0,2
+10 Jul 2021,,St.Louis Cardinals,Chicago Cubs,-116,-116,6,0
+10 Jul 2021,,Cincinnati Reds,Milwaukee Brewers,+179,-227,4,3
+10 Jul 2021,,New York Yankees,Houston Astros,-116,-116,1,0
+10 Jul 2021,,Pittsburgh Pirates,New York Mets,+200,-250,2,4
+10 Jul 2021,,Kansas City Royals,Cleveland Guardians,+100,-132,6,14
+10 Jul 2021,,Atlanta Braves,Miami Marlins,-111,-120,5,4
+10 Jul 2021,,Philadelphia Phillies,Boston Red Sox,+140,-172,11,2
+10 Jul 2021,,Pittsburgh Pirates,New York Mets,+165,-200,6,2
+10 Jul 2021,,Athletics,Texas Rangers,-135,+104,8,4
+10 Jul 2021,,Chicago White Sox,Baltimore Orioles,-222,+175,8,3
+10 Jul 2021,,Washington Nationals,San Francisco Giants,+170,-213,4,10
+10 Jul 2021,,Detroit Tigers,Minnesota Twins,+165,-185,4,9
+10 Jul 2021,,Toronto Blue Jays,Tampa Bay Rays,-116,-116,2,5
+09 Jul 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+220,-286,5,2
+09 Jul 2021,,Colorado Rockies,San Diego Padres,+175,-222,2,4
+09 Jul 2021,,Los Angeles Angels,Seattle Mariners,-132,+100,3,7
+09 Jul 2021,,Washington Nationals,San Francisco Giants,+129,-161,3,5
+09 Jul 2021,,Cincinnati Reds,Milwaukee Brewers,+100,-132,2,0
+09 Jul 2021,,Detroit Tigers,Minnesota Twins,+200,-250,2,4
+09 Jul 2021,,New York Yankees,Houston Astros,+110,-141,4,0
+09 Jul 2021,,Athletics,Texas Rangers,-141,+110,2,3
+09 Jul 2021,,Atlanta Braves,Miami Marlins,-156,+125,5,0
+09 Jul 2021,,Philadelphia Phillies,Boston Red Sox,+104,-135,5,11
+09 Jul 2021,,Kansas City Royals,Cleveland Guardians,+129,-161,1,2
+09 Jul 2021,,Pittsburgh Pirates,New York Mets,+179,-227,4,13
+09 Jul 2021,,Toronto Blue Jays,Tampa Bay Rays,+100,-132,1,7
+09 Jul 2021,,Chicago White Sox,Baltimore Orioles,-141,+110,12,1
+09 Jul 2021,,St.Louis Cardinals,Chicago Cubs,+129,-161,5,10
+08 Jul 2021,,Washington Nationals,San Diego Padres,+129,-161,8,9
+08 Jul 2021,,Cincinnati Reds,Milwaukee Brewers,-111,-120,3,5
+08 Jul 2021,,Detroit Tigers,Minnesota Twins,+104,-135,3,5
+08 Jul 2021,,Philadelphia Phillies,Chicago Cubs,-116,-116,8,0
+08 Jul 2021,,Kansas City Royals,Cleveland Guardians,+114,-147,4,7
+08 Jul 2021,,New York Yankees,Seattle Mariners,-147,+114,0,4
+08 Jul 2021,,Colorado Rockies,Arizona Diamondbacks,-105,-125,9,3
+08 Jul 2021,,Athletics,Houston Astros,+154,-185,2,1
+08 Jul 2021,,Los Angeles Dodgers,Miami Marlins,-167,+135,6,1
+07 Jul 2021,,New York Yankees,Seattle Mariners,-105,-125,5,4
+07 Jul 2021,,Washington Nationals,San Diego Padres,+145,-175,15,5
+07 Jul 2021,,St.Louis Cardinals,San Francisco Giants,+154,-185,2,5
+07 Jul 2021,,Colorado Rockies,Arizona Diamondbacks,-111,-120,4,6
+07 Jul 2021,,Athletics,Houston Astros,+135,-167,3,4
+07 Jul 2021,,Philadelphia Phillies,Chicago Cubs,-147,+114,3,8
+07 Jul 2021,,Toronto Blue Jays,Baltimore Orioles,-213,+170,10,2
+07 Jul 2021,,Boston Red Sox,Los Angeles Angels,-141,+110,4,5
+07 Jul 2021,,Cincinnati Reds,Kansas City Royals,-135,+104,5,2
+07 Jul 2021,,Cleveland Guardians,Tampa Bay Rays,+185,-233,0,4
+07 Jul 2021,,Milwaukee Brewers,New York Mets,+150,-182,3,4
+07 Jul 2021,,Detroit Tigers,Texas Rangers,+125,-156,5,3
+07 Jul 2021,,Chicago White Sox,Minnesota Twins,-125,-105,6,1
+07 Jul 2021,,Atlanta Braves,Pittsburgh Pirates,-167,+135,14,3
+07 Jul 2021,,Cleveland Guardians,Tampa Bay Rays,+129,-161,1,8
+06 Jul 2021,,New York Yankees,Seattle Mariners,-175,+145,12,1
+06 Jul 2021,,Washington Nationals,San Diego Padres,+145,-175,4,7
+06 Jul 2021,,St.Louis Cardinals,San Francisco Giants,+110,-141,6,5
+06 Jul 2021,,Colorado Rockies,Arizona Diamondbacks,+110,-141,3,4
+06 Jul 2021,,Boston Red Sox,Los Angeles Angels,-120,-111,3,5
+06 Jul 2021,,Athletics,Houston Astros,+140,-172,6,9
+06 Jul 2021,,Chicago White Sox,Minnesota Twins,-132,+100,4,1
+06 Jul 2021,,Cincinnati Reds,Kansas City Royals,-167,+135,6,7
+06 Jul 2021,,Philadelphia Phillies,Chicago Cubs,-147,+114,15,10
+06 Jul 2021,,Detroit Tigers,Texas Rangers,+154,-185,5,10
+06 Jul 2021,,Los Angeles Dodgers,Miami Marlins,-147,+114,1,2
+06 Jul 2021,,Atlanta Braves,Pittsburgh Pirates,-192,+160,1,2
+06 Jul 2021,,Toronto Blue Jays,Baltimore Orioles,-213,+170,5,7
+05 Jul 2021,,Washington Nationals,San Diego Padres,+215,-270,7,5
+05 Jul 2021,,Boston Red Sox,Los Angeles Angels,-135,+104,5,4
+05 Jul 2021,,Cincinnati Reds,Kansas City Royals,+104,-135,6,2
+05 Jul 2021,,Philadelphia Phillies,Chicago Cubs,+125,-156,13,3
+05 Jul 2021,,Detroit Tigers,Texas Rangers,+140,-172,7,3
+05 Jul 2021,,Chicago White Sox,Minnesota Twins,-135,+104,5,8
+05 Jul 2021,,Cleveland Guardians,Tampa Bay Rays,+170,-200,8,9
+05 Jul 2021,,Milwaukee Brewers,New York Mets,-135,+104,2,4
+05 Jul 2021,,Atlanta Braves,Pittsburgh Pirates,-213,+170,1,11
+05 Jul 2021,,Los Angeles Dodgers,Miami Marlins,-135,+104,4,5
+05 Jul 2021,,St.Louis Cardinals,San Francisco Giants,+175,-222,5,3
+04 Jul 2021,,San Francisco Giants,Arizona Diamondbacks,-192,+160,5,2
+04 Jul 2021,,New York Mets,New York Yankees,+120,-152,2,4
+04 Jul 2021,,Texas Rangers,Seattle Mariners,+114,-147,1,4
+04 Jul 2021,,Boston Red Sox,Athletics,-116,-116,1,0
+04 Jul 2021,,Baltimore Orioles,Los Angeles Angels,+190,-238,5,6
+04 Jul 2021,,St.Louis Cardinals,Colorado Rockies,+129,-161,2,3
+04 Jul 2021,,Minnesota Twins,Kansas City Royals,-141,+110,6,2
+04 Jul 2021,,New York Mets,New York Yankees,+145,-175,10,5
+04 Jul 2021,,Miami Marlins,Atlanta Braves,+150,-182,7,8
+04 Jul 2021,,Chicago White Sox,Detroit Tigers,-182,+150,5,6
+04 Jul 2021,,Houston Astros,Cleveland Guardians,-156,+125,4,3
+04 Jul 2021,,Chicago Cubs,Cincinnati Reds,-111,-120,2,3
+04 Jul 2021,,Tampa Bay Rays,Toronto Blue Jays,+150,-182,5,1
+04 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-192,+160,0,2
+04 Jul 2021,,San Diego Padres,Philadelphia Phillies,-141,+110,11,1
+04 Jul 2021,,Los Angeles Dodgers,Washington Nationals,-141,+110,5,1
+03 Jul 2021,,San Francisco Giants,Arizona Diamondbacks,-167,+135,6,5
+03 Jul 2021,,Boston Red Sox,Athletics,+114,-147,6,7
+03 Jul 2021,,Miami Marlins,Atlanta Braves,+100,-132,3,2
+03 Jul 2021,,Chicago Cubs,Cincinnati Reds,+104,-135,2,3
+03 Jul 2021,,Chicago White Sox,Detroit Tigers,-116,-116,5,11
+03 Jul 2021,,Minnesota Twins,Kansas City Royals,+100,-132,3,6
+03 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-161,+129,11,2
+03 Jul 2021,,San Diego Padres,Philadelphia Phillies,-161,+140,2,4
+03 Jul 2021,,Tampa Bay Rays,Toronto Blue Jays,+100,-132,3,6
+03 Jul 2021,,New York Mets,New York Yankees,+125,-156,8,3
+02 Jul 2021,,Texas Rangers,Seattle Mariners,+100,-132,4,5
+02 Jul 2021,,San Francisco Giants,Arizona Diamondbacks,-161,+129,11,4
+02 Jul 2021,,Boston Red Sox,Athletics,-125,-105,3,2
+02 Jul 2021,,Baltimore Orioles,Los Angeles Angels,+160,-192,7,8
+02 Jul 2021,,St.Louis Cardinals,Colorado Rockies,-120,-111,9,3
+02 Jul 2021,,Minnesota Twins,Kansas City Royals,-116,-116,4,7
+02 Jul 2021,,Miami Marlins,Atlanta Braves,-111,-120,0,1
+02 Jul 2021,,Chicago Cubs,Cincinnati Reds,+120,-152,1,2
+02 Jul 2021,,Chicago White Sox,Detroit Tigers,-152,+120,8,2
+02 Jul 2021,,Houston Astros,Cleveland Guardians,-167,+135,6,3
+02 Jul 2021,,Tampa Bay Rays,Toronto Blue Jays,+104,-135,1,11
+02 Jul 2021,,Los Angeles Dodgers,Washington Nationals,-132,+100,10,5
+02 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-132,+100,7,2
+02 Jul 2021,,San Diego Padres,Philadelphia Phillies,-105,-125,3,4
+01 Jul 2021,,San Francisco Giants,Arizona Diamondbacks,-156,+125,3,5
+01 Jul 2021,,St.Louis Cardinals,Colorado Rockies,-116,-105,2,5
+01 Jul 2021,,New York Mets,Atlanta Braves,-182,+150,3,4
+01 Jul 2021,,San Diego Padres,Cincinnati Reds,+104,-135,4,5
+01 Jul 2021,,Houston Astros,Cleveland Guardians,-185,+154,7,2
+01 Jul 2021,,Los Angeles Dodgers,Washington Nationals,-147,+114,6,2
+01 Jul 2021,,Milwaukee Brewers,Pittsburgh Pirates,-270,+215,7,2
+01 Jul 2021,,Texas Rangers,Athletics,+165,-200,8,3
+01 Jul 2021,,Minnesota Twins,Chicago White Sox,+125,-156,5,8
+01 Jul 2021,,Kansas City Royals,Boston Red Sox,+210,-263,1,15
+01 Jul 2021,,Seattle Mariners,Toronto Blue Jays,+170,-213,7,2
+30 Jun 2021,,Texas Rangers,Athletics,+165,-200,1,3
+30 Jun 2021,,Baltimore Orioles,Houston Astros,+240,-323,5,2
+30 Jun 2021,,Minnesota Twins,Chicago White Sox,+104,-135,3,13
+30 Jun 2021,,New York Mets,Atlanta Braves,+135,-167,2,20
+30 Jun 2021,,Kansas City Royals,Boston Red Sox,+125,-147,2,6
+30 Jun 2021,,San Diego Padres,Cincinnati Reds,-120,+100,7,5
+30 Jun 2021,,Detroit Tigers,Cleveland Guardians,-105,-125,7,1
+30 Jun 2021,,Seattle Mariners,Toronto Blue Jays,+210,-263,9,7
+30 Jun 2021,,Los Angeles Angels,New York Yankees,-105,-125,11,8
+30 Jun 2021,,Miami Marlins,Philadelphia Phillies,+200,-250,11,6
+30 Jun 2021,,Detroit Tigers,Cleveland Guardians,+165,-200,9,4
+30 Jun 2021,,Tampa Bay Rays,Washington Nationals,-135,+104,6,15
+30 Jun 2021,,Pittsburgh Pirates,Colorado Rockies,+140,-172,2,6
+30 Jun 2021,,Chicago Cubs,Milwaukee Brewers,+129,-161,7,15
+30 Jun 2021,,Arizona Diamondbacks,St.Louis Cardinals,+179,-227,4,7
+29 Jun 2021,,San Francisco Giants,Los Angeles Dodgers,+135,-156,1,3
+29 Jun 2021,,Texas Rangers,Athletics,+170,-213,5,4
+29 Jun 2021,,Pittsburgh Pirates,Colorado Rockies,+154,-185,0,8
+29 Jun 2021,,Arizona Diamondbacks,St.Louis Cardinals,+135,-167,2,3
+29 Jun 2021,,Baltimore Orioles,Houston Astros,+235,-312,13,3
+29 Jun 2021,,Chicago Cubs,Milwaukee Brewers,+204,-250,1,2
+29 Jun 2021,,Minnesota Twins,Chicago White Sox,+104,-135,6,7
+29 Jun 2021,,New York Mets,Atlanta Braves,+140,-172,4,3
+29 Jun 2021,,Kansas City Royals,Boston Red Sox,+190,-238,6,7
+29 Jun 2021,,San Diego Padres,Cincinnati Reds,-161,+140,5,4
+29 Jun 2021,,Seattle Mariners,Toronto Blue Jays,+190,-238,3,9
+29 Jun 2021,,Los Angeles Angels,New York Yankees,+125,-156,5,11
+29 Jun 2021,,Miami Marlins,Philadelphia Phillies,-116,-116,3,4
+29 Jun 2021,,Tampa Bay Rays,Washington Nationals,-116,-116,3,4
+28 Jun 2021,,San Francisco Giants,Los Angeles Dodgers,+150,-182,2,3
+28 Jun 2021,,Arizona Diamondbacks,St.Louis Cardinals,+145,-175,1,7
+28 Jun 2021,,Baltimore Orioles,Houston Astros,+270,-370,9,7
+28 Jun 2021,,Chicago Cubs,Milwaukee Brewers,+125,-156,4,14
+28 Jun 2021,,Kansas City Royals,Boston Red Sox,+129,-161,5,6
+28 Jun 2021,,Detroit Tigers,Cleveland Guardians,+129,-161,5,13
+28 Jun 2021,,Los Angeles Angels,New York Yankees,+140,-172,5,3
+28 Jun 2021,,New York Mets,Washington Nationals,+110,-141,4,8
+28 Jun 2021,,Philadelphia Phillies,Cincinnati Reds,+140,-172,4,12
+28 Jun 2021,,Pittsburgh Pirates,Colorado Rockies,-105,-125,0,2
+27 Jun 2021,,Chicago Cubs,Los Angeles Dodgers,+175,-222,1,7
+27 Jun 2021,,Arizona Diamondbacks,San Diego Padres,+220,-286,4,5
+27 Jun 2021,,Seattle Mariners,Chicago White Sox,,,5,7
+27 Jun 2021,,Athletics,San Francisco Giants,+140,-172,6,2
+27 Jun 2021,,Kansas City Royals,Texas Rangers,-116,-116,1,4
+27 Jun 2021,,Pittsburgh Pirates,St.Louis Cardinals,+120,-152,7,2
+27 Jun 2021,,Seattle Mariners,Chicago White Sox,,,3,2
+27 Jun 2021,,Cleveland Guardians,Minnesota Twins,+110,-141,2,8
+27 Jun 2021,,Colorado Rockies,Milwaukee Brewers,+160,-192,0,5
+27 Jun 2021,,Atlanta Braves,Cincinnati Reds,+120,-152,4,0
+27 Jun 2021,,New York Yankees,Boston Red Sox,-156,+125,2,9
+27 Jun 2021,,Houston Astros,Detroit Tigers,-175,+145,1,2
+27 Jun 2021,,Los Angeles Angels,Tampa Bay Rays,+129,-161,6,4
+27 Jun 2021,,Washington Nationals,Miami Marlins,-141,+110,5,1
+27 Jun 2021,,Philadelphia Phillies,New York Mets,+104,-135,4,2
+27 Jun 2021,,Baltimore Orioles,Toronto Blue Jays,+215,-270,2,5
+26 Jun 2021,,Arizona Diamondbacks,San Diego Padres,+225,-278,10,1
+26 Jun 2021,,Athletics,San Francisco Giants,+110,-132,5,6
+26 Jun 2021,,New York Yankees,Boston Red Sox,-161,+140,2,4
+26 Jun 2021,,Chicago Cubs,Los Angeles Dodgers,+175,-222,2,3
+26 Jun 2021,,Houston Astros,Detroit Tigers,,,3,2
+26 Jun 2021,,Atlanta Braves,Cincinnati Reds,+104,-135,1,4
+26 Jun 2021,,Colorado Rockies,Milwaukee Brewers,+150,-182,4,10
+26 Jun 2021,,Los Angeles Angels,Tampa Bay Rays,+129,-161,3,13
+26 Jun 2021,,Washington Nationals,Miami Marlins,-116,-116,2,3
+26 Jun 2021,,Philadelphia Phillies,New York Mets,+220,-286,3,4
+26 Jun 2021,,Kansas City Royals,Texas Rangers,+129,-161,0,8
+26 Jun 2021,,Baltimore Orioles,Toronto Blue Jays,+220,-286,4,12
+26 Jun 2021,,Pittsburgh Pirates,St.Louis Cardinals,+135,-167,1,3
+26 Jun 2021,,Houston Astros,Detroit Tigers,,,1,3
+25 Jun 2021,,Arizona Diamondbacks,San Diego Padres,+260,-345,5,11
+25 Jun 2021,,Chicago Cubs,Los Angeles Dodgers,+150,-182,2,6
+25 Jun 2021,,Athletics,San Francisco Giants,-120,-111,0,2
+25 Jun 2021,,Pittsburgh Pirates,St.Louis Cardinals,+129,-152,5,4
+25 Jun 2021,,Seattle Mariners,Chicago White Sox,+165,-185,9,3
+25 Jun 2021,,Cleveland Guardians,Minnesota Twins,+129,-152,7,8
+25 Jun 2021,,Kansas City Royals,Texas Rangers,+100,-132,4,9
+25 Jun 2021,,Atlanta Braves,Cincinnati Reds,-116,-116,3,2
+25 Jun 2021,,New York Yankees,Boston Red Sox,-132,+100,3,5
+25 Jun 2021,,Los Angeles Angels,Tampa Bay Rays,+150,-182,3,4
+25 Jun 2021,,Washington Nationals,Miami Marlins,+114,-147,2,11
+25 Jun 2021,,Baltimore Orioles,Toronto Blue Jays,+215,-270,6,5
+25 Jun 2021,,Colorado Rockies,Milwaukee Brewers,+225,-294,4,5
+25 Jun 2021,,Philadelphia Phillies,New York Mets,,,1,2
+24 Jun 2021,,Chicago Cubs,Los Angeles Dodgers,+215,-270,4,0
+24 Jun 2021,,Pittsburgh Pirates,St.Louis Cardinals,+129,-161,8,2
+24 Jun 2021,,Cleveland Guardians,Minnesota Twins,+170,-213,4,1
+24 Jun 2021,,Atlanta Braves,Cincinnati Reds,+110,-141,3,5
+24 Jun 2021,,Boston Red Sox,Tampa Bay Rays,-116,-116,0,1
+24 Jun 2021,,Houston Astros,Detroit Tigers,-250,+204,12,3
+24 Jun 2021,,Washington Nationals,Miami Marlins,-125,-105,7,3
+24 Jun 2021,,Baltimore Orioles,Toronto Blue Jays,+160,-192,0,9
+24 Jun 2021,,Athletics,Texas Rangers,-152,+120,5,1
+24 Jun 2021,,Kansas City Royals,New York Yankees,+175,-222,1,8
+23 Jun 2021,,Los Angeles Dodgers,San Diego Padres,-111,-120,3,5
+23 Jun 2021,,Athletics,Texas Rangers,-156,+125,3,5
+23 Jun 2021,,Atlanta Braves,New York Mets,+120,-152,3,7
+23 Jun 2021,,Boston Red Sox,Tampa Bay Rays,+129,-161,2,8
+23 Jun 2021,,Toronto Blue Jays,Miami Marlins,-132,+100,3,1
+23 Jun 2021,,Houston Astros,Baltimore Orioles,-233,+185,13,0
+23 Jun 2021,,Kansas City Royals,New York Yankees,+150,-182,5,6
+23 Jun 2021,,Colorado Rockies,Seattle Mariners,-116,-116,5,2
+23 Jun 2021,,San Francisco Giants,Los Angeles Angels,-135,+104,9,3
+23 Jun 2021,,Milwaukee Brewers,Arizona Diamondbacks,-233,+185,3,2
+23 Jun 2021,,St.Louis Cardinals,Detroit Tigers,-132,+100,2,6
+23 Jun 2021,,Washington Nationals,Philadelphia Phillies,-116,-116,13,12
+23 Jun 2021,,Chicago White Sox,Pittsburgh Pirates,-172,+140,4,3
+22 Jun 2021,,Colorado Rockies,Seattle Mariners,+145,-175,1,2
+22 Jun 2021,,Los Angeles Dodgers,San Diego Padres,-135,+104,2,3
+22 Jun 2021,,Milwaukee Brewers,Arizona Diamondbacks,-156,+125,5,0
+22 Jun 2021,,San Francisco Giants,Los Angeles Angels,+104,-135,5,0
+22 Jun 2021,,Athletics,Texas Rangers,-141,+110,13,6
+22 Jun 2021,,Cleveland Guardians,Chicago Cubs,+170,-213,1,7
+22 Jun 2021,,Atlanta Braves,New York Mets,-120,-111,3,0
+22 Jun 2021,,Boston Red Sox,Tampa Bay Rays,+100,-132,9,5
+22 Jun 2021,,St.Louis Cardinals,Detroit Tigers,-125,-105,2,8
+22 Jun 2021,,Toronto Blue Jays,Miami Marlins,-111,-120,2,1
+22 Jun 2021,,Houston Astros,Baltimore Orioles,-200,+165,3,1
+22 Jun 2021,,Chicago White Sox,Pittsburgh Pirates,-182,+150,3,6
+22 Jun 2021,,Kansas City Royals,New York Yankees,+220,-286,6,5
+22 Jun 2021,,Washington Nationals,Philadelphia Phillies,-116,-105,3,2
+22 Jun 2021,,Cincinnati Reds,Minnesota Twins,+100,-132,10,7
+21 Jun 2021,,Los Angeles Dodgers,San Diego Padres,+120,-152,2,6
+21 Jun 2021,,Milwaukee Brewers,Arizona Diamondbacks,-135,+104,1,5
+21 Jun 2021,,Atlanta Braves,New York Mets,-152,+120,1,0
+21 Jun 2021,,Cincinnati Reds,Minnesota Twins,-120,-111,5,7
+21 Jun 2021,,Athletics,Texas Rangers,-125,-105,3,8
+21 Jun 2021,,Cleveland Guardians,Chicago Cubs,+120,-152,4,0
+21 Jun 2021,,Houston Astros,Baltimore Orioles,-192,+167,10,2
+21 Jun 2021,,Atlanta Braves,New York Mets,+220,-286,2,4
+20 Jun 2021,,St.Louis Cardinals,Atlanta Braves,+104,-135,0,1
+20 Jun 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-182,+150,9,8
+20 Jun 2021,,Cincinnati Reds,San Diego Padres,-105,-125,2,3
+20 Jun 2021,,Tampa Bay Rays,Seattle Mariners,-161,+129,2,6
+20 Jun 2021,,Detroit Tigers,Los Angeles Angels,+129,-161,5,3
+20 Jun 2021,,Philadelphia Phillies,San Francisco Giants,-105,-125,2,11
+20 Jun 2021,,Milwaukee Brewers,Colorado Rockies,-141,+110,7,6
+20 Jun 2021,,Minnesota Twins,Texas Rangers,-135,+104,4,2
+20 Jun 2021,,Miami Marlins,Chicago Cubs,+125,-156,0,2
+20 Jun 2021,,St.Louis Cardinals,Atlanta Braves,-116,-116,9,1
+20 Jun 2021,,Boston Red Sox,Kansas City Royals,-141,+110,3,7
+20 Jun 2021,,Chicago White Sox,Houston Astros,+120,-152,2,8
+20 Jun 2021,,Athletics,New York Yankees,+114,-147,1,2
+20 Jun 2021,,Toronto Blue Jays,Baltimore Orioles,-185,+154,7,4
+20 Jun 2021,,Cleveland Guardians,Pittsburgh Pirates,+104,-135,2,1
+20 Jun 2021,,New York Mets,Washington Nationals,-105,-125,2,5
+19 Jun 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-263,+210,9,3
+19 Jun 2021,,Tampa Bay Rays,Seattle Mariners,-152,+120,5,6
+19 Jun 2021,,Detroit Tigers,Los Angeles Angels,+175,-222,3,8
+19 Jun 2021,,Milwaukee Brewers,Colorado Rockies,-105,-125,6,5
+19 Jun 2021,,Chicago White Sox,Houston Astros,+104,-135,3,7
+19 Jun 2021,,Cincinnati Reds,San Diego Padres,+129,-161,5,7
+19 Jun 2021,,New York Mets,Washington Nationals,-116,-116,2,6
+19 Jun 2021,,Boston Red Sox,Kansas City Royals,-125,-105,7,1
+19 Jun 2021,,Toronto Blue Jays,Baltimore Orioles,-167,+135,10,7
+19 Jun 2021,,Cleveland Guardians,Pittsburgh Pirates,-125,-105,3,6
+19 Jun 2021,,Minnesota Twins,Texas Rangers,-116,-116,3,2
+19 Jun 2021,,Philadelphia Phillies,San Francisco Giants,-105,-125,13,6
+19 Jun 2021,,Miami Marlins,Chicago Cubs,+104,-135,11,1
+19 Jun 2021,,Athletics,New York Yankees,-105,-125,5,7
+19 Jun 2021,,New York Mets,Washington Nationals,+110,-141,5,1
+18 Jun 2021,,Cincinnati Reds,San Diego Padres,+170,-213,2,8
+18 Jun 2021,,Tampa Bay Rays,Seattle Mariners,-116,-116,1,5
+18 Jun 2021,,Philadelphia Phillies,San Francisco Giants,+120,-152,3,5
+18 Jun 2021,,Los Angeles Dodgers,Arizona Diamondbacks,-222,+175,3,0
+18 Jun 2021,,Detroit Tigers,Los Angeles Angels,+175,-222,3,11
+18 Jun 2021,,Milwaukee Brewers,Colorado Rockies,-200,+165,5,6
+18 Jun 2021,,Boston Red Sox,Kansas City Royals,-161,+129,3,5
+18 Jun 2021,,Chicago White Sox,Houston Astros,-120,-111,1,2
+18 Jun 2021,,Miami Marlins,Chicago Cubs,+145,-175,10,2
+18 Jun 2021,,Minnesota Twins,Texas Rangers,-172,+140,7,5
+18 Jun 2021,,St.Louis Cardinals,Atlanta Braves,+129,-161,1,9
+18 Jun 2021,,Athletics,New York Yankees,+120,-152,5,3
+18 Jun 2021,,Toronto Blue Jays,Baltimore Orioles,-222,+175,1,7
+18 Jun 2021,,Cleveland Guardians,Pittsburgh Pirates,-141,+110,10,11
+18 Jun 2021,,New York Mets,Washington Nationals,+104,-135,0,1
+17 Jun 2021,,Tampa Bay Rays,Seattle Mariners,-182,+150,5,6
+17 Jun 2021,,Detroit Tigers,Los Angeles Angels,+200,-250,5,7
+17 Jun 2021,,Cincinnati Reds,San Diego Padres,+154,-185,4,6
+17 Jun 2021,,Milwaukee Brewers,Colorado Rockies,-161,+129,3,7
+17 Jun 2021,,Chicago White Sox,Houston Astros,+104,-135,2,10
+17 Jun 2021,,St.Louis Cardinals,Atlanta Braves,+160,-192,0,4
+17 Jun 2021,,Chicago Cubs,New York Mets,-105,-125,2,0
+17 Jun 2021,,New York Yankees,Toronto Blue Jays,-116,-116,8,4
+17 Jun 2021,,Arizona Diamondbacks,San Francisco Giants,+190,-238,3,10
+17 Jun 2021,,Baltimore Orioles,Cleveland Guardians,+100,-132,3,10
+16 Jun 2021,,Philadelphia Phillies,Los Angeles Dodgers,+125,-156,2,0
+16 Jun 2021,,Minnesota Twins,Seattle Mariners,-147,+114,7,2
+16 Jun 2021,,Arizona Diamondbacks,San Francisco Giants,+154,-185,7,13
+16 Jun 2021,,Texas Rangers,Houston Astros,+200,-250,4,8
+16 Jun 2021,,Boston Red Sox,Atlanta Braves,+125,-156,10,8
+16 Jun 2021,,Baltimore Orioles,Cleveland Guardians,+135,-167,7,8
+16 Jun 2021,,Chicago Cubs,New York Mets,+250,-333,3,6
+16 Jun 2021,,New York Yankees,Toronto Blue Jays,-175,+145,3,2
+16 Jun 2021,,Pittsburgh Pirates,Washington Nationals,+140,-172,1,3
+16 Jun 2021,,Los Angeles Angels,Athletics,-105,-125,4,8
+16 Jun 2021,,San Diego Padres,Colorado Rockies,-222,+175,7,8
+16 Jun 2021,,Tampa Bay Rays,Chicago White Sox,+110,-141,7,8
+16 Jun 2021,,Cincinnati Reds,Milwaukee Brewers,+120,-152,2,1
+16 Jun 2021,,Detroit Tigers,Kansas City Royals,+120,-152,6,5
+16 Jun 2021,,Miami Marlins,St.Louis Cardinals,-111,-120,0,1
+15 Jun 2021,,Philadelphia Phillies,Los Angeles Dodgers,+135,-167,3,5
+15 Jun 2021,,Minnesota Twins,Seattle Mariners,-147,+114,0,10
+15 Jun 2021,,Arizona Diamondbacks,San Francisco Giants,+165,-200,8,9
+15 Jun 2021,,Los Angeles Angels,Athletics,+104,-135,4,6
+15 Jun 2021,,San Diego Padres,Colorado Rockies,-250,+204,4,8
+15 Jun 2021,,Miami Marlins,St.Louis Cardinals,+104,-135,1,2
+15 Jun 2021,,Tampa Bay Rays,Chicago White Sox,-105,-125,0,3
+15 Jun 2021,,Cincinnati Reds,Milwaukee Brewers,-116,-116,2,1
+15 Jun 2021,,Detroit Tigers,Kansas City Royals,+125,-147,4,3
+15 Jun 2021,,Texas Rangers,Houston Astros,+154,-185,3,6
+15 Jun 2021,,Boston Red Sox,Atlanta Braves,-105,-125,10,8
+15 Jun 2021,,Baltimore Orioles,Cleveland Guardians,+145,-175,2,7
+15 Jun 2021,,Chicago Cubs,New York Mets,+110,-141,2,3
+15 Jun 2021,,New York Yankees,Toronto Blue Jays,+104,-135,6,5
+15 Jun 2021,,Pittsburgh Pirates,Washington Nationals,+140,-172,1,8
+14 Jun 2021,,Philadelphia Phillies,Los Angeles Dodgers,+150,-182,1,3
+14 Jun 2021,,Minnesota Twins,Seattle Mariners,-156,+125,3,4
+14 Jun 2021,,Arizona Diamondbacks,San Francisco Giants,+154,-185,2,5
+14 Jun 2021,,Los Angeles Angels,Athletics,+125,-156,5,8
+14 Jun 2021,,San Diego Padres,Colorado Rockies,-161,+129,2,3
+14 Jun 2021,,Miami Marlins,St.Louis Cardinals,+175,-222,2,4
+14 Jun 2021,,Tampa Bay Rays,Chicago White Sox,-132,+100,5,2
+14 Jun 2021,,Cincinnati Reds,Milwaukee Brewers,+114,-147,10,2
+14 Jun 2021,,Detroit Tigers,Kansas City Royals,+129,-161,10,3
+14 Jun 2021,,Baltimore Orioles,Cleveland Guardians,,,3,4
+14 Jun 2021,,Toronto Blue Jays,Boston Red Sox,+100,-132,1,2
+14 Jun 2021,,Chicago Cubs,New York Mets,+114,-147,2,5
+14 Jun 2021,,Pittsburgh Pirates,Washington Nationals,+100,-132,2,3
+13 Jun 2021,,St.Louis Cardinals,Chicago Cubs,+110,-141,0,2
+13 Jun 2021,,Los Angeles Angels,Arizona Diamondbacks,-141,+110,10,3
+13 Jun 2021,,Texas Rangers,Los Angeles Dodgers,+179,-227,3,5
+13 Jun 2021,,Kansas City Royals,Athletics,+175,-222,3,6
+13 Jun 2021,,Houston Astros,Minnesota Twins,-161,+129,14,3
+13 Jun 2021,,Pittsburgh Pirates,Milwaukee Brewers,+154,-185,2,5
+13 Jun 2021,,Atlanta Braves,Miami Marlins,+110,-141,6,4
+13 Jun 2021,,Baltimore Orioles,Tampa Bay Rays,+150,-182,1,7
+13 Jun 2021,,Toronto Blue Jays,Boston Red Sox,-141,+110,18,4
+13 Jun 2021,,Chicago White Sox,Detroit Tigers,-238,+190,4,1
+13 Jun 2021,,Colorado Rockies,Cincinnati Reds,+135,-167,2,6
+13 Jun 2021,,Seattle Mariners,Cleveland Guardians,+195,-244,6,2
+13 Jun 2021,,San Diego Padres,New York Mets,-135,+104,7,3
+13 Jun 2021,,New York Yankees,Philadelphia Phillies,+100,-132,0,7
+13 Jun 2021,,San Francisco Giants,Washington Nationals,-111,-120,0,5
+12 Jun 2021,,Texas Rangers,Los Angeles Dodgers,+229,-303,12,1
+12 Jun 2021,,St.Louis Cardinals,Chicago Cubs,+150,-182,2,7
+12 Jun 2021,,Houston Astros,Minnesota Twins,-120,-111,2,5
+12 Jun 2021,,Los Angeles Angels,Arizona Diamondbacks,-125,-105,8,7
+12 Jun 2021,,Atlanta Braves,Miami Marlins,-172,+140,2,4
+12 Jun 2021,,Baltimore Orioles,Tampa Bay Rays,+179,-227,4,5
+12 Jun 2021,,Toronto Blue Jays,Boston Red Sox,-105,-125,7,2
+12 Jun 2021,,Chicago White Sox,Detroit Tigers,-182,+150,15,2
+12 Jun 2021,,Colorado Rockies,Cincinnati Reds,+125,-156,3,10
+12 Jun 2021,,Seattle Mariners,Cleveland Guardians,-111,-120,4,5
+12 Jun 2021,,Pittsburgh Pirates,Milwaukee Brewers,+265,-357,4,7
+12 Jun 2021,,San Diego Padres,New York Mets,-147,+114,1,4
+12 Jun 2021,,Kansas City Royals,Athletics,+135,-167,2,11
+12 Jun 2021,,New York Yankees,Philadelphia Phillies,-125,-105,7,8
+12 Jun 2021,,San Francisco Giants,Washington Nationals,-167,+135,0,2
+11 Jun 2021,,Texas Rangers,Los Angeles Dodgers,+270,-370,1,12
+11 Jun 2021,,Kansas City Royals,Athletics,+104,-135,3,4
+11 Jun 2021,,Los Angeles Angels,Arizona Diamondbacks,-152,+120,6,5
+11 Jun 2021,,Houston Astros,Minnesota Twins,-152,+120,6,4
+11 Jun 2021,,Pittsburgh Pirates,Milwaukee Brewers,+260,-345,4,7
+11 Jun 2021,,Atlanta Braves,Miami Marlins,-120,-111,3,4
+11 Jun 2021,,Baltimore Orioles,Tampa Bay Rays,+160,-192,2,4
+11 Jun 2021,,Toronto Blue Jays,Boston Red Sox,-111,-120,5,6
+11 Jun 2021,,Chicago White Sox,Detroit Tigers,-156,+125,5,4
+11 Jun 2021,,Colorado Rockies,Cincinnati Reds,+179,-227,5,11
+11 Jun 2021,,Seattle Mariners,Cleveland Guardians,+135,-167,0,7
+11 Jun 2021,,San Diego Padres,New York Mets,+145,-175,2,3
+11 Jun 2021,,San Francisco Giants,Washington Nationals,+145,-175,1,0
+11 Jun 2021,,St.Louis Cardinals,Chicago Cubs,+125,-156,5,8
+10 Jun 2021,,Kansas City Royals,Athletics,+125,-156,6,1
+10 Jun 2021,,Toronto Blue Jays,Chicago White Sox,-120,-111,2,5
+10 Jun 2021,,New York Yankees,Minnesota Twins,-147,+114,5,7
+10 Jun 2021,,Houston Astros,Boston Red Sox,-120,-111,8,12
+10 Jun 2021,,Colorado Rockies,Miami Marlins,+175,-222,4,11
+10 Jun 2021,,Seattle Mariners,Detroit Tigers,-105,-125,3,8
+10 Jun 2021,,Atlanta Braves,Philadelphia Phillies,+110,-141,3,4
+10 Jun 2021,,Milwaukee Brewers,Cincinnati Reds,-116,-116,7,2
+10 Jun 2021,,Los Angeles Dodgers,Pittsburgh Pirates,-238,+190,6,3
+09 Jun 2021,,Kansas City Royals,Los Angeles Angels,+125,-156,1,6
+09 Jun 2021,,Cleveland Guardians,St.Louis Cardinals,+110,-141,2,8
+09 Jun 2021,,Toronto Blue Jays,Chicago White Sox,+129,-161,6,2
+09 Jun 2021,,New York Yankees,Minnesota Twins,-200,+165,9,6
+09 Jun 2021,,Houston Astros,Boston Red Sox,+110,-141,8,3
+09 Jun 2021,,Milwaukee Brewers,Cincinnati Reds,-105,-125,3,7
+09 Jun 2021,,Colorado Rockies,Miami Marlins,-105,-125,4,3
+09 Jun 2021,,Seattle Mariners,Detroit Tigers,+110,-141,9,6
+09 Jun 2021,,Washington Nationals,Tampa Bay Rays,+145,-175,9,7
+09 Jun 2021,,Atlanta Braves,Philadelphia Phillies,+110,-141,1,2
+09 Jun 2021,,New York Mets,Baltimore Orioles,-147,+114,14,1
+09 Jun 2021,,Los Angeles Dodgers,Pittsburgh Pirates,-227,+185,2,1
+09 Jun 2021,,Chicago Cubs,San Diego Padres,+215,-270,3,1
+09 Jun 2021,,Arizona Diamondbacks,Athletics,+165,-200,0,4
+09 Jun 2021,,San Francisco Giants,Texas Rangers,-116,-116,3,4
+08 Jun 2021,,Chicago Cubs,San Diego Padres,+165,-200,7,1
+08 Jun 2021,,Arizona Diamondbacks,Athletics,+210,-263,2,5
+08 Jun 2021,,Kansas City Royals,Los Angeles Angels,+140,-172,1,8
+08 Jun 2021,,Cleveland Guardians,St.Louis Cardinals,-175,+145,10,1
+08 Jun 2021,,Toronto Blue Jays,Chicago White Sox,+125,-156,1,6
+08 Jun 2021,,New York Yankees,Minnesota Twins,-120,-111,8,4
+08 Jun 2021,,San Francisco Giants,Texas Rangers,-152,+120,9,4
+08 Jun 2021,,Houston Astros,Boston Red Sox,-132,+100,7,1
+08 Jun 2021,,Milwaukee Brewers,Cincinnati Reds,+125,-156,5,1
+08 Jun 2021,,Colorado Rockies,Miami Marlins,+165,-200,2,6
+08 Jun 2021,,Seattle Mariners,Detroit Tigers,+100,-120,3,5
+08 Jun 2021,,Washington Nationals,Tampa Bay Rays,+195,-244,1,3
+08 Jun 2021,,New York Mets,Baltimore Orioles,-120,-111,3,10
+08 Jun 2021,,Los Angeles Dodgers,Pittsburgh Pirates,-213,+170,5,3
+08 Jun 2021,,Atlanta Braves,Philadelphia Phillies,+140,-172,9,5
+07 Jun 2021,,Chicago Cubs,San Diego Padres,-105,-125,4,9
+07 Jun 2021,,Kansas City Royals,Los Angeles Angels,+125,-156,3,8
+07 Jun 2021,,Miami Marlins,Boston Red Sox,+170,-213,3,5
+06 Jun 2021,,Boston Red Sox,New York Yankees,+129,-161,6,5
+06 Jun 2021,,New York Mets,San Diego Padres,+125,-156,6,2
+06 Jun 2021,,Seattle Mariners,Los Angeles Angels,+135,-167,9,5
+06 Jun 2021,,Chicago Cubs,San Francisco Giants,-120,-111,4,3
+06 Jun 2021,,Athletics,Colorado Rockies,+100,-132,1,3
+06 Jun 2021,,Tampa Bay Rays,Texas Rangers,-147,+114,7,1
+06 Jun 2021,,Cincinnati Reds,St.Louis Cardinals,+100,-132,8,7
+06 Jun 2021,,Arizona Diamondbacks,Milwaukee Brewers,+215,-270,0,2
+06 Jun 2021,,Detroit Tigers,Chicago White Sox,+170,-213,0,3
+06 Jun 2021,,Minnesota Twins,Kansas City Royals,+114,-147,2,1
+06 Jun 2021,,Los Angeles Dodgers,Atlanta Braves,-152,+120,2,4
+06 Jun 2021,,Houston Astros,Toronto Blue Jays,-111,-120,6,3
+06 Jun 2021,,Cleveland Guardians,Baltimore Orioles,-120,-111,5,18
+06 Jun 2021,,Miami Marlins,Pittsburgh Pirates,-132,+100,3,1
+06 Jun 2021,,Washington Nationals,Philadelphia Phillies,+104,-135,6,12
+05 Jun 2021,,New York Mets,San Diego Padres,+114,-135,4,0
+05 Jun 2021,,Seattle Mariners,Los Angeles Angels,+135,-156,5,12
+05 Jun 2021,,Athletics,Colorado Rockies,-120,+100,6,3
+05 Jun 2021,,Los Angeles Dodgers,Atlanta Braves,-135,+104,4,6
+05 Jun 2021,,Boston Red Sox,New York Yankees,+120,-152,7,3
+05 Jun 2021,,Chicago Cubs,San Francisco Giants,+135,-167,3,4
+05 Jun 2021,,Arizona Diamondbacks,Milwaukee Brewers,+204,-250,5,7
+05 Jun 2021,,Minnesota Twins,Kansas City Royals,-116,-116,5,4
+05 Jun 2021,,Cleveland Guardians,Baltimore Orioles,+104,-135,10,4
+05 Jun 2021,,Miami Marlins,Pittsburgh Pirates,-132,+100,7,8
+05 Jun 2021,,Washington Nationals,Philadelphia Phillies,+100,-132,2,5
+05 Jun 2021,,Tampa Bay Rays,Texas Rangers,-156,+125,3,0
+05 Jun 2021,,Houston Astros,Toronto Blue Jays,-116,-116,2,6
+05 Jun 2021,,Cincinnati Reds,St.Louis Cardinals,-120,-111,5,2
+05 Jun 2021,,Detroit Tigers,Chicago White Sox,+195,-244,4,3
+04 Jun 2021,,New York Mets,San Diego Padres,+145,-175,0,2
+04 Jun 2021,,Chicago Cubs,San Francisco Giants,-116,-116,5,8
+04 Jun 2021,,Seattle Mariners,Los Angeles Angels,+140,-172,2,3
+04 Jun 2021,,Athletics,Colorado Rockies,-152,+120,9,5
+04 Jun 2021,,Tampa Bay Rays,Texas Rangers,-135,+104,4,5
+04 Jun 2021,,Cincinnati Reds,St.Louis Cardinals,+114,-135,6,4
+04 Jun 2021,,Arizona Diamondbacks,Milwaukee Brewers,+170,-213,1,5
+04 Jun 2021,,Detroit Tigers,Chicago White Sox,+179,-222,8,9
+04 Jun 2021,,Minnesota Twins,Kansas City Royals,+110,-141,5,14
+04 Jun 2021,,Los Angeles Dodgers,Atlanta Braves,-147,+114,9,5
+04 Jun 2021,,Houston Astros,Toronto Blue Jays,+110,-141,13,1
+04 Jun 2021,,Cleveland Guardians,Baltimore Orioles,-116,-116,1,3
+04 Jun 2021,,Boston Red Sox,New York Yankees,-116,-116,5,2
+04 Jun 2021,,Miami Marlins,Pittsburgh Pirates,-156,+135,2,9
+04 Jun 2021,,Washington Nationals,Philadelphia Phillies,-120,-111,2,1
+03 Jun 2021,,New York Mets,San Diego Padres,+160,-192,3,4
+03 Jun 2021,,Chicago Cubs,San Francisco Giants,-105,-125,2,7
+03 Jun 2021,,Seattle Mariners,Los Angeles Angels,+135,-167,6,2
+03 Jun 2021,,Cincinnati Reds,St.Louis Cardinals,+114,-147,4,2
+03 Jun 2021,,Detroit Tigers,Chicago White Sox,+179,-227,1,4
+03 Jun 2021,,Minnesota Twins,Kansas City Royals,-111,-120,5,6
+03 Jun 2021,,Arizona Diamondbacks,Milwaukee Brewers,+150,-182,4,7
+03 Jun 2021,,Miami Marlins,Pittsburgh Pirates,-116,-116,3,5
+03 Jun 2021,,Texas Rangers,Colorado Rockies,+110,-141,6,11
+03 Jun 2021,,Boston Red Sox,Houston Astros,-105,-125,5,1
+03 Jun 2021,,Tampa Bay Rays,New York Yankees,+165,-200,9,2
+03 Jun 2021,,Washington Nationals,Atlanta Braves,+110,-141,1,5
+02 Jun 2021,,Athletics,Seattle Mariners,-161,+129,6,0
+02 Jun 2021,,St.Louis Cardinals,Los Angeles Dodgers,+190,-238,3,14
+02 Jun 2021,,Texas Rangers,Colorado Rockies,-116,-116,3,6
+02 Jun 2021,,Boston Red Sox,Houston Astros,+110,-141,1,2
+02 Jun 2021,,Washington Nationals,Atlanta Braves,+129,-161,5,3
+02 Jun 2021,,Miami Marlins,Toronto Blue Jays,+140,-172,5,6
+02 Jun 2021,,Minnesota Twins,Baltimore Orioles,-135,+104,3,6
+02 Jun 2021,,Tampa Bay Rays,New York Yankees,+110,-141,3,4
+02 Jun 2021,,New York Mets,Arizona Diamondbacks,+100,-132,7,6
+02 Jun 2021,,San Diego Padres,Chicago Cubs,+100,-132,1,6
+01 Jun 2021,,Athletics,Seattle Mariners,-161,+129,12,6
+01 Jun 2021,,St.Louis Cardinals,Los Angeles Dodgers,+160,-192,3,2
+01 Jun 2021,,Los Angeles Angels,San Francisco Giants,+135,-167,8,1
+01 Jun 2021,,New York Mets,Arizona Diamondbacks,-132,+100,5,6
+01 Jun 2021,,Texas Rangers,Colorado Rockies,-111,-120,2,3
+01 Jun 2021,,Boston Red Sox,Houston Astros,+135,-167,1,5
+01 Jun 2021,,Pittsburgh Pirates,Kansas City Royals,+140,-172,5,10
+01 Jun 2021,,San Diego Padres,Chicago Cubs,+104,-135,3,4
+01 Jun 2021,,Detroit Tigers,Milwaukee Brewers,+150,-182,10,7
+01 Jun 2021,,Washington Nationals,Atlanta Braves,+114,-147,11,6
+01 Jun 2021,,Philadelphia Phillies,Cincinnati Reds,-116,-116,17,3
+01 Jun 2021,,Miami Marlins,Toronto Blue Jays,+129,-161,1,5
+01 Jun 2021,,Minnesota Twins,Baltimore Orioles,-185,+154,4,7
+01 Jun 2021,,Tampa Bay Rays,New York Yankees,-141,+110,3,5
+01 Jun 2021,,Chicago White Sox,Cleveland Guardians,+135,-167,5,6
+31 May 2021,,New York Mets,Arizona Diamondbacks,-182,+150,6,2
+31 May 2021,,St.Louis Cardinals,Los Angeles Dodgers,+170,-213,4,9
+31 May 2021,,Pittsburgh Pirates,Kansas City Royals,+165,-200,3,7
+31 May 2021,,Washington Nationals,Atlanta Braves,+165,-200,3,5
+31 May 2021,,Athletics,Seattle Mariners,-141,+110,5,6
+31 May 2021,,Boston Red Sox,Houston Astros,-120,-111,2,11
+31 May 2021,,Los Angeles Angels,San Francisco Giants,+129,-161,1,6
+31 May 2021,,Chicago White Sox,Cleveland Guardians,-175,+145,8,6
+31 May 2021,,San Diego Padres,Chicago Cubs,-147,+114,2,7
+31 May 2021,,Philadelphia Phillies,Cincinnati Reds,-120,-111,1,11
+31 May 2021,,Detroit Tigers,Milwaukee Brewers,+235,-312,2,3
+31 May 2021,,Minnesota Twins,Baltimore Orioles,-167,+135,3,2
+31 May 2021,,Tampa Bay Rays,New York Yankees,+104,-135,3,1
+30 May 2021,,St.Louis Cardinals,Arizona Diamondbacks,-111,-120,2,9
+30 May 2021,,Toronto Blue Jays,Cleveland Guardians,-147,+114,5,6
+30 May 2021,,San Francisco Giants,Los Angeles Dodgers,+140,-172,5,4
+30 May 2021,,Texas Rangers,Seattle Mariners,+125,-156,2,4
+30 May 2021,,Los Angeles Angels,Athletics,+114,-147,4,2
+30 May 2021,,Cincinnati Reds,Chicago Cubs,-111,-120,5,1
+30 May 2021,,Baltimore Orioles,Chicago White Sox,+179,-227,1,3
+30 May 2021,,San Diego Padres,Houston Astros,-105,-125,4,7
+30 May 2021,,Kansas City Royals,Minnesota Twins,+104,-135,6,3
+30 May 2021,,Toronto Blue Jays,Cleveland Guardians,-116,-116,4,1
+30 May 2021,,New York Yankees,Detroit Tigers,-200,+165,2,6
+30 May 2021,,Philadelphia Phillies,Tampa Bay Rays,+120,-152,2,6
+30 May 2021,,Colorado Rockies,Pittsburgh Pirates,+100,-132,4,3
+30 May 2021,,Milwaukee Brewers,Washington Nationals,-116,-116,3,0
+29 May 2021,,St.Louis Cardinals,Arizona Diamondbacks,-156,+125,7,4
+29 May 2021,,Texas Rangers,Seattle Mariners,-116,-116,2,3
+29 May 2021,,Atlanta Braves,New York Mets,-156,+125,2,13
+29 May 2021,,San Francisco Giants,Los Angeles Dodgers,+170,-213,11,6
+29 May 2021,,Milwaukee Brewers,Washington Nationals,+100,-132,6,2
+29 May 2021,,Miami Marlins,Boston Red Sox,+145,-175,1,3
+29 May 2021,,New York Yankees,Detroit Tigers,-141,+110,1,6
+29 May 2021,,San Diego Padres,Houston Astros,-167,+135,11,8
+29 May 2021,,Los Angeles Angels,Athletics,+120,-152,4,0
+29 May 2021,,Colorado Rockies,Pittsburgh Pirates,-132,+100,0,4
+29 May 2021,,Cincinnati Reds,Chicago Cubs,-105,-125,2,10
+29 May 2021,,Baltimore Orioles,Chicago White Sox,,,4,7
+29 May 2021,,Kansas City Royals,Minnesota Twins,,,5,6
+29 May 2021,,Milwaukee Brewers,Washington Nationals,,,4,1
+29 May 2021,,Philadelphia Phillies,Tampa Bay Rays,-105,-125,3,5
+29 May 2021,,Colorado Rockies,Pittsburgh Pirates,,,0,7
+28 May 2021,,San Francisco Giants,Los Angeles Dodgers,+185,-233,8,5
+28 May 2021,,Texas Rangers,Seattle Mariners,-105,-125,2,3
+28 May 2021,,St.Louis Cardinals,Arizona Diamondbacks,+110,-141,8,6
+28 May 2021,,Los Angeles Angels,Athletics,+125,-156,1,3
+28 May 2021,,San Diego Padres,Houston Astros,-111,-120,10,3
+28 May 2021,,Kansas City Royals,Minnesota Twins,+135,-167,8,3
+28 May 2021,,Miami Marlins,Boston Red Sox,+140,-172,2,5
+28 May 2021,,Toronto Blue Jays,Cleveland Guardians,-182,+150,11,2
+28 May 2021,,New York Yankees,Detroit Tigers,-286,+220,2,3
+28 May 2021,,Cincinnati Reds,Chicago Cubs,+150,-182,0,1
+27 May 2021,,San Francisco Giants,Los Angeles Dodgers,+120,-152,3,4
+27 May 2021,,Texas Rangers,Seattle Mariners,-116,-116,0,5
+27 May 2021,,St.Louis Cardinals,Arizona Diamondbacks,-125,-105,5,4
+27 May 2021,,Los Angeles Angels,Athletics,+165,-200,0,5
+27 May 2021,,Baltimore Orioles,Chicago White Sox,+179,-227,1,5
+27 May 2021,,Cincinnati Reds,Washington Nationals,+104,-135,3,0
+27 May 2021,,Toronto Blue Jays,New York Yankees,+100,-132,3,5
+27 May 2021,,Toronto Blue Jays,New York Yankees,-105,-125,2,0
+27 May 2021,,Colorado Rockies,New York Mets,+175,-222,2,4
+27 May 2021,,Kansas City Royals,Tampa Bay Rays,+150,-182,2,7
+27 May 2021,,Cincinnati Reds,Washington Nationals,,,3,5
+27 May 2021,,Cleveland Guardians,Detroit Tigers,-167,+135,5,2
+27 May 2021,,San Diego Padres,Milwaukee Brewers,-120,-111,5,6
+27 May 2021,,Chicago Cubs,Pittsburgh Pirates,-156,+125,5,3
+27 May 2021,,Colorado Rockies,New York Mets,+100,-132,0,1
+27 May 2021,,Philadelphia Phillies,Miami Marlins,+120,-152,3,2
+26 May 2021,,San Francisco Giants,Arizona Diamondbacks,-120,-111,5,4
+26 May 2021,,Los Angeles Dodgers,Houston Astros,-167,+135,2,5
+26 May 2021,,San Diego Padres,Milwaukee Brewers,-120,-111,2,1
+26 May 2021,,Atlanta Braves,Boston Red Sox,+114,-147,5,9
+26 May 2021,,Cleveland Guardians,Detroit Tigers,-132,+100,0,1
+26 May 2021,,Kansas City Royals,Tampa Bay Rays,+170,-213,1,2
+26 May 2021,,Philadelphia Phillies,Miami Marlins,-172,+140,2,4
+26 May 2021,,Chicago Cubs,Pittsburgh Pirates,-132,+100,4,1
+26 May 2021,,Texas Rangers,Los Angeles Angels,-120,-111,8,9
+26 May 2021,,Seattle Mariners,Athletics,+154,-185,3,6
+26 May 2021,,St.Louis Cardinals,Chicago White Sox,+175,-222,4,0
+26 May 2021,,Baltimore Orioles,Minnesota Twins,+175,-222,2,3
+25 May 2021,,San Francisco Giants,Arizona Diamondbacks,-172,+140,8,0
+25 May 2021,,Seattle Mariners,Athletics,+145,-175,4,3
+25 May 2021,,Texas Rangers,Los Angeles Angels,+150,-182,5,11
+25 May 2021,,St.Louis Cardinals,Chicago White Sox,+110,-141,3,8
+25 May 2021,,Los Angeles Dodgers,Houston Astros,-120,-111,9,2
+25 May 2021,,Baltimore Orioles,Minnesota Twins,+175,-222,4,7
+25 May 2021,,San Diego Padres,Milwaukee Brewers,+104,-135,7,1
+25 May 2021,,Atlanta Braves,Boston Red Sox,-116,-116,3,1
+25 May 2021,,Cleveland Guardians,Detroit Tigers,-152,+120,4,1
+25 May 2021,,Colorado Rockies,New York Mets,+210,-263,1,3
+25 May 2021,,Kansas City Royals,Tampa Bay Rays,+170,-213,2,1
+25 May 2021,,Cincinnati Reds,Washington Nationals,+179,-227,2,1
+25 May 2021,,Toronto Blue Jays,New York Yankees,+150,-182,6,2
+25 May 2021,,Philadelphia Phillies,Miami Marlins,+120,-152,2,0
+25 May 2021,,Chicago Cubs,Pittsburgh Pirates,-141,+110,4,3
+24 May 2021,,Seattle Mariners,Athletics,+154,-185,4,2
+24 May 2021,,St.Louis Cardinals,Chicago White Sox,+154,-185,1,5
+24 May 2021,,Baltimore Orioles,Minnesota Twins,-120,-111,3,8
+24 May 2021,,San Diego Padres,Milwaukee Brewers,-105,-125,3,5
+24 May 2021,,Cleveland Guardians,Detroit Tigers,+104,-135,6,5
+24 May 2021,,Colorado Rockies,New York Mets,+114,-147,3,2
+24 May 2021,,Philadelphia Phillies,Miami Marlins,+114,-147,6,9
+24 May 2021,,Tampa Bay Rays,Toronto Blue Jays,-120,-111,14,8
+23 May 2021,,Chicago Cubs,St.Louis Cardinals,+104,-135,2,1
+23 May 2021,,Seattle Mariners,San Diego Padres,+225,-294,2,9
+23 May 2021,,Athletics,Los Angeles Angels,-132,+100,5,6
+23 May 2021,,Los Angeles Dodgers,San Francisco Giants,-141,+110,11,5
+23 May 2021,,Arizona Diamondbacks,Colorado Rockies,+110,-141,3,4
+23 May 2021,,Houston Astros,Texas Rangers,-156,+125,2,3
+23 May 2021,,Detroit Tigers,Kansas City Royals,+120,-152,2,3
+23 May 2021,,Pittsburgh Pirates,Atlanta Braves,+179,-227,1,7
+23 May 2021,,Milwaukee Brewers,Cincinnati Reds,-125,+104,9,4
+23 May 2021,,New York Mets,Miami Marlins,+129,-161,1,5
+23 May 2021,,Minnesota Twins,Cleveland Guardians,+120,-152,8,5
+23 May 2021,,Tampa Bay Rays,Toronto Blue Jays,+140,-172,6,4
+23 May 2021,,Baltimore Orioles,Washington Nationals,+154,-185,5,6
+23 May 2021,,Boston Red Sox,Philadelphia Phillies,+104,-135,2,6
+23 May 2021,,Chicago White Sox,New York Yankees,+129,-161,4,5
+22 May 2021,,Athletics,Los Angeles Angels,-141,+110,6,2
+22 May 2021,,Seattle Mariners,San Diego Padres,+170,-213,4,6
+22 May 2021,,Tampa Bay Rays,Toronto Blue Jays,-105,-125,3,1
+22 May 2021,,Boston Red Sox,Philadelphia Phillies,-135,+104,4,3
+22 May 2021,,Chicago Cubs,St.Louis Cardinals,-125,-105,1,2
+22 May 2021,,Los Angeles Dodgers,San Francisco Giants,-161,+129,6,3
+22 May 2021,,Pittsburgh Pirates,Atlanta Braves,+179,-227,1,6
+22 May 2021,,Milwaukee Brewers,Cincinnati Reds,+135,-167,4,3
+22 May 2021,,Minnesota Twins,Cleveland Guardians,+145,-175,3,5
+22 May 2021,,Detroit Tigers,Kansas City Royals,+125,-156,5,7
+22 May 2021,,New York Mets,Miami Marlins,+129,-161,1,3
+22 May 2021,,Baltimore Orioles,Washington Nationals,+129,-161,9,12
+22 May 2021,,Houston Astros,Texas Rangers,-182,+150,4,8
+22 May 2021,,Arizona Diamondbacks,Colorado Rockies,-125,-105,6,7
+22 May 2021,,Chicago White Sox,New York Yankees,+179,-227,0,7
+21 May 2021,,Seattle Mariners,San Diego Padres,+190,-238,1,16
+21 May 2021,,Los Angeles Dodgers,San Francisco Giants,-132,+100,2,1
+21 May 2021,,Athletics,Los Angeles Angels,-111,-120,8,4
+21 May 2021,,Arizona Diamondbacks,Colorado Rockies,+125,-156,1,7
+21 May 2021,,Chicago Cubs,St.Louis Cardinals,-125,-105,12,3
+21 May 2021,,Detroit Tigers,Kansas City Royals,+145,-175,7,5
+21 May 2021,,Houston Astros,Texas Rangers,-135,+104,5,7
+21 May 2021,,Tampa Bay Rays,Toronto Blue Jays,-167,+135,9,7
+21 May 2021,,Pittsburgh Pirates,Atlanta Braves,+165,-200,1,20
+21 May 2021,,Milwaukee Brewers,Cincinnati Reds,-141,+110,4,9
+21 May 2021,,Minnesota Twins,Cleveland Guardians,+110,-141,10,0
+21 May 2021,,New York Mets,Miami Marlins,-120,-111,6,5
+21 May 2021,,Baltimore Orioles,Washington Nationals,+170,-213,2,4
+21 May 2021,,Boston Red Sox,Philadelphia Phillies,+125,-156,11,3
+21 May 2021,,Chicago White Sox,New York Yankees,-111,-120,1,2
+20 May 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+175,-222,2,3
+20 May 2021,,Boston Red Sox,Toronto Blue Jays,+100,-132,8,7
+20 May 2021,,Pittsburgh Pirates,Atlanta Braves,+175,-222,6,4
+20 May 2021,,Minnesota Twins,Los Angeles Angels,-125,-105,6,3
+20 May 2021,,Miami Marlins,Philadelphia Phillies,-105,-125,6,0
+20 May 2021,,Minnesota Twins,Los Angeles Angels,-111,-120,1,7
+20 May 2021,,Houston Astros,Athletics,-125,-105,8,4
+20 May 2021,,Washington Nationals,Chicago Cubs,+100,-132,2,5
+20 May 2021,,New York Yankees,Texas Rangers,-125,-105,2,0
+20 May 2021,,Tampa Bay Rays,Baltimore Orioles,-167,+135,10,1
+20 May 2021,,San Francisco Giants,Cincinnati Reds,+125,-156,19,4
+19 May 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+260,-345,2,4
+19 May 2021,,Detroit Tigers,Seattle Mariners,+129,-161,6,2
+19 May 2021,,Houston Astros,Athletics,-125,+104,8,1
+19 May 2021,,Milwaukee Brewers,Kansas City Royals,-213,+170,4,6
+19 May 2021,,Cleveland Guardians,Los Angeles Angels,-105,-125,3,2
+19 May 2021,,New York Yankees,Texas Rangers,-141,+120,2,0
+19 May 2021,,Pittsburgh Pirates,St.Louis Cardinals,+204,-250,5,8
+19 May 2021,,Washington Nationals,Chicago Cubs,-167,+135,4,3
+19 May 2021,,Boston Red Sox,Toronto Blue Jays,-105,-125,7,3
+19 May 2021,,New York Mets,Atlanta Braves,+175,-222,4,5
+19 May 2021,,Tampa Bay Rays,Baltimore Orioles,-105,-116,9,7
+19 May 2021,,Miami Marlins,Philadelphia Phillies,+100,-132,3,1
+19 May 2021,,San Francisco Giants,Cincinnati Reds,+114,-135,4,0
+19 May 2021,,Colorado Rockies,San Diego Padres,+229,-303,0,3
+19 May 2021,,Chicago White Sox,Minnesota Twins,-132,+100,2,1
+18 May 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+220,-286,1,9
+18 May 2021,,Colorado Rockies,San Diego Padres,+190,-238,1,2
+18 May 2021,,Detroit Tigers,Seattle Mariners,-105,-125,5,0
+18 May 2021,,Houston Astros,Athletics,-125,-105,5,6
+18 May 2021,,Cleveland Guardians,Los Angeles Angels,-111,-120,6,5
+18 May 2021,,Milwaukee Brewers,Kansas City Royals,-185,+154,0,2
+18 May 2021,,New York Yankees,Texas Rangers,-156,+125,7,4
+18 May 2021,,Pittsburgh Pirates,St.Louis Cardinals,+100,-132,2,5
+18 May 2021,,Washington Nationals,Chicago Cubs,-116,-116,3,6
+18 May 2021,,Chicago White Sox,Minnesota Twins,-156,+125,4,5
+18 May 2021,,Boston Red Sox,Toronto Blue Jays,+104,-135,0,8
+18 May 2021,,New York Mets,Atlanta Braves,+140,-161,4,3
+18 May 2021,,Tampa Bay Rays,Baltimore Orioles,-161,+129,13,6
+18 May 2021,,Miami Marlins,Philadelphia Phillies,+160,-192,3,8
+18 May 2021,,San Francisco Giants,Cincinnati Reds,-111,-120,4,2
+17 May 2021,,Arizona Diamondbacks,Los Angeles Dodgers,+175,-222,1,3
+17 May 2021,,Colorado Rockies,San Diego Padres,+179,-227,0,7
+17 May 2021,,Detroit Tigers,Seattle Mariners,+154,-185,4,1
+17 May 2021,,Cleveland Guardians,Los Angeles Angels,+114,-147,4,7
+17 May 2021,,New York Yankees,Texas Rangers,-286,+220,2,5
+17 May 2021,,Washington Nationals,Chicago Cubs,+129,-161,3,7
+17 May 2021,,Chicago White Sox,Minnesota Twins,-116,-105,16,4
+17 May 2021,,New York Mets,Atlanta Braves,+145,-167,3,1
+17 May 2021,,San Francisco Giants,Cincinnati Reds,+110,-141,6,3
+16 May 2021,,St.Louis Cardinals,San Diego Padres,-116,-116,3,5
+16 May 2021,,Washington Nationals,Arizona Diamondbacks,-116,-116,3,0
+16 May 2021,,Cleveland Guardians,Seattle Mariners,-213,+170,2,3
+16 May 2021,,Miami Marlins,Los Angeles Dodgers,+120,-152,3,2
+16 May 2021,,Cincinnati Reds,Colorado Rockies,-116,-116,7,6
+16 May 2021,,Athletics,Minnesota Twins,-111,-120,7,6
+16 May 2021,,Atlanta Braves,Milwaukee Brewers,+114,-147,9,10
+16 May 2021,,Kansas City Royals,Chicago White Sox,+154,-185,3,4
+16 May 2021,,Texas Rangers,Houston Astros,+150,-182,2,6
+16 May 2021,,Los Angeles Angels,Boston Red Sox,+135,-167,6,5
+16 May 2021,,Chicago Cubs,Detroit Tigers,-152,+120,5,1
+16 May 2021,,New York Mets,Tampa Bay Rays,-120,-111,1,7
+16 May 2021,,Philadelphia Phillies,Toronto Blue Jays,+170,-213,8,10
+16 May 2021,,New York Yankees,Baltimore Orioles,-172,+140,6,10
+16 May 2021,,San Francisco Giants,Pittsburgh Pirates,-175,+145,4,1
+15 May 2021,,Cleveland Guardians,Seattle Mariners,-120,-111,3,7
+15 May 2021,,Miami Marlins,Los Angeles Dodgers,+225,-294,0,7
+15 May 2021,,St.Louis Cardinals,San Diego Padres,-105,-125,3,13
+15 May 2021,,Washington Nationals,Arizona Diamondbacks,-132,+100,4,11
+15 May 2021,,Cincinnati Reds,Colorado Rockies,-182,+150,6,5
+15 May 2021,,Atlanta Braves,Milwaukee Brewers,-116,-116,5,1
+15 May 2021,,Kansas City Royals,Chicago White Sox,+175,-222,5,1
+15 May 2021,,Texas Rangers,Houston Astros,+140,-172,5,6
+15 May 2021,,New York Yankees,Baltimore Orioles,-167,+145,8,2
+15 May 2021,,San Francisco Giants,Pittsburgh Pirates,-132,+100,6,8
+15 May 2021,,Los Angeles Angels,Boston Red Sox,-125,-105,0,9
+15 May 2021,,Chicago Cubs,Detroit Tigers,-161,+129,8,9
+15 May 2021,,Athletics,Minnesota Twins,+114,-147,4,5
+15 May 2021,,New York Mets,Tampa Bay Rays,+125,-156,5,12
+14 May 2021,,Cleveland Guardians,Seattle Mariners,-120,-111,3,7
+14 May 2021,,Miami Marlins,Los Angeles Dodgers,+190,-238,6,9
+14 May 2021,,St.Louis Cardinals,San Diego Padres,+150,-182,4,5
+14 May 2021,,Washington Nationals,Arizona Diamondbacks,-200,+165,17,2
+14 May 2021,,Cincinnati Reds,Colorado Rockies,-116,-116,6,9
+14 May 2021,,Athletics,Minnesota Twins,-116,-116,6,1
+14 May 2021,,Atlanta Braves,Milwaukee Brewers,+114,-147,6,3
+14 May 2021,,Kansas City Royals,Chicago White Sox,+140,-172,1,3
+14 May 2021,,Texas Rangers,Houston Astros,+179,-227,4,10
+14 May 2021,,Philadelphia Phillies,Toronto Blue Jays,+125,-156,5,1
+14 May 2021,,Los Angeles Angels,Boston Red Sox,-111,-120,3,4
+14 May 2021,,Chicago Cubs,Detroit Tigers,-152,+120,4,2
+14 May 2021,,New York Mets,Tampa Bay Rays,+129,-161,2,3
+14 May 2021,,New York Yankees,Baltimore Orioles,-172,+140,5,4
+14 May 2021,,San Francisco Giants,Pittsburgh Pirates,-192,+160,2,3
+14 May 2021,,Kansas City Royals,Chicago White Sox,+170,-213,6,2
+13 May 2021,,Cleveland Guardians,Seattle Mariners,-132,+100,4,2
+13 May 2021,,Miami Marlins,Arizona Diamondbacks,-125,-105,5,1
+13 May 2021,,Cincinnati Reds,Colorado Rockies,-116,-105,8,13
+13 May 2021,,Texas Rangers,Houston Astros,+175,-222,3,4
+13 May 2021,,Athletics,Boston Red Sox,-116,-116,1,8
+13 May 2021,,New York Yankees,Tampa Bay Rays,-132,+100,1,9
+13 May 2021,,San Francisco Giants,Pittsburgh Pirates,-156,+125,3,1
+13 May 2021,,Minnesota Twins,Chicago White Sox,+100,-132,2,4
+13 May 2021,,St.Louis Cardinals,Milwaukee Brewers,,,2,0
+13 May 2021,,Kansas City Royals,Detroit Tigers,-120,-111,3,4
+13 May 2021,,Philadelphia Phillies,Washington Nationals,-116,-116,1,5
+13 May 2021,,Toronto Blue Jays,Atlanta Braves,+129,-161,8,4
+12 May 2021,,Seattle Mariners,Los Angeles Dodgers,+220,-286,1,7
+12 May 2021,,Miami Marlins,Arizona Diamondbacks,+104,-135,3,2
+12 May 2021,,Minnesota Twins,Chicago White Sox,+114,-147,8,13
+12 May 2021,,Los Angeles Angels,Houston Astros,+145,-175,1,9
+12 May 2021,,St.Louis Cardinals,Milwaukee Brewers,+150,-182,1,4
+12 May 2021,,Toronto Blue Jays,Atlanta Braves,-120,-111,4,1
+12 May 2021,,Athletics,Boston Red Sox,+129,-161,4,1
+12 May 2021,,New York Yankees,Tampa Bay Rays,-213,+170,1,0
+12 May 2021,,Kansas City Royals,Detroit Tigers,-156,+125,2,4
+12 May 2021,,Philadelphia Phillies,Washington Nationals,-147,+114,5,2
+12 May 2021,,San Diego Padres,Colorado Rockies,,,2,3
+12 May 2021,,Chicago Cubs,Cleveland Guardians,+110,-141,1,2
+12 May 2021,,Cincinnati Reds,Pittsburgh Pirates,-182,+150,5,1
+12 May 2021,,Baltimore Orioles,New York Mets,+160,-192,1,7
+11 May 2021,,Seattle Mariners,Los Angeles Dodgers,+190,-238,4,6
+11 May 2021,,Miami Marlins,Arizona Diamondbacks,-111,-120,3,11
+11 May 2021,,San Diego Padres,Colorado Rockies,-175,+145,8,1
+11 May 2021,,Minnesota Twins,Chicago White Sox,-111,-120,3,9
+11 May 2021,,Los Angeles Angels,Houston Astros,+125,-156,1,5
+11 May 2021,,St.Louis Cardinals,Milwaukee Brewers,+104,-135,6,1
+11 May 2021,,Toronto Blue Jays,Atlanta Braves,-116,-116,5,3
+11 May 2021,,Athletics,Boston Red Sox,-105,-125,3,2
+11 May 2021,,Baltimore Orioles,New York Mets,+129,-161,2,3
+11 May 2021,,Kansas City Royals,Detroit Tigers,-135,+104,7,8
+11 May 2021,,New York Yankees,Tampa Bay Rays,-132,+100,3,1
+11 May 2021,,Philadelphia Phillies,Washington Nationals,+100,-132,6,2
+11 May 2021,,Cincinnati Reds,Pittsburgh Pirates,+100,-132,2,7
+11 May 2021,,Chicago Cubs,Cleveland Guardians,+160,-192,2,3
+11 May 2021,,Texas Rangers,San Francisco Giants,+125,-156,2,4
+10 May 2021,,Texas Rangers,San Francisco Giants,+120,-152,1,3
+10 May 2021,,Miami Marlins,Arizona Diamondbacks,+100,-132,2,5
+10 May 2021,,Los Angeles Angels,Houston Astros,+154,-185,5,4
+10 May 2021,,Boston Red Sox,Baltimore Orioles,-132,+100,1,4
+10 May 2021,,Cincinnati Reds,Pittsburgh Pirates,-167,+135,14,1
+09 May 2021,,Philadelphia Phillies,Atlanta Braves,-116,-116,1,6
+09 May 2021,,Tampa Bay Rays,Athletics,+100,-132,4,3
+09 May 2021,,Los Angeles Dodgers,Los Angeles Angels,-192,+160,1,2
+09 May 2021,,San Diego Padres,San Francisco Giants,-135,+104,11,1
+09 May 2021,,Seattle Mariners,Texas Rangers,+110,-141,2,10
+09 May 2021,,Pittsburgh Pirates,Chicago Cubs,+140,-172,6,5
+09 May 2021,,Colorado Rockies,St.Louis Cardinals,+129,-161,0,2
+09 May 2021,,Chicago White Sox,Kansas City Royals,-156,+125,9,3
+09 May 2021,,Toronto Blue Jays,Houston Astros,+135,-167,4,7
+09 May 2021,,Arizona Diamondbacks,New York Mets,+250,-333,2,4
+09 May 2021,,Milwaukee Brewers,Miami Marlins,+125,-156,2,1
+09 May 2021,,Boston Red Sox,Baltimore Orioles,-147,+114,4,3
+09 May 2021,,Washington Nationals,New York Yankees,+129,-161,2,3
+08 May 2021,,Los Angeles Dodgers,Los Angeles Angels,-161,+129,14,11
+08 May 2021,,Philadelphia Phillies,Atlanta Braves,+129,-161,7,8
+08 May 2021,,Arizona Diamondbacks,New York Mets,+125,-156,2,4
+08 May 2021,,Chicago White Sox,Kansas City Royals,-182,+150,9,1
+08 May 2021,,Toronto Blue Jays,Houston Astros,+125,-156,8,4
+08 May 2021,,Boston Red Sox,Baltimore Orioles,-152,+120,11,6
+08 May 2021,,Seattle Mariners,Texas Rangers,-116,-116,8,9
+08 May 2021,,Cincinnati Reds,Cleveland Guardians,-105,-125,2,9
+08 May 2021,,Milwaukee Brewers,Miami Marlins,-132,+100,6,2
+08 May 2021,,Minnesota Twins,Detroit Tigers,-192,+160,3,7
+08 May 2021,,Tampa Bay Rays,Athletics,-147,+114,3,6
+08 May 2021,,San Diego Padres,San Francisco Giants,-141,+110,1,7
+08 May 2021,,Pittsburgh Pirates,Chicago Cubs,+160,-192,2,3
+08 May 2021,,Colorado Rockies,St.Louis Cardinals,+165,-200,8,9
+08 May 2021,,Washington Nationals,New York Yankees,+100,-120,3,4
+07 May 2021,,San Diego Padres,San Francisco Giants,-152,+120,4,5
+07 May 2021,,Tampa Bay Rays,Athletics,+104,-135,1,2
+07 May 2021,,Los Angeles Dodgers,Los Angeles Angels,-182,+150,2,9
+07 May 2021,,Colorado Rockies,St.Louis Cardinals,+185,-233,0,5
+07 May 2021,,Chicago White Sox,Kansas City Royals,-156,+125,3,0
+07 May 2021,,Toronto Blue Jays,Houston Astros,+114,-147,4,10
+07 May 2021,,Seattle Mariners,Texas Rangers,-105,-125,5,4
+07 May 2021,,Philadelphia Phillies,Atlanta Braves,+120,-152,12,2
+07 May 2021,,Arizona Diamondbacks,New York Mets,+100,-132,4,5
+07 May 2021,,Cincinnati Reds,Cleveland Guardians,-111,-111,3,0
+07 May 2021,,Minnesota Twins,Detroit Tigers,-152,+120,7,3
+07 May 2021,,Milwaukee Brewers,Miami Marlins,+110,-141,1,6
+07 May 2021,,Boston Red Sox,Baltimore Orioles,-152,+129,6,2
+07 May 2021,,Washington Nationals,New York Yankees,+145,-175,11,4
+07 May 2021,,Pittsburgh Pirates,Chicago Cubs,+125,-156,2,3
+06 May 2021,,Tampa Bay Rays,Los Angeles Angels,+125,-156,8,3
+06 May 2021,,Arizona Diamondbacks,Miami Marlins,+110,-141,1,3
+06 May 2021,,Atlanta Braves,Washington Nationals,-116,-116,3,2
+06 May 2021,,Toronto Blue Jays,Athletics,-147,+114,10,4
+06 May 2021,,Cleveland Guardians,Kansas City Royals,+120,-152,4,0
+06 May 2021,,New York Mets,St.Louis Cardinals,-111,-111,4,1
+06 May 2021,,Detroit Tigers,Boston Red Sox,+170,-213,9,12
+06 May 2021,,Texas Rangers,Minnesota Twins,+150,-182,4,3
+06 May 2021,,Houston Astros,New York Yankees,+175,-222,7,4
+06 May 2021,,Milwaukee Brewers,Philadelphia Phillies,-135,+104,0,2
+05 May 2021,,Toronto Blue Jays,Athletics,+120,-152,9,4
+05 May 2021,,Tampa Bay Rays,Los Angeles Angels,-116,-116,3,1
+05 May 2021,,Cleveland Guardians,Kansas City Royals,-175,+145,5,4
+05 May 2021,,Pittsburgh Pirates,San Diego Padres,+190,-238,2,4
+05 May 2021,,Los Angeles Dodgers,Chicago Cubs,-175,+145,5,6
+05 May 2021,,Texas Rangers,Minnesota Twins,+160,-182,3,1
+05 May 2021,,Detroit Tigers,Boston Red Sox,+175,-213,6,5
+05 May 2021,,Atlanta Braves,Washington Nationals,-132,+100,5,3
+05 May 2021,,Houston Astros,New York Yankees,+114,-147,3,6
+05 May 2021,,Milwaukee Brewers,Philadelphia Phillies,-147,+114,4,5
+05 May 2021,,Arizona Diamondbacks,Miami Marlins,-111,-120,0,8
+05 May 2021,,New York Mets,St.Louis Cardinals,-125,-105,1,4
+05 May 2021,,Baltimore Orioles,Seattle Mariners,-111,-120,6,0
+05 May 2021,,San Francisco Giants,Colorado Rockies,+100,-120,5,6
+05 May 2021,,Chicago White Sox,Cincinnati Reds,+110,-141,0,1
+04 May 2021,,Baltimore Orioles,Seattle Mariners,+104,-135,2,5
+04 May 2021,,Pittsburgh Pirates,San Diego Padres,+210,-263,2,1
+04 May 2021,,Toronto Blue Jays,Athletics,-105,-125,1,4
+04 May 2021,,Tampa Bay Rays,Los Angeles Angels,-105,-125,8,3
+04 May 2021,,San Francisco Giants,Colorado Rockies,,,6,8
+04 May 2021,,Cleveland Guardians,Kansas City Royals,+114,-147,7,3
+04 May 2021,,Los Angeles Dodgers,Chicago Cubs,-250,+200,3,4
+04 May 2021,,Texas Rangers,Minnesota Twins,+135,-167,6,3
+04 May 2021,,Detroit Tigers,Boston Red Sox,+150,-182,7,11
+04 May 2021,,Atlanta Braves,Washington Nationals,-141,+110,6,1
+04 May 2021,,Houston Astros,New York Yankees,+100,-132,3,7
+04 May 2021,,Milwaukee Brewers,Philadelphia Phillies,+145,-175,5,6
+04 May 2021,,Arizona Diamondbacks,Miami Marlins,+125,-156,3,9
+04 May 2021,,Chicago White Sox,Cincinnati Reds,-111,-120,9,0
+04 May 2021,,San Francisco Giants,Colorado Rockies,,,12,4
+04 May 2021,,Los Angeles Dodgers,Chicago Cubs,-172,+140,1,7
+03 May 2021,,Baltimore Orioles,Seattle Mariners,+104,-135,5,3
+03 May 2021,,Pittsburgh Pirates,San Diego Padres,+154,-185,0,2
+03 May 2021,,Toronto Blue Jays,Athletics,+100,-132,4,5
+03 May 2021,,Tampa Bay Rays,Los Angeles Angels,-161,+129,7,3
+03 May 2021,,Cleveland Guardians,Kansas City Royals,-125,-105,8,6
+03 May 2021,,New York Mets,St.Louis Cardinals,+104,-135,5,6
+03 May 2021,,Texas Rangers,Minnesota Twins,+154,-185,5,6
+03 May 2021,,Milwaukee Brewers,Philadelphia Phillies,-120,-111,3,4
+02 May 2021,,New York Mets,Philadelphia Phillies,+100,-132,8,7
+02 May 2021,,Colorado Rockies,Arizona Diamondbacks,+120,-152,4,8
+02 May 2021,,Los Angeles Angels,Seattle Mariners,-167,+135,0,2
+02 May 2021,,San Francisco Giants,San Diego Padres,+154,-185,7,1
+02 May 2021,,Baltimore Orioles,Athletics,+170,-213,5,7
+02 May 2021,,Boston Red Sox,Texas Rangers,-132,+100,3,5
+02 May 2021,,Cleveland Guardians,Chicago White Sox,+135,-167,5,0
+02 May 2021,,Kansas City Royals,Minnesota Twins,+175,-222,4,13
+02 May 2021,,Los Angeles Dodgers,Milwaukee Brewers,-213,+170,16,4
+02 May 2021,,Chicago Cubs,Cincinnati Reds,+145,-175,12,13
+02 May 2021,,Houston Astros,Tampa Bay Rays,-135,+104,4,5
+02 May 2021,,Atlanta Braves,Toronto Blue Jays,-132,+110,2,7
+02 May 2021,,Detroit Tigers,New York Yankees,+204,-250,0,2
+02 May 2021,,Miami Marlins,Washington Nationals,+135,-167,1,3
+02 May 2021,,St.Louis Cardinals,Pittsburgh Pirates,-141,+110,3,0
+01 May 2021,,Los Angeles Angels,Seattle Mariners,-147,+114,10,5
+01 May 2021,,San Francisco Giants,San Diego Padres,+150,-182,2,6
+01 May 2021,,Colorado Rockies,Arizona Diamondbacks,+160,-192,14,6
+01 May 2021,,Atlanta Braves,Toronto Blue Jays,-147,+114,5,6
+01 May 2021,,Los Angeles Dodgers,Milwaukee Brewers,-141,+110,5,6
+01 May 2021,,Boston Red Sox,Texas Rangers,-192,+160,6,8
+01 May 2021,,St.Louis Cardinals,Pittsburgh Pirates,-167,+135,12,5
+01 May 2021,,New York Mets,Philadelphia Phillies,-116,-116,5,4
+01 May 2021,,Chicago Cubs,Cincinnati Reds,+135,-167,3,2
+01 May 2021,,Houston Astros,Tampa Bay Rays,-120,-111,3,1
+01 May 2021,,Baltimore Orioles,Athletics,+165,-200,8,4
+01 May 2021,,Cleveland Guardians,Chicago White Sox,+150,-182,3,7
+01 May 2021,,Kansas City Royals,Minnesota Twins,+120,-152,11,3
+01 May 2021,,Detroit Tigers,New York Yankees,+185,-233,4,6
+01 May 2021,,Miami Marlins,Washington Nationals,+125,-156,2,7
+30 Apr 2021,,Los Angeles Angels,Seattle Mariners,-161,+129,4,7
+30 Apr 2021,,San Francisco Giants,San Diego Padres,+170,-213,2,3
+30 Apr 2021,,Colorado Rockies,Arizona Diamondbacks,+104,-135,2,7
+30 Apr 2021,,Baltimore Orioles,Athletics,+100,-132,3,2
+30 Apr 2021,,Cleveland Guardians,Chicago White Sox,-152,+120,5,3
+30 Apr 2021,,Kansas City Royals,Minnesota Twins,+110,-141,1,9
+30 Apr 2021,,Los Angeles Dodgers,Milwaukee Brewers,-116,-116,1,3
+30 Apr 2021,,Boston Red Sox,Texas Rangers,-167,+135,6,1
+30 Apr 2021,,Atlanta Braves,Toronto Blue Jays,+110,-141,5,13
+30 Apr 2021,,Chicago Cubs,Cincinnati Reds,+110,-141,6,8
+30 Apr 2021,,Houston Astros,Tampa Bay Rays,-132,+100,9,2
+30 Apr 2021,,Detroit Tigers,New York Yankees,+320,-435,0,10
+30 Apr 2021,,Miami Marlins,Washington Nationals,-135,+104,1,2
+30 Apr 2021,,New York Mets,Philadelphia Phillies,-167,+135,1,2
+30 Apr 2021,,St.Louis Cardinals,Pittsburgh Pirates,+100,-132,7,3
+29 Apr 2021,,Colorado Rockies,Arizona Diamondbacks,+110,-141,3,5
+29 Apr 2021,,Boston Red Sox,Texas Rangers,-111,-120,1,4
+29 Apr 2021,,Los Angeles Dodgers,Milwaukee Brewers,-222,+175,1,2
+29 Apr 2021,,Chicago Cubs,Atlanta Braves,+104,-135,9,3
+29 Apr 2021,,Detroit Tigers,Chicago White Sox,+170,-213,1,3
+29 Apr 2021,,Seattle Mariners,Houston Astros,+129,-161,1,0
+29 Apr 2021,,Philadelphia Phillies,St.Louis Cardinals,-125,-105,3,4
+29 Apr 2021,,Athletics,Tampa Bay Rays,-120,-111,3,2
+29 Apr 2021,,New York Yankees,Baltimore Orioles,-192,+160,3,4
+28 Apr 2021,,Colorado Rockies,San Francisco Giants,+120,-152,3,7
+28 Apr 2021,,San Diego Padres,Arizona Diamondbacks,-161,+129,12,3
+28 Apr 2021,,Seattle Mariners,Houston Astros,+179,-222,5,7
+28 Apr 2021,,Los Angeles Angels,Texas Rangers,-135,+104,4,3
+28 Apr 2021,,Philadelphia Phillies,St.Louis Cardinals,-141,+120,5,3
+28 Apr 2021,,Chicago Cubs,Atlanta Braves,+104,-135,0,10
+28 Apr 2021,,Athletics,Tampa Bay Rays,-116,-105,0,2
+28 Apr 2021,,Washington Nationals,Toronto Blue Jays,+165,-200,8,2
+28 Apr 2021,,New York Yankees,Baltimore Orioles,-175,+154,7,0
+28 Apr 2021,,Boston Red Sox,New York Mets,+220,-286,1,0
+28 Apr 2021,,Kansas City Royals,Pittsburgh Pirates,-135,+104,9,6
+28 Apr 2021,,Cincinnati Reds,Los Angeles Dodgers,+190,-238,0,8
+28 Apr 2021,,Miami Marlins,Milwaukee Brewers,-125,-105,6,2
+28 Apr 2021,,Minnesota Twins,Cleveland Guardians,-135,+104,10,2
+27 Apr 2021,,Cincinnati Reds,Los Angeles Dodgers,+215,-270,6,5
+27 Apr 2021,,Colorado Rockies,San Francisco Giants,+145,-175,7,5
+27 Apr 2021,,San Diego Padres,Arizona Diamondbacks,-161,+129,1,5
+27 Apr 2021,,Detroit Tigers,Chicago White Sox,+204,-250,5,2
+27 Apr 2021,,Seattle Mariners,Houston Astros,+170,-213,0,2
+27 Apr 2021,,Los Angeles Angels,Texas Rangers,-167,+135,1,6
+27 Apr 2021,,Philadelphia Phillies,St.Louis Cardinals,-120,-111,2,5
+27 Apr 2021,,Miami Marlins,Milwaukee Brewers,+125,-156,4,5
+27 Apr 2021,,Chicago Cubs,Atlanta Braves,+140,-172,0,5
+27 Apr 2021,,Athletics,Tampa Bay Rays,-105,-125,3,4
+27 Apr 2021,,Boston Red Sox,New York Mets,+125,-156,2,1
+27 Apr 2021,,Washington Nationals,Toronto Blue Jays,-125,-105,5,9
+27 Apr 2021,,New York Yankees,Baltimore Orioles,-182,+150,5,1
+27 Apr 2021,,Kansas City Royals,Pittsburgh Pirates,+100,-132,1,2
+27 Apr 2021,,Minnesota Twins,Cleveland Guardians,-120,-111,4,7
+26 Apr 2021,,Cincinnati Reds,Los Angeles Dodgers,+170,-213,5,3
+26 Apr 2021,,Colorado Rockies,San Francisco Giants,+150,-182,0,12
+26 Apr 2021,,Seattle Mariners,Houston Astros,+154,-185,2,5
+26 Apr 2021,,Los Angeles Angels,Texas Rangers,-167,+135,9,4
+26 Apr 2021,,Philadelphia Phillies,St.Louis Cardinals,-111,-120,2,1
+26 Apr 2021,,Miami Marlins,Milwaukee Brewers,+140,-172,8,0
+26 Apr 2021,,Athletics,Tampa Bay Rays,-125,-105,2,1
+26 Apr 2021,,Chicago Cubs,Atlanta Braves,+170,-213,7,8
+26 Apr 2021,,New York Yankees,Baltimore Orioles,-172,+140,2,4
+26 Apr 2021,,Minnesota Twins,Cleveland Guardians,-132,+100,3,5
+26 Apr 2021,,Kansas City Royals,Detroit Tigers,-111,-120,3,2
+25 Apr 2021,,San Diego Padres,Los Angeles Dodgers,+110,-141,8,7
+25 Apr 2021,,Arizona Diamondbacks,Atlanta Braves,+160,-192,7,0
+25 Apr 2021,,Miami Marlins,San Francisco Giants,+135,-167,3,4
+25 Apr 2021,,Philadelphia Phillies,Colorado Rockies,-111,-120,2,12
+25 Apr 2021,,Milwaukee Brewers,Chicago Cubs,-152,+120,6,0
+25 Apr 2021,,Cincinnati Reds,St.Louis Cardinals,-105,-125,2,5
+25 Apr 2021,,Texas Rangers,Chicago White Sox,+150,-182,4,8
+25 Apr 2021,,Los Angeles Angels,Houston Astros,+120,-152,4,2
+25 Apr 2021,,Pittsburgh Pirates,Minnesota Twins,+160,-192,6,2
+25 Apr 2021,,Arizona Diamondbacks,Atlanta Braves,+104,-135,5,0
+25 Apr 2021,,Seattle Mariners,Boston Red Sox,+179,-227,3,5
+25 Apr 2021,,New York Yankees,Cleveland Guardians,-135,+104,3,7
+25 Apr 2021,,Kansas City Royals,Detroit Tigers,-125,-105,4,0
+25 Apr 2021,,Washington Nationals,New York Mets,+120,-152,0,4
+25 Apr 2021,,Toronto Blue Jays,Tampa Bay Rays,-125,-105,1,0
+25 Apr 2021,,Athletics,Baltimore Orioles,-132,+100,1,8
+24 Apr 2021,,San Diego Padres,Los Angeles Dodgers,+125,-156,4,5
+24 Apr 2021,,Miami Marlins,San Francisco Giants,+135,-167,5,2
+24 Apr 2021,,Philadelphia Phillies,Colorado Rockies,-185,+154,7,5
+24 Apr 2021,,Texas Rangers,Chicago White Sox,+150,-182,1,2
+24 Apr 2021,,Athletics,Baltimore Orioles,-172,+140,7,2
+24 Apr 2021,,New York Yankees,Cleveland Guardians,-132,+100,2,1
+24 Apr 2021,,Toronto Blue Jays,Tampa Bay Rays,+114,-147,3,5
+24 Apr 2021,,Los Angeles Angels,Houston Astros,+125,-156,2,16
+24 Apr 2021,,Washington Nationals,New York Mets,+170,-213,7,1
+24 Apr 2021,,Milwaukee Brewers,Chicago Cubs,-111,-120,4,3
+24 Apr 2021,,Cincinnati Reds,St.Louis Cardinals,-105,-116,0,2
+24 Apr 2021,,Pittsburgh Pirates,Minnesota Twins,+195,-244,6,2
+24 Apr 2021,,Seattle Mariners,Boston Red Sox,+175,-222,8,2
+24 Apr 2021,,Kansas City Royals,Detroit Tigers,-132,+100,2,1
+23 Apr 2021,,San Diego Padres,Los Angeles Dodgers,+129,-161,6,1
+23 Apr 2021,,Miami Marlins,San Francisco Giants,+110,-141,3,5
+23 Apr 2021,,Philadelphia Phillies,Colorado Rockies,+100,-132,4,5
+23 Apr 2021,,Cincinnati Reds,St.Louis Cardinals,-120,-111,4,5
+23 Apr 2021,,Texas Rangers,Chicago White Sox,+120,-152,7,9
+23 Apr 2021,,Los Angeles Angels,Houston Astros,+140,-172,4,5
+23 Apr 2021,,Pittsburgh Pirates,Minnesota Twins,+125,-156,0,2
+23 Apr 2021,,Arizona Diamondbacks,Atlanta Braves,+135,-167,4,5
+23 Apr 2021,,Seattle Mariners,Boston Red Sox,+125,-156,5,6
+23 Apr 2021,,New York Yankees,Cleveland Guardians,-172,+140,5,3
+23 Apr 2021,,Kansas City Royals,Detroit Tigers,-125,-105,6,2
+23 Apr 2021,,Washington Nationals,New York Mets,+235,-312,0,6
+23 Apr 2021,,Toronto Blue Jays,Tampa Bay Rays,+129,-161,5,3
+23 Apr 2021,,Athletics,Baltimore Orioles,-141,+110,3,1
+23 Apr 2021,,Milwaukee Brewers,Chicago Cubs,+140,-172,2,15
+22 Apr 2021,,San Diego Padres,Los Angeles Dodgers,+154,-185,3,2
+22 Apr 2021,,Miami Marlins,San Francisco Giants,+114,-147,0,3
+22 Apr 2021,,Los Angeles Angels,Houston Astros,+104,-135,2,8
+22 Apr 2021,,New York Mets,Chicago Cubs,-111,-120,3,4
+22 Apr 2021,,Seattle Mariners,Boston Red Sox,+145,-175,7,3
+22 Apr 2021,,New York Yankees,Cleveland Guardians,-105,-125,6,3
+22 Apr 2021,,Pittsburgh Pirates,Detroit Tigers,-105,-125,4,2
+22 Apr 2021,,Arizona Diamondbacks,Cincinnati Reds,+120,-152,14,11
+21 Apr 2021,,Tampa Bay Rays,Kansas City Royals,-111,-120,8,9
+21 Apr 2021,,New York Mets,Chicago Cubs,-135,+104,4,16
+21 Apr 2021,,Toronto Blue Jays,Boston Red Sox,+110,-132,6,3
+21 Apr 2021,,Arizona Diamondbacks,Cincinnati Reds,+125,-147,8,5
+21 Apr 2021,,Pittsburgh Pirates,Detroit Tigers,+110,-141,2,5
+21 Apr 2021,,Atlanta Braves,New York Yankees,+110,-141,4,1
+21 Apr 2021,,Arizona Diamondbacks,Cincinnati Reds,,,5,4
+21 Apr 2021,,Milwaukee Brewers,San Diego Padres,+170,-213,4,2
+21 Apr 2021,,Texas Rangers,Los Angeles Angels,+150,-182,7,4
+21 Apr 2021,,St.Louis Cardinals,Washington Nationals,+150,-182,0,1
+21 Apr 2021,,Minnesota Twins,Athletics,-116,-116,12,13
+21 Apr 2021,,Houston Astros,Colorado Rockies,-152,+120,3,6
+21 Apr 2021,,Pittsburgh Pirates,Detroit Tigers,,,3,2
+21 Apr 2021,,Baltimore Orioles,Miami Marlins,+135,-167,0,3
+21 Apr 2021,,San Francisco Giants,Philadelphia Phillies,+104,-135,5,6
+20 Apr 2021,,Milwaukee Brewers,San Diego Padres,-125,-105,6,0
+20 Apr 2021,,Texas Rangers,Los Angeles Angels,+160,-192,2,6
+20 Apr 2021,,Minnesota Twins,Athletics,-132,+100,0,1
+20 Apr 2021,,Houston Astros,Colorado Rockies,-125,-105,2,6
+20 Apr 2021,,Tampa Bay Rays,Kansas City Royals,-111,-120,14,7
+20 Apr 2021,,New York Mets,Chicago Cubs,-125,-105,1,3
+20 Apr 2021,,Toronto Blue Jays,Boston Red Sox,-116,-116,2,4
+20 Apr 2021,,San Francisco Giants,Philadelphia Phillies,+100,-120,10,7
+20 Apr 2021,,St.Louis Cardinals,Washington Nationals,-111,-120,2,3
+20 Apr 2021,,Baltimore Orioles,Miami Marlins,-111,-120,7,5
+20 Apr 2021,,Atlanta Braves,New York Yankees,+100,-132,1,3
+20 Apr 2021,,Minnesota Twins,Athletics,-105,-125,0,7
+20 Apr 2021,,Chicago White Sox,Cleveland Guardians,-120,-111,8,5
+20 Apr 2021,,Los Angeles Dodgers,Seattle Mariners,-185,+154,1,0
+19 Apr 2021,,Los Angeles Dodgers,Seattle Mariners,-222,+175,3,4
+19 Apr 2021,,Milwaukee Brewers,San Diego Padres,+140,-172,3,1
+19 Apr 2021,,Texas Rangers,Los Angeles Angels,+179,-227,6,4
+19 Apr 2021,,Tampa Bay Rays,Kansas City Royals,-116,-116,4,1
+19 Apr 2021,,San Francisco Giants,Philadelphia Phillies,-116,-116,2,0
+19 Apr 2021,,St.Louis Cardinals,Washington Nationals,-120,-111,12,5
+19 Apr 2021,,Chicago White Sox,Boston Red Sox,-120,-111,4,11
+18 Apr 2021,,Atlanta Braves,Chicago Cubs,+114,-147,13,4
+18 Apr 2021,,Chicago White Sox,Boston Red Sox,,,5,1
+18 Apr 2021,,Houston Astros,Seattle Mariners,-135,+104,2,7
+18 Apr 2021,,Los Angeles Dodgers,San Diego Padres,-141,+110,2,5
+18 Apr 2021,,Detroit Tigers,Athletics,+135,-167,2,3
+18 Apr 2021,,New York Mets,Colorado Rockies,-192,+160,2,1
+18 Apr 2021,,Baltimore Orioles,Texas Rangers,-120,-111,0,1
+18 Apr 2021,,Toronto Blue Jays,Kansas City Royals,-105,-125,0,2
+18 Apr 2021,,Pittsburgh Pirates,Milwaukee Brewers,+175,-222,6,5
+18 Apr 2021,,Chicago White Sox,Boston Red Sox,-111,-120,3,2
+18 Apr 2021,,Cleveland Guardians,Cincinnati Reds,-172,+140,6,3
+18 Apr 2021,,San Francisco Giants,Miami Marlins,+120,-152,1,0
+18 Apr 2021,,Arizona Diamondbacks,Washington Nationals,+120,-152,5,2
+18 Apr 2021,,Tampa Bay Rays,New York Yankees,+210,-263,4,2
+18 Apr 2021,,St.Louis Cardinals,Philadelphia Phillies,+150,-182,0,2
+17 Apr 2021,,Houston Astros,Seattle Mariners,-141,+110,1,0
+17 Apr 2021,,Los Angeles Dodgers,San Diego Padres,-125,-105,2,0
+17 Apr 2021,,Pittsburgh Pirates,Milwaukee Brewers,+114,-147,1,7
+17 Apr 2021,,Baltimore Orioles,Texas Rangers,+120,-152,6,1
+17 Apr 2021,,Toronto Blue Jays,Kansas City Royals,-132,+100,2,3
+17 Apr 2021,,San Francisco Giants,Miami Marlins,+104,-135,6,7
+17 Apr 2021,,New York Mets,Colorado Rockies,-294,+225,4,3
+17 Apr 2021,,Cleveland Guardians,Cincinnati Reds,+114,-147,2,3
+17 Apr 2021,,Detroit Tigers,Athletics,+104,-135,0,7
+17 Apr 2021,,Chicago White Sox,Boston Red Sox,+104,-135,4,7
+17 Apr 2021,,St.Louis Cardinals,Philadelphia Phillies,-116,-116,9,4
+17 Apr 2021,,Atlanta Braves,Chicago Cubs,-120,-111,4,13
+17 Apr 2021,,Toronto Blue Jays,Kansas City Royals,-111,-120,5,1
+17 Apr 2021,,Arizona Diamondbacks,Washington Nationals,-105,-125,2,6
+17 Apr 2021,,Tampa Bay Rays,New York Yankees,-111,-120,6,3
+16 Apr 2021,,Houston Astros,Seattle Mariners,-120,-111,5,6
+16 Apr 2021,,Los Angeles Dodgers,San Diego Padres,-156,+125,11,6
+16 Apr 2021,,Detroit Tigers,Athletics,+170,-213,0,3
+16 Apr 2021,,Minnesota Twins,Los Angeles Angels,+104,-135,3,10
+16 Apr 2021,,Pittsburgh Pirates,Milwaukee Brewers,+120,-152,6,1
+16 Apr 2021,,Baltimore Orioles,Texas Rangers,+110,-141,5,2
+16 Apr 2021,,Cleveland Guardians,Cincinnati Reds,-105,-125,3,10
+16 Apr 2021,,San Francisco Giants,Miami Marlins,-152,+120,1,4
+16 Apr 2021,,Arizona Diamondbacks,Washington Nationals,+170,-213,0,1
+16 Apr 2021,,Tampa Bay Rays,New York Yankees,+140,-172,8,2
+16 Apr 2021,,St.Louis Cardinals,Philadelphia Phillies,+125,-156,2,9
+16 Apr 2021,,Atlanta Braves,Chicago Cubs,-111,-120,5,2
+15 Apr 2021,,Colorado Rockies,Los Angeles Dodgers,+225,-294,5,7
+15 Apr 2021,,Detroit Tigers,Athletics,+150,-182,4,8
+15 Apr 2021,,Toronto Blue Jays,Kansas City Royals,+100,-132,5,7
+15 Apr 2021,,Texas Rangers,Tampa Bay Rays,+160,-192,6,4
+15 Apr 2021,,Arizona Diamondbacks,Washington Nationals,+160,-192,11,6
+15 Apr 2021,,Seattle Mariners,Baltimore Orioles,,,2,1
+15 Apr 2021,,Cleveland Guardians,Chicago White Sox,+135,-167,4,2
+15 Apr 2021,,Boston Red Sox,Minnesota Twins,+114,-147,3,4
+15 Apr 2021,,Seattle Mariners,Baltimore Orioles,-116,-116,4,2
+15 Apr 2021,,San Diego Padres,Pittsburgh Pirates,-161,+129,8,3
+15 Apr 2021,,Miami Marlins,Atlanta Braves,+145,-175,6,7
+14 Apr 2021,,Colorado Rockies,Los Angeles Dodgers,+215,-270,2,4
+14 Apr 2021,,Cleveland Guardians,Chicago White Sox,+110,-132,0,8
+14 Apr 2021,,Miami Marlins,Atlanta Braves,+154,-175,6,5
+14 Apr 2021,,Detroit Tigers,Houston Astros,+160,-192,6,4
+14 Apr 2021,,Philadelphia Phillies,New York Mets,-125,-222,1,5
+14 Apr 2021,,Texas Rangers,Tampa Bay Rays,+170,-213,5,1
+14 Apr 2021,,San Diego Padres,Pittsburgh Pirates,-182,+160,1,5
+14 Apr 2021,,Boston Red Sox,Minnesota Twins,,,7,1
+14 Apr 2021,,Cincinnati Reds,San Francisco Giants,-125,+104,0,3
+14 Apr 2021,,Los Angeles Angels,Kansas City Royals,-132,+110,1,6
+14 Apr 2021,,Chicago Cubs,Milwaukee Brewers,+160,-182,0,7
+14 Apr 2021,,Washington Nationals,St.Louis Cardinals,+100,-120,6,0
+14 Apr 2021,,New York Yankees,Toronto Blue Jays,-147,+125,4,5
+13 Apr 2021,,Colorado Rockies,Los Angeles Dodgers,+260,-345,0,7
+13 Apr 2021,,Cincinnati Reds,San Francisco Giants,-111,-120,6,7
+13 Apr 2021,,Cleveland Guardians,Chicago White Sox,-111,-120,2,0
+13 Apr 2021,,Detroit Tigers,Houston Astros,+154,-185,8,2
+13 Apr 2021,,Los Angeles Angels,Kansas City Royals,-147,+114,2,3
+13 Apr 2021,,Philadelphia Phillies,New York Mets,-135,+104,0,4
+13 Apr 2021,,Washington Nationals,St.Louis Cardinals,-116,-116,3,14
+13 Apr 2021,,Chicago Cubs,Milwaukee Brewers,+125,-156,3,2
+13 Apr 2021,,Miami Marlins,Atlanta Braves,+140,-172,14,8
+13 Apr 2021,,Texas Rangers,Tampa Bay Rays,+150,-182,8,3
+13 Apr 2021,,New York Yankees,Toronto Blue Jays,-111,-120,3,7
+13 Apr 2021,,San Diego Padres,Pittsburgh Pirates,-263,+210,4,8
+13 Apr 2021,,Philadelphia Phillies,New York Mets,+129,-161,3,4
+13 Apr 2021,,Seattle Mariners,Baltimore Orioles,+125,-156,4,3
+13 Apr 2021,,Athletics,Arizona Diamondbacks,-116,-116,7,5
+13 Apr 2021,,Boston Red Sox,Minnesota Twins,+110,-141,4,2
+12 Apr 2021,,Cincinnati Reds,San Francisco Giants,-116,-116,3,0
+12 Apr 2021,,Athletics,Arizona Diamondbacks,-147,+114,9,5
+12 Apr 2021,,Cleveland Guardians,Chicago White Sox,+104,-135,3,4
+12 Apr 2021,,Detroit Tigers,Houston Astros,+220,-286,6,2
+12 Apr 2021,,Los Angeles Angels,Kansas City Royals,-116,-116,10,3
+12 Apr 2021,,Washington Nationals,St.Louis Cardinals,+125,-156,5,2
+12 Apr 2021,,Chicago Cubs,Milwaukee Brewers,+110,-141,3,6
+12 Apr 2021,,Miami Marlins,Atlanta Braves,+120,-152,5,3
+12 Apr 2021,,Texas Rangers,Tampa Bay Rays,+185,-233,0,1
+12 Apr 2021,,New York Yankees,Toronto Blue Jays,-200,+165,3,1
+12 Apr 2021,,San Diego Padres,Pittsburgh Pirates,-222,+175,6,2
+11 Apr 2021,,Philadelphia Phillies,Atlanta Braves,+135,-167,7,6
+11 Apr 2021,,Cincinnati Reds,Arizona Diamondbacks,-125,-105,0,7
+11 Apr 2021,,Washington Nationals,Los Angeles Dodgers,+135,-167,0,3
+11 Apr 2021,,Colorado Rockies,San Francisco Giants,+100,-132,0,4
+11 Apr 2021,,San Diego Padres,Texas Rangers,-182,+150,2,0
+11 Apr 2021,,Milwaukee Brewers,St.Louis Cardinals,+114,-147,9,3
+11 Apr 2021,,Kansas City Royals,Chicago White Sox,-111,-120,4,3
+11 Apr 2021,,Seattle Mariners,Minnesota Twins,+160,-192,8,6
+11 Apr 2021,,Detroit Tigers,Cleveland Guardians,+150,-182,2,5
+11 Apr 2021,,New York Yankees,Tampa Bay Rays,-161,+129,8,4
+11 Apr 2021,,Boston Red Sox,Baltimore Orioles,-152,+129,14,9
+11 Apr 2021,,Chicago Cubs,Pittsburgh Pirates,-141,+110,1,7
+10 Apr 2021,,Washington Nationals,Los Angeles Dodgers,+145,-175,5,9
+10 Apr 2021,,Cincinnati Reds,Arizona Diamondbacks,-141,+110,3,8
+10 Apr 2021,,Philadelphia Phillies,Atlanta Braves,+120,-152,4,5
+10 Apr 2021,,Los Angeles Angels,Toronto Blue Jays,-116,-105,1,15
+10 Apr 2021,,Boston Red Sox,Baltimore Orioles,-132,+100,6,4
+10 Apr 2021,,San Diego Padres,Texas Rangers,-161,+129,7,4
+10 Apr 2021,,Chicago Cubs,Pittsburgh Pirates,-167,+135,2,8
+10 Apr 2021,,Detroit Tigers,Cleveland Guardians,+140,-172,3,11
+10 Apr 2021,,Athletics,Houston Astros,+129,-161,7,3
+10 Apr 2021,,Colorado Rockies,San Francisco Giants,+154,-185,3,4
+10 Apr 2021,,Milwaukee Brewers,St.Louis Cardinals,+100,-132,9,5
+10 Apr 2021,,Seattle Mariners,Minnesota Twins,+170,-213,4,3
+10 Apr 2021,,Miami Marlins,New York Mets,+235,-312,3,0
+10 Apr 2021,,New York Yankees,Tampa Bay Rays,-147,+114,0,4
+09 Apr 2021,,Cincinnati Reds,Arizona Diamondbacks,-156,+125,6,5
+09 Apr 2021,,Athletics,Houston Astros,+160,-192,6,2
+09 Apr 2021,,San Diego Padres,Texas Rangers,-213,+170,3,0
+09 Apr 2021,,Philadelphia Phillies,Atlanta Braves,+100,-132,1,8
+09 Apr 2021,,Detroit Tigers,Cleveland Guardians,+165,-200,1,4
+09 Apr 2021,,Los Angeles Angels,Toronto Blue Jays,-132,+100,7,1
+09 Apr 2021,,Colorado Rockies,San Francisco Giants,+135,-167,1,3
+09 Apr 2021,,Washington Nationals,Los Angeles Dodgers,+235,-312,0,1
+09 Apr 2021,,New York Yankees,Tampa Bay Rays,-135,+104,5,10
+08 Apr 2021,,Athletics,Houston Astros,+145,-175,2,6
+08 Apr 2021,,Los Angeles Angels,Toronto Blue Jays,-116,-116,7,5
+08 Apr 2021,,Milwaukee Brewers,St.Louis Cardinals,-156,+125,1,3
+08 Apr 2021,,Kansas City Royals,Chicago White Sox,+154,-175,0,6
+08 Apr 2021,,Seattle Mariners,Minnesota Twins,+179,-227,2,10
+08 Apr 2021,,Arizona Diamondbacks,Colorado Rockies,+104,-135,3,7
+08 Apr 2021,,Boston Red Sox,Baltimore Orioles,-161,+129,7,3
+08 Apr 2021,,Chicago Cubs,Pittsburgh Pirates,-161,+129,4,2
+08 Apr 2021,,Miami Marlins,New York Mets,+160,-192,2,3
+07 Apr 2021,,Arizona Diamondbacks,Colorado Rockies,-132,+100,0,8
+07 Apr 2021,,Baltimore Orioles,New York Yankees,+175,-222,4,3
+07 Apr 2021,,Chicago White Sox,Seattle Mariners,-156,+125,4,8
+07 Apr 2021,,St.Louis Cardinals,Miami Marlins,-125,-105,7,0
+07 Apr 2021,,San Francisco Giants,San Diego Padres,+129,-161,3,2
+07 Apr 2021,,New York Mets,Philadelphia Phillies,+145,-175,2,8
+07 Apr 2021,,Los Angeles Dodgers,Athletics,-167,+135,3,4
+07 Apr 2021,,Milwaukee Brewers,Chicago Cubs,-120,-111,4,2
+07 Apr 2021,,Toronto Blue Jays,Texas Rangers,-213,+170,1,2
+07 Apr 2021,,Tampa Bay Rays,Boston Red Sox,-105,-116,2,9
+07 Apr 2021,,Kansas City Royals,Cleveland Guardians,+170,-213,2,4
+07 Apr 2021,,Minnesota Twins,Detroit Tigers,-185,+154,3,2
+07 Apr 2021,,Pittsburgh Pirates,Cincinnati Reds,+179,-222,4,11
+07 Apr 2021,,Atlanta Braves,Washington Nationals,,,7,6
+06 Apr 2021,,Chicago White Sox,Seattle Mariners,-161,+129,10,4
+06 Apr 2021,,San Francisco Giants,San Diego Padres,+160,-192,1,3
+06 Apr 2021,,Los Angeles Dodgers,Athletics,-175,+145,5,1
+06 Apr 2021,,Arizona Diamondbacks,Colorado Rockies,-105,-116,10,8
+06 Apr 2021,,Toronto Blue Jays,Texas Rangers,-141,+110,4,7
+06 Apr 2021,,Milwaukee Brewers,Chicago Cubs,-105,-125,4,0
+06 Apr 2021,,Tampa Bay Rays,Boston Red Sox,-175,+145,5,6
+06 Apr 2021,,New York Mets,Philadelphia Phillies,-132,+100,8,4
+06 Apr 2021,,Pittsburgh Pirates,Cincinnati Reds,+140,-172,1,14
+06 Apr 2021,,St.Louis Cardinals,Miami Marlins,+110,-141,4,2
+06 Apr 2021,,Baltimore Orioles,New York Yankees,+235,-312,2,7
+06 Apr 2021,,Houston Astros,Los Angeles Angels,-111,-120,4,2
+06 Apr 2021,,Atlanta Braves,Washington Nationals,-111,-120,5,6
+06 Apr 2021,,Minnesota Twins,Detroit Tigers,-156,+125,3,4
+05 Apr 2021,,Chicago White Sox,Seattle Mariners,-132,+100,6,0
+05 Apr 2021,,San Francisco Giants,San Diego Padres,+170,-200,3,2
+05 Apr 2021,,Los Angeles Dodgers,Athletics,-167,+135,10,3
+05 Apr 2021,,Houston Astros,Los Angeles Angels,-111,-120,6,7
+05 Apr 2021,,Milwaukee Brewers,Chicago Cubs,-111,-120,3,5
+05 Apr 2021,,Tampa Bay Rays,Boston Red Sox,-120,-111,2,11
+05 Apr 2021,,New York Mets,Philadelphia Phillies,-213,+170,3,5
+05 Apr 2021,,Pittsburgh Pirates,Cincinnati Reds,+135,-167,3,5
+05 Apr 2021,,St.Louis Cardinals,Miami Marlins,-111,-120,4,1
+05 Apr 2021,,Baltimore Orioles,New York Yankees,+185,-233,0,7
+05 Apr 2021,,Kansas City Royals,Cleveland Guardians,+110,-141,3,0
+05 Apr 2021,,Toronto Blue Jays,Texas Rangers,-161,+129,6,2
+05 Apr 2021,,Minnesota Twins,Detroit Tigers,-161,+129,15,6
+04 Apr 2021,,Chicago White Sox,Los Angeles Angels,+104,-135,4,7
+04 Apr 2021,,Arizona Diamondbacks,San Diego Padres,+175,-222,3,1
+04 Apr 2021,,Houston Astros,Athletics,-111,-120,9,2
+04 Apr 2021,,Los Angeles Dodgers,Colorado Rockies,-227,+179,4,2
+04 Apr 2021,,Pittsburgh Pirates,Chicago Cubs,+165,-200,3,4
+04 Apr 2021,,Texas Rangers,Kansas City Royals,+145,-175,7,3
+04 Apr 2021,,Minnesota Twins,Milwaukee Brewers,-111,-120,8,2
+04 Apr 2021,,Baltimore Orioles,Boston Red Sox,+140,-172,11,3
+04 Apr 2021,,St.Louis Cardinals,Cincinnati Reds,-125,-105,1,12
+04 Apr 2021,,Cleveland Guardians,Detroit Tigers,-141,+110,9,3
+04 Apr 2021,,Atlanta Braves,Philadelphia Phillies,-132,+100,1,2
+04 Apr 2021,,Toronto Blue Jays,New York Yankees,+160,-192,3,1
+03 Apr 2021,,San Francisco Giants,Seattle Mariners,-125,-105,0,4
+03 Apr 2021,,Chicago White Sox,Los Angeles Angels,-125,-105,3,5
+03 Apr 2021,,Arizona Diamondbacks,San Diego Padres,+190,-238,0,7
+03 Apr 2021,,Los Angeles Dodgers,Colorado Rockies,-238,+190,6,5
+03 Apr 2021,,Minnesota Twins,Milwaukee Brewers,+104,-135,2,0
+03 Apr 2021,,Tampa Bay Rays,Miami Marlins,-111,-120,7,12
+03 Apr 2021,,St.Louis Cardinals,Cincinnati Reds,+100,-132,6,9
+03 Apr 2021,,Houston Astros,Athletics,-147,+114,9,1
+03 Apr 2021,,Atlanta Braves,Philadelphia Phillies,-116,-116,0,4
+03 Apr 2021,,Pittsburgh Pirates,Chicago Cubs,+140,-172,1,5
+03 Apr 2021,,Texas Rangers,Kansas City Royals,+140,-172,4,11
+03 Apr 2021,,Baltimore Orioles,Boston Red Sox,+145,-175,4,2
+03 Apr 2021,,Cleveland Guardians,Detroit Tigers,-172,+140,2,5
+03 Apr 2021,,Toronto Blue Jays,New York Yankees,+140,-172,3,5
+02 Apr 2021,,Arizona Diamondbacks,San Diego Padres,+179,-227,2,4
+02 Apr 2021,,San Francisco Giants,Seattle Mariners,-111,-120,6,3
+02 Apr 2021,,Houston Astros,Athletics,-105,-125,9,5
+02 Apr 2021,,Chicago White Sox,Los Angeles Angels,-105,-125,12,8
+02 Apr 2021,,Los Angeles Dodgers,Colorado Rockies,-270,+215,11,6
+02 Apr 2021,,Tampa Bay Rays,Miami Marlins,-111,-120,6,4
+02 Apr 2021,,Baltimore Orioles,Boston Red Sox,+150,-182,3,0
+01 Apr 2021,,San Francisco Giants,Seattle Mariners,-135,+104,7,8
+01 Apr 2021,,Houston Astros,Athletics,-120,-111,8,1
+01 Apr 2021,,Chicago White Sox,Los Angeles Angels,-125,-105,3,4
+01 Apr 2021,,Arizona Diamondbacks,San Diego Padres,+200,-250,7,8
+01 Apr 2021,,St.Louis Cardinals,Cincinnati Reds,+100,-132,11,6
+01 Apr 2021,,Los Angeles Dodgers,Colorado Rockies,-233,+185,5,8
+01 Apr 2021,,Texas Rangers,Kansas City Royals,+135,-167,10,14
+01 Apr 2021,,Tampa Bay Rays,Miami Marlins,-161,+129,1,0
+01 Apr 2021,,Atlanta Braves,Philadelphia Phillies,+104,-135,2,3
+01 Apr 2021,,Pittsburgh Pirates,Chicago Cubs,+179,-227,5,3
+01 Apr 2021,,Minnesota Twins,Milwaukee Brewers,-105,-125,5,6
+01 Apr 2021,,Cleveland Guardians,Detroit Tigers,-175,+154,2,3
+01 Apr 2021,,Toronto Blue Jays,New York Yankees,+160,-192,3,2
