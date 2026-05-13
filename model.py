@@ -369,6 +369,51 @@ def get_all_rolling_averages(team_ids, days_short=7, days_long=15):
         }
     return results
 
+from datetime import datetime
+run_time = datetime.now().strftime('%H:%M')
+todays_predictions = []
+
+def get_yesterdays_results():
+    yesterday = (date.today() - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    schedule = statsapi.schedule(date=yesterday)
+    results = {}
+    for game in schedule:
+        if game['status'] == 'Final':
+            home = game['home_name']
+            away = game['away_name']
+            home_score = game['home_score']
+            away_score = game['away_score']
+            winner = home if home_score > away_score else away
+            if home in NAME_TO_FG and away in NAME_TO_FG:
+                results[f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"] = {
+                    'home': NAME_TO_FG[home],
+                    'away': NAME_TO_FG[away],
+                    'home_score': home_score,
+                    'away_score': away_score,
+                    'winner': NAME_TO_FG[home] if home_score > away_score else NAME_TO_FG[away]
+                }
+    return results
+
+yesterdays_results = get_yesterdays_results()
+
+#New Def Log Predictions - Beginning
+def log_predictions(predictions, results):
+    import csv
+    from datetime import datetime
+    log_file = 'predictions_log.csv'
+    file_exists = os.path.exists(log_file)
+    
+    # Check if this run has already been logged
+    if file_exists and predictions:
+        existing = pd.read_csv(log_file)
+        run_time_check = predictions[0]['run_time']
+        date_check = predictions[0]['date']
+        if not existing[(existing['run_time'] == run_time_check) & 
+                        (existing['date'] == date_check)].empty:
+            print("Predictions already logged for this run - skipping")
+            return
+#New Def Log Predictions - End
+
 def calculate_rolling_lambda(team,rolling):
     if team not in rolling:
         return None
@@ -530,9 +575,29 @@ for game in upcoming:
         edge_games.append({
             'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {home_name} | Model: {home_win_pct:.1%} | Book: {home_market_line} | Edge: +{home_edge:.1%}{warning}"
         })
+        todays_predictions.append({
+            'date': first_game_date,
+            'run_time': run_time,
+            'home_fg': home_fg,
+            'away_fg': away_fg,
+            'bet_fg': home_fg,
+            'model_pct': f"{home_win_pct:.1%}",
+            'book_line': home_market_line,
+            'edge': f"+{home_edge:.1%}"
+         })   
     elif away_edge > 0.03:
         edge_games.append({
             'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {away_name} | Model: {away_win_pct:.1%} | Book: {away_market_line} | Edge: +{away_edge:.1%}{warning}"
+        })
+        todays_predictions.append({
+            'date': first_game_date,
+            'run_time': run_time,
+            'home_fg': home_fg,
+            'away_fg': away_fg,
+            'bet_fg': away_fg,
+            'model_pct': f"{away_win_pct:.1%}",
+            'book_line': away_market_line,
+            'edge': f"+{away_edge:.1%}"
         })
     else:
         no_edge_games.append(f"❌ {away_name} @ {home_name} - {time_str}\n   {home_name}: {home_win_pct:.1%} (Book: {home_market_line}) | {away_name}: {away_win_pct:.1%} (Book: {away_market_line}){warning}")
@@ -560,3 +625,8 @@ if skipped_games:
         print()
 
 todays_starters = get_todays_starters()
+
+log_predictions(todays_predictions, yesterdays_results)
+if os.path.exists('predictions_log.csv'):
+    log = pd.read_csv('predictions_log.csv')
+    print(log)
