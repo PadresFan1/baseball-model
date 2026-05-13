@@ -5,7 +5,7 @@ import statsapi
 import json
 import os
 from dotenv import load_dotenv
-load_dotenv(dotenv_path=r'C:\Users\User\OneDrive\Desktop\baseball_model\.env')
+load_dotenv(dotenv_path=r'C:\Users\super\baseball-model\.env')
 from datetime import date
 
 # Team Abbreviation Translation - MLB API to Fangraphs
