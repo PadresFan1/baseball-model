@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=r'C:\Users\super\baseball-model\.env')
 from datetime import date
 import numpy as np
+from io import StringIO
 
 # Team Abbreviation Translation - MLB API to Fangraphs
 TEAM_MAP = {
@@ -76,6 +77,19 @@ NAME_TO_FG = {
     'New York Mets': 'NYM'
 }
 
+PARK_FACTOR_TEAM_MAP = {
+    'Angels': 'LAA', 'Orioles': 'BAL', 'Red Sox': 'BOS',
+    'White Sox': 'CHW', 'Guardians': 'CLE', 'Tigers': 'DET',
+    'Royals': 'KCR', 'Twins': 'MIN', 'Yankees': 'NYY',
+    'Athletics': 'ATH', 'Mariners': 'SEA', 'Rays': 'TBR',
+    'Rangers': 'TEX', 'Blue Jays': 'TOR', 'Diamondbacks': 'ARI',
+    'Braves': 'ATL', 'Cubs': 'CHC', 'Reds': 'CIN',
+    'Rockies': 'COL', 'Dodgers': 'LAD', 'Marlins': 'MIA',
+    'Brewers': 'MIL', 'Mets': 'NYM', 'Phillies': 'PHI',
+    'Pirates': 'PIT', 'Cardinals': 'STL', 'Padres': 'SDP',
+    'Giants': 'SFG', 'Nationals': 'WSN', 'Astros': 'HOU'
+}
+
 from datetime import timezone, timedelta, datetime
 
 API_KEY = os.getenv('API_KEY')
@@ -83,12 +97,30 @@ print(f"API Key loaded: {API_KEY is not None}")
 
 MST = timezone(timedelta(hours=-7))
 
+# Starter/bullpen split
 STARTER_INNINGS = 5
 TOTAL_INNINGS = 9
 STARTER_WEIGHT = STARTER_INNINGS / TOTAL_INNINGS
 BULLPEN_WEIGHT = 1 - STARTER_WEIGHT
 MIN_INNINGS = 15
-MAX_RA9 = 7
+MAX_RA9 = 7.00
+
+# Lambda weights - adjust for backtesting
+OFFENSE_WEIGHTS = {
+    'rolling': 1/5,
+    'woba': 1/5,
+    'xwoba': 1/5,
+    'k_pct': 1/5,
+    'bb_pct': 1/5
+}
+
+PITCHING_WEIGHTS = {
+    'rolling': 1/5,
+    'fip': 1/5,
+    'xfip': 1/5,
+    'k_pct': 1/5,
+    'bb_pct': 1/5
+}
 
 NUM_SIMULATIONS = 5000
 
@@ -174,6 +206,17 @@ def get_mlb_odds():
     data = response.json()
     return data
 
+def get_park_factor(home_team, season=2025):
+    pf_df = PARK_FACTORS[PARK_FACTORS['Season'] == season]
+    team_name = next((k for k, v in PARK_FACTOR_TEAM_MAP.items() if v == home_team), None)
+    if team_name is None:
+        return 1.0
+    row = pf_df[pf_df['Team'] == team_name]
+    if row.empty:
+        return 1.0
+    return row['1yr'].values[0] / 100
+
+
 # Load offense data
 offense_2021 = pd.read_csv('offense_2021.csv')
 offense_2022 = pd.read_csv('offense_2022.csv')
@@ -251,9 +294,17 @@ model_data['lambda'] = model_data['off_rating']*model_data['lg_avg_runs']
 # Calculate expected runs for both teams - New Beginning
 def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
     if rolling and home_team in rolling and away_team in rolling:
-        home = calculate_rolling_lambda(home_team, rolling)
-        away = calculate_rolling_lambda(away_team, rolling)
-
+        lg_avg_runs = league_avg[league_avg['year'] == 2026]['lg_avg_runs'].values[0]
+        
+        home_off_rating, home_pit_rating = calculate_team_ratings(
+            home_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs)
+        away_off_rating, away_pit_rating = calculate_team_ratings(
+            away_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs)
+        
+        # Get park factor for home stadium
+        park_factor = get_park_factor(home_team)
+        
+        # Calculate blended pitching including starter
         home_pitch_roll = rolling[home_team]['pitch_7'] * 0.60 + rolling[home_team]['pitch_15'] * 0.40
         away_pitch_roll = rolling[away_team]['pitch_7'] * 0.60 + rolling[away_team]['pitch_15'] * 0.40
 
@@ -279,15 +330,17 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
         else:
             away_blended_pitch = away_pitch_roll
 
-        lg_avg = league_avg[league_avg['year'] == 2026]['lg_avg_runs'].values[0]
-        home_pitch_rating = lg_avg / home_blended_pitch
-        away_pitch_rating = lg_avg / away_blended_pitch
+        # Convert blended pitch to rating
+        home_starter_pit_rating = lg_avg_runs / home_blended_pitch if home_blended_pitch > 0 else 1.0
+        away_starter_pit_rating = lg_avg_runs / away_blended_pitch if away_blended_pitch > 0 else 1.0
 
-        home_pitch_rating = max(0.60, min(1.60, home_pitch_rating))
-        away_pitch_rating = max(0.60, min(1.60, away_pitch_rating))
+        # Blend starter rating with full pitching rating
+        home_final_pit = (home_starter_pit_rating * 0.50) + (home_pit_rating * 0.50)
+        away_final_pit = (away_starter_pit_rating * 0.50) + (away_pit_rating * 0.50)
 
-        home_lambda = (home['off_rating'] / away_pitch_rating) * lg_avg
-        away_lambda = (away['off_rating'] / home_pitch_rating) * lg_avg
+        # Calculate lambdas with park factor
+        home_lambda = (home_off_rating / away_final_pit) * lg_avg_runs * park_factor
+        away_lambda = (away_off_rating / home_final_pit) * lg_avg_runs * park_factor
 
     else:
         home_off = model_data[(model_data['team'] == home_team) & (model_data['year'] == year)]['lambda'].values[0]
@@ -443,8 +496,6 @@ def get_all_team_ids():
             teams_ids[fg_abbrev]=team['id']
     return teams_ids
 
-team_ids = get_all_team_ids()
-
 def get_all_team_woba(team_ids, season=2026):
     results = {}
     for fg_abbrev, team_id in team_ids.items():
@@ -452,6 +503,40 @@ def get_all_team_woba(team_ids, season=2026):
         if stats:
             results[fg_abbrev] = stats
     return results
+
+def get_team_xwoba(team_ids, season=2026):
+    try:
+        url = f"https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=batter&year={season}&position=&team=&min=10&csv=true"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'}
+        response = requests.get(url, headers=headers)
+        xwoba_df = pd.read_csv(StringIO(response.text))
+        
+        player_team = {}
+        for fg_abbrev, team_id in team_ids.items():
+            try:
+                roster_data = statsapi.get('team_roster', {
+                    'teamId': team_id,
+                    'rosterType': 'active'
+                })
+                for player in roster_data['roster']:
+                    player_team[player['person']['id']] = fg_abbrev
+            except:
+                continue
+        
+        xwoba_df['team'] = xwoba_df['player_id'].map(player_team)
+        xwoba_df = xwoba_df.dropna(subset=['team'])
+        
+        team_xwoba = xwoba_df.groupby('team').apply(
+            lambda x: pd.Series({
+                'xwoba': (x['est_woba'] * x['pa']).sum() / x['pa'].sum(),
+                'woba_savant': (x['woba'] * x['pa']).sum() / x['pa'].sum()
+            })
+        ).reset_index()
+        
+        return dict(zip(team_xwoba['team'], team_xwoba['xwoba']))
+    except Exception as e:
+        print(f"xwOBA fetch failed: {e}")
+        return {}
 
 def calculate_lg_hr_fb(team_ids, season=2026):
     total_hr = 0
@@ -729,6 +814,82 @@ def get_total_line(game):
         'book': best_total_book
     }
 
+def calculate_league_averages(all_woba, all_fip, team_xwoba):
+    # Offensive averages
+    lg_woba = np.mean([v['woba'] for v in all_woba.values()])
+    lg_xwoba = np.mean(list(team_xwoba.values()))
+    lg_k_pct_off = np.mean([v['k_pct'] for v in all_woba.values()])
+    lg_bb_pct_off = np.mean([v['bb_pct'] for v in all_woba.values()])
+    
+    # Pitching averages
+    lg_fip = np.mean([v['fip'] for v in all_fip.values()])
+    lg_xfip = np.mean([v['xfip'] for v in all_fip.values()])
+    lg_k_pct_pit = np.mean([v['k_pct'] for v in all_fip.values()])
+    lg_bb_pct_pit = np.mean([v['bb_pct'] for v in all_fip.values()])
+    
+    return {
+        'lg_woba': lg_woba,
+        'lg_xwoba': lg_xwoba,
+        'lg_k_pct_off': lg_k_pct_off,
+        'lg_bb_pct_off': lg_bb_pct_off,
+        'lg_fip': lg_fip,
+        'lg_xfip': lg_xfip,
+        'lg_k_pct_pit': lg_k_pct_pit,
+        'lg_bb_pct_pit': lg_bb_pct_pit
+    }
+
+def calculate_team_ratings(team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs):
+    # Get rolling averages
+    hit_7 = rolling[team]['hit_7']
+    hit_15 = rolling[team]['hit_15']
+    pitch_7 = rolling[team]['pitch_7']
+    pitch_15 = rolling[team]['pitch_15']
+    rolling_off = (hit_7 * 0.60) + (hit_15 * 0.40)
+    rolling_pit = (pitch_7 * 0.60) + (pitch_15 * 0.40)
+
+    # Convert to ratings relative to league average
+    rolling_off_rating = rolling_off / lg_avg_runs
+    rolling_pit_rating = lg_avg_runs / rolling_pit if rolling_pit > 0 else 1.0
+
+    # Offensive ratings
+    woba_rating = all_woba[team]['woba'] / lg_avgs['lg_woba'] if team in all_woba else 1.0
+    xwoba_rating = team_xwoba[team] / lg_avgs['lg_xwoba'] if team in team_xwoba else 1.0
+    
+    # K% and BB% for offense - higher K% is bad, higher BB% is good
+    k_off_rating = lg_avgs['lg_k_pct_off'] / all_woba[team]['k_pct'] if team in all_woba and all_woba[team]['k_pct'] > 0 else 1.0
+    bb_off_rating = all_woba[team]['bb_pct'] / lg_avgs['lg_bb_pct_off'] if team in all_woba and lg_avgs['lg_bb_pct_off'] > 0 else 1.0
+
+    # Pitching ratings - lower FIP/xFIP is better so we invert
+    fip_rating = lg_avgs['lg_fip'] / all_fip[team]['fip'] if team in all_fip and all_fip[team]['fip'] > 0 else 1.0
+    xfip_rating = lg_avgs['lg_xfip'] / all_fip[team]['xfip'] if team in all_fip and all_fip[team]['xfip'] > 0 else 1.0
+    
+    # K% and BB% for pitching - higher K% is good, higher BB% is bad
+    k_pit_rating = all_fip[team]['k_pct'] / lg_avgs['lg_k_pct_pit'] if team in all_fip and lg_avgs['lg_k_pct_pit'] > 0 else 1.0
+    bb_pit_rating = lg_avgs['lg_bb_pct_pit'] / all_fip[team]['bb_pct'] if team in all_fip and all_fip[team]['bb_pct'] > 0 else 1.0
+
+    # Combine with equal weights
+    off_rating = (
+        rolling_off_rating * OFFENSE_WEIGHTS['rolling'] +
+        woba_rating * OFFENSE_WEIGHTS['woba'] +
+        xwoba_rating * OFFENSE_WEIGHTS['xwoba'] +
+        k_off_rating * OFFENSE_WEIGHTS['k_pct'] +
+        bb_off_rating * OFFENSE_WEIGHTS['bb_pct']
+    )
+
+    pit_rating = (
+        rolling_pit_rating * PITCHING_WEIGHTS['rolling'] +
+        fip_rating * PITCHING_WEIGHTS['fip'] +
+        xfip_rating * PITCHING_WEIGHTS['xfip'] +
+        k_pit_rating * PITCHING_WEIGHTS['k_pct'] +
+        bb_pit_rating * PITCHING_WEIGHTS['bb_pct']
+    )
+
+    # Apply caps
+    off_rating = max(0.60, min(1.60, off_rating))
+    pit_rating = max(0.60, min(1.60, pit_rating))
+
+    return off_rating, pit_rating
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
@@ -737,6 +898,14 @@ game_statuses = get_todays_game_statuses()
 
 in_progress_games = []
 completed_games = []
+
+team_ids = get_all_team_ids()
+team_xwoba = get_team_xwoba(team_ids)
+all_woba = get_all_team_woba(team_ids)
+all_fip = get_all_team_fip(team_ids)
+team_xwoba = get_team_xwoba(team_ids)
+lg_avgs = calculate_league_averages(all_woba, all_fip, team_xwoba)
+print(f"League averages calculated")
 
 for key, status in game_statuses.items():
     parts = key.split('_')
@@ -943,4 +1112,3 @@ todays_starters = get_todays_starters()
 log_predictions(todays_predictions, yesterdays_results)
 if os.path.exists('predictions_log.csv'):
     log = pd.read_csv('predictions_log.csv')
-
