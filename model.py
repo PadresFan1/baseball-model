@@ -91,17 +91,27 @@ MIN_INNINGS = 15
 MAX_RA9 = 7
 
 NUM_SIMULATIONS = 5000
-FIP_CONSTANT = 3.106
 
-# wOBA weights - update annually from FanGraphs
-WOBA_WEIGHTS = {
-    'wBB': 0.705,
-    'wHBP': 0.736,
-    'w1B': 0.901,
-    'w2B': 1.281,
-    'w3B': 1.623,
-    'wHR': 2.090
-}
+def load_constants(year=2026):
+    woba_fip = pd.read_csv('constants/woba_fip_constants.csv')
+    row = woba_fip[woba_fip['Season'] == year].iloc[0]
+    
+    woba_weights = {
+        'wBB': row['wBB'],
+        'wHBP': row['wHBP'],
+        'w1B': row['w1B'],
+        'w2B': row['w2B'],
+        'w3B': row['w3B'],
+        'wHR': row['wHR']
+    }
+    fip_constant = row['cFIP']
+    
+    park_factors = pd.read_csv('constants/park_factors.csv')
+    park_factors_hand = pd.read_csv('constants/park_factors_handedness.csv')
+    
+    return woba_weights, fip_constant, park_factors, park_factors_hand
+
+WOBA_WEIGHTS, FIP_CONSTANT, PARK_FACTORS, PARK_FACTORS_HAND = load_constants(2026)
 
 def american_to_prob(line):
     if line < 0:
@@ -934,8 +944,3 @@ log_predictions(todays_predictions, yesterdays_results)
 if os.path.exists('predictions_log.csv'):
     log = pd.read_csv('predictions_log.csv')
 
-all_fip = get_all_team_fip(team_ids)
-print("\nTeam FIP/xFIP rankings:")
-sorted_fip = sorted(all_fip.items(), key=lambda x: x[1]['xfip'])
-for team, stats in sorted_fip:
-    print(f"{team}: FIP={stats['fip']} | xFIP={stats['xfip']} | K%={stats['k_pct']:.1%} | BB%={stats['bb_pct']:.1%}")
