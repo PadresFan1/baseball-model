@@ -91,6 +91,7 @@ MIN_INNINGS = 15
 MAX_RA9 = 7
 
 NUM_SIMULATIONS = 5000
+FIP_CONSTANT = 3.106
 
 # wOBA weights - update annually from FanGraphs
 WOBA_WEIGHTS = {
@@ -442,6 +443,78 @@ def get_all_team_woba(team_ids, season=2026):
             results[fg_abbrev] = stats
     return results
 
+def calculate_lg_hr_fb(team_ids, season=2026):
+    total_hr = 0
+    total_fb = 0
+    for fg_abbrev, team_id in team_ids.items():
+        try:
+            stats = statsapi.get('team_stats', {
+                'teamId': team_id,
+                'stats': 'season',
+                'group': 'pitching',
+                'season': season
+            })
+            s = stats['stats'][0]['splits'][0]['stat']
+            hr = float(s.get('homeRuns', 0))
+            air_outs = float(s.get('airOuts', 0))
+            total_hr += hr
+            total_fb += (air_outs + hr)
+        except:
+            continue
+    if total_fb == 0:
+        return 0.115
+    return total_hr / total_fb
+
+def calculate_team_fip(team_id, lg_hr_fb, season=2026):
+    try:
+        stats = statsapi.get('team_stats', {
+            'teamId': team_id,
+            'stats': 'season',
+            'group': 'pitching',
+            'season': season
+        })
+        s = stats['stats'][0]['splits'][0]['stat']
+        
+        hr = float(s.get('homeRuns', 0))
+        bb = float(s.get('baseOnBalls', 0))
+        hbp = float(s.get('hitBatsmen', 0))
+        k = float(s.get('strikeOuts', 0))
+        air_outs = float(s.get('airOuts', 0))
+        bf = float(s.get('battersFaced', 1))
+        ip_str = s.get('inningsPitched', '0')
+        ip = float(ip_str)
+        
+        if ip == 0:
+            return None
+        
+        fb = air_outs + hr
+        expected_hr = fb * lg_hr_fb
+        
+        fip = ((13 * hr) + (3 * (bb + hbp)) - (2 * k)) / ip + FIP_CONSTANT
+        xfip = ((13 * expected_hr) + (3 * (bb + hbp)) - (2 * k)) / ip + FIP_CONSTANT
+        
+        k_pct = k / bf
+        bb_pct = bb / bf
+        
+        return {
+            'fip': round(fip, 3),
+            'xfip': round(xfip, 3),
+            'k_pct': round(k_pct, 3),
+            'bb_pct': round(bb_pct, 3),
+            'lg_hr_fb': round(lg_hr_fb, 4)
+        }
+    except Exception as e:
+        return None
+
+def get_all_team_fip(team_ids, season=2026):
+    lg_hr_fb = calculate_lg_hr_fb(team_ids, season)
+    print(f"League HR/FB rate: {lg_hr_fb:.4f}")
+    results = {}
+    for fg_abbrev, team_id in team_ids.items():
+        stats = calculate_team_fip(team_id, lg_hr_fb, season)
+        if stats:
+            results[fg_abbrev] = stats
+    return results
 
 def get_all_rolling_averages(team_ids, days_short=7, days_long=15):
     results = {}
@@ -760,7 +833,7 @@ for game in upcoming:
 
     home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda = result
     total_data = get_total_line(game)
-    
+
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
 
@@ -860,3 +933,9 @@ todays_starters = get_todays_starters()
 log_predictions(todays_predictions, yesterdays_results)
 if os.path.exists('predictions_log.csv'):
     log = pd.read_csv('predictions_log.csv')
+
+all_fip = get_all_team_fip(team_ids)
+print("\nTeam FIP/xFIP rankings:")
+sorted_fip = sorted(all_fip.items(), key=lambda x: x[1]['xfip'])
+for team, stats in sorted_fip:
+    print(f"{team}: FIP={stats['fip']} | xFIP={stats['xfip']} | K%={stats['k_pct']:.1%} | BB%={stats['bb_pct']:.1%}")

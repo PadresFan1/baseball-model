@@ -1,11 +1,13 @@
-import statsapi
+import requests
+import pandas as pd
+from io import StringIO
 
-# Get team stats for a specific team
-team_stats = statsapi.get('team_stats', {
-    'teamId': 147,
-    'stats': 'season',
-    'group': 'hitting',
-    'season': 2026
-})
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'
+}
 
-print(team_stats['stats'][0]['splits'][0]['stat'].keys())
+url = "https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=pitcher&year=2026&position=&team=&min=q&csv=true"
+
+response = requests.get(url, headers=headers)
+print(response.status_code)
+print(response.text[:500])
