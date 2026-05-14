@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=r'C:\Users\super\baseball-model\.env')
 from datetime import date
+import numpy as np
 
 # Team Abbreviation Translation - MLB API to Fangraphs
 TEAM_MAP = {
@@ -89,6 +90,18 @@ BULLPEN_WEIGHT = 1 - STARTER_WEIGHT
 MIN_INNINGS = 15
 MAX_RA9 = 7
 
+NUM_SIMULATIONS = 5000
+
+# wOBA weights - update annually from FanGraphs
+WOBA_WEIGHTS = {
+    'wBB': 0.705,
+    'wHBP': 0.736,
+    'w1B': 0.901,
+    'w2B': 1.281,
+    'w3B': 1.623,
+    'wHR': 2.090
+}
+
 def american_to_prob(line):
     if line < 0:
         return abs(line) / (abs(line) + 100)
@@ -103,7 +116,7 @@ def get_cached_odds():
         modified_time = os.path.getmtime(cache_file)
         from datetime import datetime
         age_hours = (datetime.now().timestamp() - modified_time) / 3600
-        if age_hours < 6:
+        if age_hours < 2.5:
             print ("Loading odds from cache. . .")
             with open(cache_file,'r') as f:
                 return json.load(f)
@@ -120,15 +133,32 @@ def get_cached_odds():
 
 def get_upcoming_games(odds_data):
     now = datetime.now(timezone.utc)
+    today = now.date()
     upcoming = []
     for game in odds_data:
         game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-        if game_time > now:
+        if game_time > now and game_time.date() == today:
             upcoming.append(game)
     return upcoming
 
+def get_todays_game_statuses():
+    today = date.today().strftime('%Y-%m-%d')
+    schedule = statsapi.schedule(date=today)
+    statuses = {}
+    for game in schedule:
+        home = game['home_name']
+        away = game['away_name']
+        if home in NAME_TO_FG and away in NAME_TO_FG:
+            key = f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"
+            statuses[key] = {
+                'status': game['status'],
+                'home_score': game.get('home_score', '-'),
+                'away_score': game.get('away_score', '-')
+            }
+    return statuses
+
 def get_mlb_odds():
-    url = f'https://api.the-odds-api.com/v4/sports/baseball_mlb/odds/?apiKey={API_KEY}&regions=us&markets=h2h&oddsFormat=american'
+    url = f'https://api.the-odds-api.com/v4/sports/baseball_mlb/odds/?apiKey={API_KEY}&regions=us&markets=h2h,totals&oddsFormat=american&bookmakers=draftkings,fanduel'
     response = requests.get(url)
     data = response.json()
     return data
@@ -256,22 +286,26 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
         home_lambda = home_off / away_pitch
         away_lambda = away_off / home_pitch
 
-    home_wins = 0
-    away_wins = 0
-    tie = 0
 
-    for i in range(20):
-        for j in range(20):
-            prob = (math.exp(-home_lambda) * home_lambda**i / math.factorial(i)) * (math.exp(-away_lambda) * away_lambda**j / math.factorial(j))
-            if i > j:
-                home_wins += prob
-            elif j > i:
-                away_wins += prob
-            else:
-                tie += prob
+    home_scores = np.random.poisson(home_lambda, NUM_SIMULATIONS)
+    away_scores = np.random.poisson(away_lambda, NUM_SIMULATIONS)
 
-    home_win_pct = home_wins + tie / 2
-    away_win_pct = away_wins + tie / 2
+    ties = home_scores == away_scores
+    extra_home = np.random.poisson(home_lambda * 0.111, ties.sum())
+    extra_away = np.random.poisson(away_lambda * 0.111, ties.sum())
+
+    home_scores[ties] += extra_home
+    away_scores[ties] += extra_away
+
+    home_wins_sim = np.sum(home_scores > away_scores)
+    away_wins_sim = np.sum(away_scores > home_scores)
+    total_runs = home_scores + away_scores
+
+    remaining = NUM_SIMULATIONS - home_wins_sim - away_wins_sim
+    home_win_pct = (home_wins_sim + remaining / 2) / NUM_SIMULATIONS
+    away_win_pct = (away_wins_sim + remaining / 2) / NUM_SIMULATIONS
+
+    avg_total = np.mean(total_runs)
 
     if home_win_pct > 0.5:
         home_line = f"-{abs(round((home_win_pct / (1 - home_win_pct)) * 100))}"
@@ -280,7 +314,54 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
         home_line = f"+{abs(round(((1 - home_win_pct) / home_win_pct) * 100))}"
         away_line = f"-{abs(round((away_win_pct / (1 - away_win_pct)) * 100))}"
 
-    return home_win_pct, away_win_pct
+    return home_win_pct, away_win_pct, avg_total
+
+def calculate_team_woba(team_id, season=2026):
+    try:
+        stats = statsapi.get('team_stats', {
+            'teamId': team_id,
+            'stats': 'season',
+            'group': 'hitting',
+            'season': season
+        })
+        s = stats['stats'][0]['splits'][0]['stat']
+        
+        bb = float(s.get('baseOnBalls', 0))
+        hbp = float(s.get('hitByPitch', 0))
+        hits = float(s.get('hits', 0))
+        doubles = float(s.get('doubles', 0))
+        triples = float(s.get('triples', 0))
+        hr = float(s.get('homeRuns', 0))
+        ab = float(s.get('atBats', 0))
+        ibb = float(s.get('intentionalWalks', 0))
+        sf = float(s.get('sacFlies', 0))
+        pa = float(s.get('plateAppearances', 0))
+        
+        singles = hits - doubles - triples - hr
+        
+        numerator = (WOBA_WEIGHTS['wBB'] * bb + 
+                    WOBA_WEIGHTS['wHBP'] * hbp + 
+                    WOBA_WEIGHTS['w1B'] * singles + 
+                    WOBA_WEIGHTS['w2B'] * doubles + 
+                    WOBA_WEIGHTS['w3B'] * triples + 
+                    WOBA_WEIGHTS['wHR'] * hr)
+        
+        denominator = ab + bb - ibb + sf + hbp
+        
+        if denominator == 0:
+            return None
+            
+        woba = numerator / denominator
+        k_pct = float(s.get('strikeOuts', 0)) / pa if pa > 0 else 0
+        bb_pct = bb / pa if pa > 0 else 0
+        
+        return {
+            'woba': round(woba, 3),
+            'k_pct': round(k_pct, 3),
+            'bb_pct': round(bb_pct, 3)
+        }
+    except Exception as e:
+        return None
 
 def compare_to_market(game, model_home_prob, model_away_prob):
     home_team = game['home_team']
@@ -352,6 +433,15 @@ def get_all_team_ids():
 
 team_ids = get_all_team_ids()
 
+def get_all_team_woba(team_ids, season=2026):
+    results = {}
+    for fg_abbrev, team_id in team_ids.items():
+        stats = calculate_team_woba(team_id, season)
+        if stats:
+            results[fg_abbrev] = stats
+    return results
+
+
 def get_all_rolling_averages(team_ids, days_short=7, days_long=15):
     results = {}
     for fg_abbrev, team_id in team_ids.items():
@@ -396,15 +486,16 @@ def get_yesterdays_results():
 
 yesterdays_results = get_yesterdays_results()
 
-#New Def Log Predictions - Beginning
 def log_predictions(predictions, results):
     import csv
-    from datetime import datetime
     log_file = 'predictions_log.csv'
     file_exists = os.path.exists(log_file)
     
+    if not predictions:
+        return
+
     # Check if this run has already been logged
-    if file_exists and predictions:
+    if file_exists:
         existing = pd.read_csv(log_file)
         run_time_check = predictions[0]['run_time']
         date_check = predictions[0]['date']
@@ -412,7 +503,49 @@ def log_predictions(predictions, results):
                         (existing['date'] == date_check)].empty:
             print("Predictions already logged for this run - skipping")
             return
-#New Def Log Predictions - End
+
+    with open(log_file, 'a', newline='') as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(['date', 'run_time', 'home_team', 'away_team',
+                           'bet_team', 'model_pct', 'book_line', 'edge',
+                           'home_score', 'away_score', 'winner', 'result'])
+        
+        for pred in predictions:
+            game_key = f"{pred['away_fg']}_{pred['home_fg']}"
+            if game_key in results:
+                r = results[game_key]
+                outcome = 'WIN' if r['winner'] == pred['bet_fg'] else 'LOSS'
+                writer.writerow([
+                    pred['date'],
+                    pred['run_time'],
+                    pred['home_fg'],
+                    pred['away_fg'],
+                    pred['bet_fg'],
+                    pred['model_pct'],
+                    pred['book_line'],
+                    pred['edge'],
+                    r['home_score'],
+                    r['away_score'],
+                    r['winner'],
+                    outcome
+                ])
+            else:
+                writer.writerow([
+                    pred['date'],
+                    pred['run_time'],
+                    pred['home_fg'],
+                    pred['away_fg'],
+                    pred['bet_fg'],
+                    pred['model_pct'],
+                    pred['book_line'],
+                    pred['edge'],
+                    'N/A',
+                    'N/A',
+                    'N/A',
+                    'PENDING'
+                ])
+    print(f"Predictions logged to {log_file}")
 
 def calculate_rolling_lambda(team,rolling):
     if team not in rolling:
@@ -483,9 +616,36 @@ def get_todays_starters(game_date=None):
             starters[away_fg] = get_pitcher_stats(away_pitcher) if away_pitcher else None
     return starters
 
+def get_total_line(game):
+    for bookmaker in game['bookmakers']:
+        for market in bookmaker['markets']:
+            if market['key'] == 'totals':
+                for outcome in market['outcomes']:
+                    if outcome['name'] == 'Over':
+                        return outcome['point']
+    return None
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
+
+game_statuses = get_todays_game_statuses()
+
+in_progress_games = []
+completed_games = []
+
+for key, status in game_statuses.items():
+    parts = key.split('_')
+    away_fg = parts[0]
+    home_fg = parts[1]
+    
+    away_name = next((k for k, v in NAME_TO_FG.items() if v == away_fg), away_fg)
+    home_name = next((k for k, v in NAME_TO_FG.items() if v == home_fg), home_fg)
+    
+    if status['status'] == 'In Progress':
+        in_progress_games.append(f"⚾ {away_name} @ {home_name} | {status['away_score']} - {status['home_score']}")
+    elif status['status'] == 'Final':
+        completed_games.append(f"✔️  {away_name} @ {home_name} | Final: {status['away_score']} - {status['home_score']}")
 
 rolling = get_all_rolling_averages(team_ids)
 if upcoming:
@@ -525,24 +685,35 @@ for game in upcoming:
     if len(game['bookmakers']) == 0:
         continue
 
-    bookmaker = game['bookmakers'][0]
-    outcomes = bookmaker['markets'][0]['outcomes']
+    best_home_line = None
+    best_away_line = None
+    best_home_book = None
+    best_away_book = None
 
-    market_lines = {}
-    for outcome in outcomes:
-        market_lines[outcome['name']] = outcome['price']
+    for bookmaker in game['bookmakers']:
+        for market in bookmaker['markets']:
+            if market['key'] == 'h2h':
+                for outcome in market['outcomes']:
+                    if outcome['name'] == home_name:
+                        if best_home_line is None or outcome['price'] > best_home_line:
+                            best_home_line = outcome['price']
+                            best_home_book = bookmaker['title']
+                    elif outcome['name'] == away_name:
+                        if best_away_line is None or outcome['price'] > best_away_line:
+                            best_away_line = outcome['price']
+                            best_away_book = bookmaker['title']
 
-    if home_name not in market_lines or away_name not in market_lines:
+    if best_home_line is None or best_away_line is None:
         continue
 
-    home_market_line = market_lines[home_name]
-    away_market_line = market_lines[away_name]
+    home_market_line = best_home_line
+    away_market_line = best_away_line
 
     home_market_prob = american_to_prob(home_market_line)
     away_market_prob = american_to_prob(away_market_line)
 
     game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(MST)
-    time_str = game_time.strftime('%I:%M %p MST')
+    time_str = game_time.strftime('%a %b %d - %I:%M %p MST')
 
     home_starter = todays_starters.get(home_fg)
     away_starter = todays_starters.get(away_fg)
@@ -566,14 +737,15 @@ for game in upcoming:
     if result is None:
         continue
 
-    home_win_pct, away_win_pct = result
+    home_win_pct, away_win_pct, avg_total = result
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
 
     warning = f"\n   ⚠️  Low sample: {', '.join(low_sample)}" if low_sample else ""
+
     if home_edge > 0.03:
         edge_games.append({
-            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {home_name} | Model: {home_win_pct:.1%} | Book: {home_market_line} | Edge: +{home_edge:.1%}{warning}"
+            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {home_name} | Model: {home_win_pct:.1%} | {best_home_book}: {home_market_line} | Edge: +{home_edge:.1%}{warning}"
         })
         todays_predictions.append({
             'date': first_game_date,
@@ -584,10 +756,10 @@ for game in upcoming:
             'model_pct': f"{home_win_pct:.1%}",
             'book_line': home_market_line,
             'edge': f"+{home_edge:.1%}"
-         })   
+        })
     elif away_edge > 0.03:
         edge_games.append({
-            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {away_name} | Model: {away_win_pct:.1%} | Book: {away_market_line} | Edge: +{away_edge:.1%}{warning}"
+            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {away_name} | Model: {away_win_pct:.1%} | {best_away_book}: {away_market_line} | Edge: +{away_edge:.1%}{warning}"
         })
         todays_predictions.append({
             'date': first_game_date,
@@ -624,9 +796,20 @@ if skipped_games:
         print(game)
         print()
 
+if in_progress_games:
+    print("\n=== IN PROGRESS ===\n")
+    for game in in_progress_games:
+        print(game)
+        print()
+
+if completed_games:
+    print("\n=== COMPLETED ===\n")
+    for game in completed_games:
+        print(game)
+        print()
+
 todays_starters = get_todays_starters()
 
 log_predictions(todays_predictions, yesterdays_results)
 if os.path.exists('predictions_log.csv'):
     log = pd.read_csv('predictions_log.csv')
-    print(log)
