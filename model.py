@@ -306,6 +306,7 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
     away_win_pct = (away_wins_sim + remaining / 2) / NUM_SIMULATIONS
 
     avg_total = np.mean(total_runs)
+    total_data = get_total_line(game)
 
     if home_win_pct > 0.5:
         home_line = f"-{abs(round((home_win_pct / (1 - home_win_pct)) * 100))}"
@@ -314,7 +315,7 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
         home_line = f"+{abs(round(((1 - home_win_pct) / home_win_pct) * 100))}"
         away_line = f"-{abs(round((away_win_pct / (1 - away_win_pct)) * 100))}"
 
-    return home_win_pct, away_win_pct, avg_total
+    return home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda
 
 def calculate_team_woba(team_id, season=2026):
     try:
@@ -617,13 +618,33 @@ def get_todays_starters(game_date=None):
     return starters
 
 def get_total_line(game):
+    best_total = None
+    best_over_price = None
+    best_under_price = None
+    best_total_book = None
+    
     for bookmaker in game['bookmakers']:
         for market in bookmaker['markets']:
             if market['key'] == 'totals':
                 for outcome in market['outcomes']:
                     if outcome['name'] == 'Over':
-                        return outcome['point']
-    return None
+                        if best_over_price is None or outcome['price'] > best_over_price:
+                            best_over_price = outcome['price']
+                            best_total = outcome['point']
+                            best_total_book = bookmaker['title']
+                    elif outcome['name'] == 'Under':
+                        if best_under_price is None or outcome['price'] > best_under_price:
+                            best_under_price = outcome['price']
+    
+    if best_total is None:
+        return None
+    
+    return {
+        'total': best_total,
+        'over_price': best_over_price,
+        'under_price': best_under_price,
+        'book': best_total_book
+    }
 
 odds_data = get_cached_odds()
 
@@ -737,42 +758,68 @@ for game in upcoming:
     if result is None:
         continue
 
-    home_win_pct, away_win_pct, avg_total = result
+    home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda = result
+    total_data = get_total_line(game)
+    
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
 
     warning = f"\n   ⚠️  Low sample: {', '.join(low_sample)}" if low_sample else ""
 
+    moneyline_edge = False
+    ou_edge = False
+    game_text = f"{away_name} @ {home_name} - {time_str}"
+    
     if home_edge > 0.03:
-        edge_games.append({
-            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {home_name} | Model: {home_win_pct:.1%} | {best_home_book}: {home_market_line} | Edge: +{home_edge:.1%}{warning}"
-        })
-        todays_predictions.append({
-            'date': first_game_date,
-            'run_time': run_time,
-            'home_fg': home_fg,
-            'away_fg': away_fg,
-            'bet_fg': home_fg,
-            'model_pct': f"{home_win_pct:.1%}",
-            'book_line': home_market_line,
-            'edge': f"+{home_edge:.1%}"
-        })
+        moneyline_text = f"   💰 Moneyline: Bet {home_name} | Model: {home_win_pct:.1%} | {best_home_book}: {home_market_line} | Edge: +{home_edge:.1%}"
+        moneyline_edge = True
+        bet_fg = home_fg
+        bet_pct = home_win_pct
+        bet_line = home_market_line
+        bet_edge = home_edge
     elif away_edge > 0.03:
-        edge_games.append({
-            'text': f"✅ {away_name} @ {home_name} - {time_str}\n   Bet: {away_name} | Model: {away_win_pct:.1%} | {best_away_book}: {away_market_line} | Edge: +{away_edge:.1%}{warning}"
-        })
-        todays_predictions.append({
-            'date': first_game_date,
-            'run_time': run_time,
-            'home_fg': home_fg,
-            'away_fg': away_fg,
-            'bet_fg': away_fg,
-            'model_pct': f"{away_win_pct:.1%}",
-            'book_line': away_market_line,
-            'edge': f"+{away_edge:.1%}"
-        })
+        moneyline_text = f"   💰 Moneyline: Bet {away_name} | Model: {away_win_pct:.1%} | {best_away_book}: {away_market_line} | Edge: +{away_edge:.1%}"
+        moneyline_edge = True
+        bet_fg = away_fg
+        bet_pct = away_win_pct
+        bet_line = away_market_line
+        bet_edge = away_edge
     else:
-        no_edge_games.append(f"❌ {away_name} @ {home_name} - {time_str}\n   {home_name}: {home_win_pct:.1%} (Book: {home_market_line}) | {away_name}: {away_win_pct:.1%} (Book: {away_market_line}){warning}")
+        moneyline_text = f"   ➖ Moneyline: No edge found"
+
+    if total_data:
+        book_total = total_data['total']
+        ou_diff = avg_total - book_total
+        if ou_diff > 0.5:
+            ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} | Edge: +{ou_diff:.1f} runs"
+            ou_edge = True
+        elif ou_diff < -0.5:
+            ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} | Edge: {ou_diff:.1f} runs"
+            ou_edge = True
+        else:
+            ou_text = f"   ➖ Over/Under: No edge | Model: {avg_total:.1f} | Book: {book_total}"
+    else:
+        ou_text = f"   ➖ Over/Under: No line available"
+
+    proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
+
+    if moneyline_edge or ou_edge:
+        edge_games.append({
+            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}"
+        })
+        if moneyline_edge:
+            todays_predictions.append({
+                'date': first_game_date,
+                'run_time': run_time,
+                'home_fg': home_fg,
+                'away_fg': away_fg,
+                'bet_fg': bet_fg,
+                'model_pct': f"{bet_pct:.1%}",
+                'book_line': bet_line,
+                'edge': f"+{bet_edge:.1%}"
+            })
+    else:
+        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}")
 
 # Print edges
 if edge_games:
