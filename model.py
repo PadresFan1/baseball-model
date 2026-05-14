@@ -890,6 +890,43 @@ def calculate_team_ratings(team, rolling, all_woba, all_fip, team_xwoba, lg_avgs
 
     return off_rating, pit_rating
 
+def get_cached_stats(team_ids, game_date=None):
+    cache_file = 'stats_cache.json'
+    
+    if os.path.exists(cache_file):
+        modified_time = os.path.getmtime(cache_file)
+        from datetime import datetime
+        age_hours = (datetime.now().timestamp() - modified_time) / 3600
+        if age_hours < 4:
+            print("Loading stats from cache...")
+            with open(cache_file, 'r') as f:
+                return json.load(f)
+    
+    print("Fetching fresh stats...")
+    stats = {
+        'all_woba': get_all_team_woba(team_ids),
+        'all_fip': get_all_team_fip(team_ids),
+        'team_xwoba': get_team_xwoba(team_ids),
+        'rolling': get_all_rolling_averages(team_ids),
+        'starters': get_todays_starters(game_date=game_date)
+    }
+    
+    with open(cache_file, 'w') as f:
+        json.dump(convert_to_serializable(stats), f)
+    
+    return stats
+    
+def convert_to_serializable(obj):
+    if isinstance(obj, np.float64):
+        return float(obj)
+    if isinstance(obj, np.int64):
+        return int(obj)
+    if isinstance(obj, dict):
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [convert_to_serializable(i) for i in obj]
+    return obj
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
@@ -900,12 +937,17 @@ in_progress_games = []
 completed_games = []
 
 team_ids = get_all_team_ids()
-team_xwoba = get_team_xwoba(team_ids)
-all_woba = get_all_team_woba(team_ids)
-all_fip = get_all_team_fip(team_ids)
-team_xwoba = get_team_xwoba(team_ids)
+
+from datetime import date
+first_game_date = date.today().strftime('%Y-%m-%d')
+cached_stats = get_cached_stats(team_ids, game_date=first_game_date)
+
+all_woba = cached_stats['all_woba']
+all_fip = cached_stats['all_fip']
+team_xwoba = cached_stats['team_xwoba']
+rolling = cached_stats['rolling']
+todays_starters = cached_stats.get('starters', {})
 lg_avgs = calculate_league_averages(all_woba, all_fip, team_xwoba)
-print(f"League averages calculated")
 
 for key, status in game_statuses.items():
     parts = key.split('_')
@@ -919,13 +961,6 @@ for key, status in game_statuses.items():
         in_progress_games.append(f"⚾ {away_name} @ {home_name} | {status['away_score']} - {status['home_score']}")
     elif status['status'] == 'Final':
         completed_games.append(f"✔️  {away_name} @ {home_name} | Final: {status['away_score']} - {status['home_score']}")
-
-rolling = get_all_rolling_averages(team_ids)
-if upcoming:
-    first_game_date = upcoming[0]['commence_time'][:10]
-    todays_starters = get_todays_starters(game_date=first_game_date)
-else:
-    todays_starters = {}
 
 print(f"\nUpcoming games today: {len(upcoming)}")
 
