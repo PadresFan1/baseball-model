@@ -145,6 +145,9 @@ def load_constants(year=2026):
 
 WOBA_WEIGHTS, FIP_CONSTANT, PARK_FACTORS, PARK_FACTORS_HAND = load_constants(2026)
 
+# Run schedule for predictions log
+RUN_SCHEDULE = {1: '9am', 2: '12pm', 3: '4pm'}
+
 def american_to_prob(line):
     if line < 0:
         return abs(line) / (abs(line) + 100)
@@ -216,7 +219,6 @@ def get_park_factor(home_team, season=2025):
     if row.empty:
         return 1.0
     return row['1yr'].values[0] / 100
-
 
 # Load offense data
 offense_2021 = pd.read_csv('offense_2021.csv')
@@ -604,7 +606,6 @@ def calculate_team_fip(team_id, lg_hr_fb, season=2026):
 
 def get_all_team_fip(team_ids, season=2026):
     lg_hr_fb = calculate_lg_hr_fb(team_ids, season)
-    print(f"League HR/FB rate: {lg_hr_fb:.4f}")
     results = {}
     for fg_abbrev, team_id in team_ids.items():
         stats = calculate_team_fip(team_id, lg_hr_fb, season)
@@ -657,65 +658,192 @@ def get_yesterdays_results():
 yesterdays_results = get_yesterdays_results()
 
 def log_predictions(predictions, results):
-    import csv
     log_file = 'predictions_log.csv'
-    file_exists = os.path.exists(log_file)
+    
+    # Determine which run this is based on current hour
+    from datetime import datetime
+    hour = datetime.now().hour
+    if hour < 11:
+        run_num = 1
+        run_label = '9am'
+    elif hour < 15:
+        run_num = 2
+        run_label = '12pm'
+    else:
+        run_num = 3
+        run_label = '4pm'
     
     if not predictions:
         return
 
-    # Check if this run has already been logged
-    if file_exists:
-        existing = pd.read_csv(log_file)
-        run_time_check = predictions[0]['run_time']
-        date_check = predictions[0]['date']
-        if not existing[(existing['run_time'] == run_time_check) & 
-                        (existing['date'] == date_check)].empty:
-            print("Predictions already logged for this run - skipping")
-            return
-
-    with open(log_file, 'a', newline='') as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(['date', 'run_time', 'home_team', 'away_team',
-                           'bet_team', 'model_pct', 'book_line', 'edge',
-                           'home_score', 'away_score', 'winner', 'result'])
+    # Load existing log or create new one
+    columns = [
+        'date', 'home_team', 'away_team', 'bet_type',
+        'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
+        'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge',
+        'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge',
+        'home_score', 'away_score', 'winner', 'result', 'flag'
+    ]
+    
+    if os.path.exists(log_file):
+        df = pd.read_csv(log_file, dtype=str)
+    else:
+        df = pd.DataFrame(columns=columns)
+    
+    for pred in predictions:
+        game_date = pred['date']
+        home_fg = pred['home_fg']
+        away_fg = pred['away_fg']
+        bet_type = pred['bet_type']
         
-        for pred in predictions:
-            game_key = f"{pred['away_fg']}_{pred['home_fg']}"
+        # Find existing row for this game and bet type
+        mask = (df['date'] == game_date) & \
+               (df['home_team'] == home_fg) & \
+               (df['away_team'] == away_fg) & \
+               (df['bet_type'] == bet_type)
+        
+        if df[mask].empty:
+            # Create new row
+            new_row = {col: None for col in columns}
+            new_row['date'] = game_date
+            new_row['home_team'] = home_fg
+            new_row['away_team'] = away_fg
+            new_row['bet_type'] = bet_type
+            new_row[f'run{run_num}_bet_team'] = pred['bet_team']
+            new_row[f'run{run_num}_model_pct'] = pred['model_pct']
+            new_row[f'run{run_num}_book_line'] = pred['book_line']
+            new_row[f'run{run_num}_edge'] = pred['edge']
+            
+            # Add results if available
+            game_key = f"{away_fg}_{home_fg}"
             if game_key in results:
                 r = results[game_key]
-                outcome = 'WIN' if r['winner'] == pred['bet_fg'] else 'LOSS'
-                writer.writerow([
-                    pred['date'],
-                    pred['run_time'],
-                    pred['home_fg'],
-                    pred['away_fg'],
-                    pred['bet_fg'],
-                    pred['model_pct'],
-                    pred['book_line'],
-                    pred['edge'],
-                    r['home_score'],
-                    r['away_score'],
-                    r['winner'],
-                    outcome
-                ])
+                new_row['home_score'] = r['home_score']
+                new_row['away_score'] = r['away_score']
+                new_row['winner'] = r['winner']
+                new_row['result'] = evaluate_result(pred, r)
+            
+            new_row['flag'] = 'CONSISTENT'
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        else:
+            # Update existing row
+            idx = df[mask].index[0]
+            df.at[idx, f'run{run_num}_bet_team'] = pred['bet_team']
+            df.at[idx, f'run{run_num}_model_pct'] = pred['model_pct']
+            df.at[idx, f'run{run_num}_book_line'] = pred['book_line']
+            df.at[idx, f'run{run_num}_edge'] = pred['edge']
+            
+            # Add results if available
+            game_key = f"{away_fg}_{home_fg}"
+            if game_key in results:
+                r = results[game_key]
+                df.at[idx, 'home_score'] = r['home_score']
+                df.at[idx, 'away_score'] = r['away_score']
+                df.at[idx, 'winner'] = r['winner']
+                df.at[idx, 'result'] = evaluate_result(pred, r)
+            
+            # Update flag
+            df.at[idx, 'flag'] = evaluate_flag(df.iloc[idx])
+    
+    df.to_csv(log_file, index=False)
+    generate_excel_log(df)
+    update_google_sheets(df)
+
+def evaluate_result(pred, game_result):
+    bet_type = pred['bet_type']
+    if bet_type == 'Moneyline':
+        if game_result['winner'] == pred['bet_team']:
+            return 'WIN'
+        elif game_result['winner'] is None:
+            return 'PENDING'
+        else:
+            return 'LOSS'
+    elif bet_type in ['Over', 'Under']:
+        home_score = game_result.get('home_score')
+        away_score = game_result.get('away_score')
+        if home_score is None or away_score is None:
+            return 'PENDING'
+        total = float(home_score) + float(away_score)
+        book_line = float(pred['book_line'])
+        if bet_type == 'Over':
+            if total > book_line:
+                return 'WIN'
+            elif total == book_line:
+                return 'PUSH'
             else:
-                writer.writerow([
-                    pred['date'],
-                    pred['run_time'],
-                    pred['home_fg'],
-                    pred['away_fg'],
-                    pred['bet_fg'],
-                    pred['model_pct'],
-                    pred['book_line'],
-                    pred['edge'],
-                    'N/A',
-                    'N/A',
-                    'N/A',
-                    'PENDING'
-                ])
-    print(f"Predictions logged to {log_file}")
+                return 'LOSS'
+        else:
+            if total < book_line:
+                return 'WIN'
+            elif total == book_line:
+                return 'PUSH'
+            else:
+                return 'LOSS'
+    return 'PENDING'
+
+def evaluate_flag(row):
+    runs = []
+    for i in range(1, 4):
+        team = row.get(f'run{i}_bet_team')
+        edge = row.get(f'run{i}_edge')
+        if team is not None and edge is not None:
+            runs.append((i, team, edge))
+    
+    if len(runs) <= 1:
+        return 'CONSISTENT'
+    
+    teams = [r[1] for r in runs]
+    if len(set(teams)) > 1:
+        return 'TEAM CHANGED'
+    
+    # Check if edge was lost or gained
+    has_edge = [r[2] != 'NO BET' for r in runs]
+    if True in has_edge and False in has_edge:
+        if has_edge[0] and not has_edge[-1]:
+            return 'EDGE LOST'
+        elif not has_edge[0] and has_edge[-1]:
+            return 'EDGE GAINED'
+    
+    return 'CONSISTENT'
+
+def generate_excel_log(df):
+    try:
+        import openpyxl
+        from openpyxl.styles import PatternFill
+        
+        excel_file = 'predictions_log.xlsx'
+        df.to_excel(excel_file, index=False)
+        
+        wb = openpyxl.load_workbook(excel_file)
+        ws = wb.active
+        
+        green = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
+        red = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+        yellow = PatternFill(start_color='FFEB9C', end_color='FFEB9C', fill_type='solid')
+        
+        flag_col = df.columns.get_loc('flag') + 1
+        result_col = df.columns.get_loc('result') + 1
+        
+        for row_idx, row in enumerate(ws.iter_rows(min_row=2), start=2):
+            flag = ws.cell(row=row_idx, column=flag_col).value
+            result = ws.cell(row=row_idx, column=result_col).value
+            
+            if flag in ['TEAM CHANGED', 'EDGE LOST', 'EDGE GAINED']:
+                fill = yellow
+            elif result == 'WIN':
+                fill = green
+            elif result == 'LOSS':
+                fill = red
+            else:
+                fill = None
+            
+            if fill:
+                for cell in row:
+                    cell.fill = fill
+        
+        wb.save(excel_file)
+    except Exception as e:
+        print(f"Excel generation failed: {e}")
 
 def calculate_rolling_lambda(team,rolling):
     if team not in rolling:
@@ -928,6 +1056,35 @@ def convert_to_serializable(obj):
         return [convert_to_serializable(i) for i in obj]
     return obj
 
+def update_google_sheets(df):
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        
+        creds_path = os.getenv('GOOGLE_CREDENTIALS_PATH', 'google_credentials.json')
+        
+        scopes = [
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/drive'
+        ]
+        
+        creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
+        client = gspread.authorize(creds)
+        
+        sheet = client.open('Baseball Model Predictions').sheet1
+        
+        sheet.clear()
+        
+        headers = df.columns.tolist()
+        sheet.append_row(headers)
+        
+        for _, row in df.iterrows():
+            sheet.append_row([str(x) if x is not None else '' for x in row.tolist()])
+        
+        print("Google Sheets updated successfully")
+    except Exception as e:
+        print(f"Google Sheets update failed: {e}")
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
@@ -1082,9 +1239,31 @@ for game in upcoming:
         if ou_diff > 1.5:
             ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Over {total_data['over_price']}) | Edge: +{ou_diff:.1f} runs"
             ou_edge = True
+            todays_predictions.append({
+                'date': first_game_date,
+                'run_time': run_time,
+                'home_fg': home_fg,
+                'away_fg': away_fg,
+                'bet_type': 'Over',
+                'bet_team': 'Over',
+                'model_pct': f"{avg_total:.1f}",
+                'book_line': str(book_total),
+                'edge': f"+{ou_diff:.1f} runs"
+            })
         elif ou_diff < -1.5:
             ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Under {total_data['under_price']}) | Edge: {ou_diff:.1f} runs"
             ou_edge = True
+            todays_predictions.append({
+                'date': first_game_date,
+                'run_time': run_time,
+                'home_fg': home_fg,
+                'away_fg': away_fg,
+                'bet_type': 'Under',
+                'bet_team': 'Under',
+                'model_pct': f"{avg_total:.1f}",
+                'book_line': str(book_total),
+                'edge': f"-{abs(ou_diff):.1f} runs"
+            })
         else:
             ou_text = f"   ➖ Over/Under: No edge | Model: {avg_total:.1f} | Book: {book_total}"
     else:
@@ -1102,9 +1281,10 @@ for game in upcoming:
                 'run_time': run_time,
                 'home_fg': home_fg,
                 'away_fg': away_fg,
-                'bet_fg': bet_fg,
+                'bet_type': 'Moneyline',
+                'bet_team': bet_fg,
                 'model_pct': f"{bet_pct:.1%}",
-                'book_line': bet_line,
+                'book_line': str(bet_line),
                 'edge': f"+{bet_edge:.1%}"
             })
     else:

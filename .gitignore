@@ -3,3 +3,4 @@ odds_cache.json
 __pycache__/
 *.pyc
 stats_cache.json
+google_credentials.json
