@@ -176,11 +176,12 @@ def get_cached_odds():
 
 def get_upcoming_games(odds_data):
     now = datetime.now(timezone.utc)
-    today = now.date()
+    today_mst = now.astimezone(MST).date()
     upcoming = []
     for game in odds_data:
         game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-        if game_time > now and game_time.date() == today:
+        game_time_mst = game_time.astimezone(MST)
+        if game_time > now and game_time_mst.date() == today_mst:
             upcoming.append(game)
     return upcoming
 
@@ -971,6 +972,7 @@ no_edge_games = []
 skipped_games = []
 
 # Game Loop
+upcoming = sorted(upcoming, key=lambda x: x['commence_time'])
 seen_games = set()
 for game in upcoming:
     game_key = f"{game['home_team']}_{game['away_team']}"
@@ -1077,11 +1079,11 @@ for game in upcoming:
     if total_data:
         book_total = total_data['total']
         ou_diff = avg_total - book_total
-        if ou_diff > 0.5:
-            ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} | Edge: +{ou_diff:.1f} runs"
+        if ou_diff > 1.5:
+            ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Over {total_data['over_price']}) | Edge: +{ou_diff:.1f} runs"
             ou_edge = True
-        elif ou_diff < -0.5:
-            ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} | Edge: {ou_diff:.1f} runs"
+        elif ou_diff < -1.5:
+            ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Under {total_data['under_price']}) | Edge: {ou_diff:.1f} runs"
             ou_edge = True
         else:
             ou_text = f"   ➖ Over/Under: No edge | Model: {avg_total:.1f} | Book: {book_total}"
