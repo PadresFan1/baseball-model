@@ -1239,54 +1239,79 @@ for game in upcoming:
         if ou_diff > 1.5:
             ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Over {total_data['over_price']}) | Edge: +{ou_diff:.1f} runs"
             ou_edge = True
-            todays_predictions.append({
-                'date': first_game_date,
-                'run_time': run_time,
-                'home_fg': home_fg,
-                'away_fg': away_fg,
-                'bet_type': 'Over',
-                'bet_team': 'Over',
-                'model_pct': f"{avg_total:.1f}",
-                'book_line': str(book_total),
-                'edge': f"+{ou_diff:.1f} runs"
-            })
+
         elif ou_diff < -1.5:
             ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Under {total_data['under_price']}) | Edge: {ou_diff:.1f} runs"
             ou_edge = True
-            todays_predictions.append({
-                'date': first_game_date,
-                'run_time': run_time,
-                'home_fg': home_fg,
-                'away_fg': away_fg,
-                'bet_type': 'Under',
-                'bet_team': 'Under',
-                'model_pct': f"{avg_total:.1f}",
-                'book_line': str(book_total),
-                'edge': f"-{abs(ou_diff):.1f} runs"
-            })
+
         else:
             ou_text = f"   ➖ Over/Under: No edge | Model: {avg_total:.1f} | Book: {book_total}"
     else:
         ou_text = f"   ➖ Over/Under: No line available"
 
-    proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
+proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
+
+    # Log moneyline for all games
+    if moneyline_edge:
+        ml_bet_team = bet_fg
+        ml_model_pct = f"{bet_pct:.1%}"
+        ml_book_line = str(bet_line)
+        ml_edge = f"+{bet_edge:.1%}"
+    else:
+        ml_bet_team = 'No Bet'
+        ml_model_pct = f"{max(home_win_pct, away_win_pct):.1%}"
+        ml_book_line = str(home_market_line if home_win_pct > away_win_pct else away_market_line)
+        ml_edge = 'No Edge'
+
+    todays_predictions.append({
+        'date': first_game_date,
+        'run_time': run_time,
+        'home_fg': home_fg,
+        'away_fg': away_fg,
+        'bet_type': 'Moneyline',
+        'bet_team': ml_bet_team,
+        'model_pct': ml_model_pct,
+        'book_line': ml_book_line,
+        'edge': ml_edge
+    })
+
+    # Log O/U for all games
+    if total_data:
+        if ou_edge:
+            ou_bet_team = 'Over' if ou_diff > 0 else 'Under'
+            ou_edge_str = f"{ou_diff:+.1f} runs"
+        else:
+            ou_bet_team = 'No Bet'
+            ou_edge_str = 'No Edge'
+        
+        todays_predictions.append({
+            'date': first_game_date,
+            'run_time': run_time,
+            'home_fg': home_fg,
+            'away_fg': away_fg,
+            'bet_type': 'Over/Under',
+            'bet_team': ou_bet_team,
+            'model_pct': f"{avg_total:.1f}",
+            'book_line': str(book_total),
+            'edge': ou_edge_str
+        })
+    else:
+        todays_predictions.append({
+            'date': first_game_date,
+            'run_time': run_time,
+            'home_fg': home_fg,
+            'away_fg': away_fg,
+            'bet_type': 'Over/Under',
+            'bet_team': 'No Bet',
+            'model_pct': f"{avg_total:.1f}",
+            'book_line': 'N/A',
+            'edge': 'No Line'
+        })
 
     if moneyline_edge or ou_edge:
         edge_games.append({
             'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}"
         })
-        if moneyline_edge:
-            todays_predictions.append({
-                'date': first_game_date,
-                'run_time': run_time,
-                'home_fg': home_fg,
-                'away_fg': away_fg,
-                'bet_type': 'Moneyline',
-                'bet_team': bet_fg,
-                'model_pct': f"{bet_pct:.1%}",
-                'book_line': str(bet_line),
-                'edge': f"+{bet_edge:.1%}"
-            })
     else:
         no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}")
 

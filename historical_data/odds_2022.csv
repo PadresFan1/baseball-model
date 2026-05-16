@@ -99,3 +99,2291 @@ date,time,away_team,home_team,away_odds,home_odds,away_score,home_score
 02 Oct 2022,,Minnesota Twins,Detroit Tigers,-116,-105,2,5
 01 Oct 2022,,Colorado Rockies,Los Angeles Dodgers,+240,-303,4,6
 01 Oct 2022,,Texas Rangers,Los Angeles Angels,+120,-141,2,3
+01 Oct 2022,,Chicago White Sox,San Diego Padres,+140,-161,2,5
+01 Oct 2022,,New York Mets,Atlanta Braves,+104,-125,2,4
+01 Oct 2022,,Tampa Bay Rays,Houston Astros,+150,-172,1,2
+01 Oct 2022,,Pittsburgh Pirates,St.Louis Cardinals,+179,-222,3,13
+01 Oct 2022,,Miami Marlins,Milwaukee Brewers,+165,-185,4,3
+01 Oct 2022,,Kansas City Royals,Cleveland Guardians,+185,-227,7,1
+01 Oct 2022,,Minnesota Twins,Detroit Tigers,-132,+110,2,3
+01 Oct 2022,,Athletics,Seattle Mariners,+204,-250,1,5
+01 Oct 2022,,Arizona Diamondbacks,San Francisco Giants,+104,-125,8,4
+01 Oct 2022,,Boston Red Sox,Toronto Blue Jays,+145,-167,0,10
+01 Oct 2022,,Cincinnati Reds,Chicago Cubs,+120,-141,1,2
+01 Oct 2022,,Baltimore Orioles,New York Yankees,+200,-244,0,8
+30 Sep 2022,,Arizona Diamondbacks,San Francisco Giants,+110,-132,4,10
+30 Sep 2022,,Colorado Rockies,Los Angeles Dodgers,+215,-263,1,10
+30 Sep 2022,,Athletics,Seattle Mariners,+220,-270,1,2
+30 Sep 2022,,Chicago White Sox,San Diego Padres,+100,-120,3,1
+30 Sep 2022,,Texas Rangers,Los Angeles Angels,+129,-152,1,4
+30 Sep 2022,,Pittsburgh Pirates,St.Louis Cardinals,+200,-244,1,2
+30 Sep 2022,,Tampa Bay Rays,Houston Astros,+140,-161,7,3
+30 Sep 2022,,Miami Marlins,Milwaukee Brewers,+165,-185,0,1
+30 Sep 2022,,New York Mets,Atlanta Braves,-125,+104,2,5
+30 Sep 2022,,Kansas City Royals,Cleveland Guardians,+170,-200,3,6
+30 Sep 2022,,Minnesota Twins,Detroit Tigers,-132,+110,7,0
+30 Sep 2022,,Boston Red Sox,Toronto Blue Jays,+125,-147,0,9
+30 Sep 2022,,Baltimore Orioles,New York Yankees,+185,-227,2,1
+30 Sep 2022,,Cincinnati Reds,Chicago Cubs,+140,-161,1,6
+29 Sep 2022,,Colorado Rockies,San Francisco Giants,+204,-250,4,6
+29 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-147,+125,5,2
+29 Sep 2022,,Texas Rangers,Seattle Mariners,+104,-125,9,10
+29 Sep 2022,,Athletics,Los Angeles Angels,+220,-270,2,4
+29 Sep 2022,,Miami Marlins,Milwaukee Brewers,+150,-172,4,2
+29 Sep 2022,,Tampa Bay Rays,Cleveland Guardians,-135,+114,1,2
+29 Sep 2022,,Philadelphia Phillies,Chicago Cubs,-185,+165,0,2
+29 Sep 2022,,Baltimore Orioles,Boston Red Sox,+129,-152,3,5
+29 Sep 2022,,Chicago White Sox,Minnesota Twins,-111,-111,4,3
+29 Sep 2022,,Kansas City Royals,Detroit Tigers,+110,-132,3,10
+28 Sep 2022,,Colorado Rockies,San Francisco Giants,+185,-227,3,6
+28 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-156,+135,1,0
+28 Sep 2022,,Texas Rangers,Seattle Mariners,+104,-125,1,3
+28 Sep 2022,,Athletics,Los Angeles Angels,+215,-263,1,4
+28 Sep 2022,,Arizona Diamondbacks,Houston Astros,+145,-167,5,2
+28 Sep 2022,,Philadelphia Phillies,Chicago Cubs,-175,+154,2,4
+28 Sep 2022,,Chicago White Sox,Minnesota Twins,-120,+100,4,8
+28 Sep 2022,,St.Louis Cardinals,Milwaukee Brewers,+160,-182,1,5
+28 Sep 2022,,Baltimore Orioles,Boston Red Sox,+140,-161,1,3
+28 Sep 2022,,Miami Marlins,New York Mets,+170,-200,4,5
+28 Sep 2022,,New York Yankees,Toronto Blue Jays,-125,+104,8,3
+28 Sep 2022,,Atlanta Braves,Washington Nationals,-213,+175,2,3
+28 Sep 2022,,Kansas City Royals,Detroit Tigers,+114,-135,1,2
+28 Sep 2022,,Tampa Bay Rays,Cleveland Guardians,-111,-111,1,2
+28 Sep 2022,,Cincinnati Reds,Pittsburgh Pirates,+100,-120,3,4
+27 Sep 2022,,Colorado Rockies,San Francisco Giants,+175,-213,2,5
+27 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-141,+120,3,4
+27 Sep 2022,,Texas Rangers,Seattle Mariners,+170,-200,5,0
+27 Sep 2022,,Athletics,Los Angeles Angels,+167,-192,3,4
+27 Sep 2022,,Arizona Diamondbacks,Houston Astros,+167,-192,2,10
+27 Sep 2022,,Philadelphia Phillies,Chicago Cubs,-175,+154,1,2
+27 Sep 2022,,Chicago White Sox,Minnesota Twins,-116,-105,0,4
+27 Sep 2022,,St.Louis Cardinals,Milwaukee Brewers,+120,-141,6,2
+27 Sep 2022,,Baltimore Orioles,Boston Red Sox,+110,-132,9,13
+27 Sep 2022,,Miami Marlins,New York Mets,+170,-200,6,4
+27 Sep 2022,,New York Yankees,Toronto Blue Jays,-125,+104,5,2
+27 Sep 2022,,Atlanta Braves,Washington Nationals,-227,+185,8,2
+27 Sep 2022,,Kansas City Royals,Detroit Tigers,+110,-132,3,4
+27 Sep 2022,,Cincinnati Reds,Pittsburgh Pirates,+100,-120,1,4
+27 Sep 2022,,Tampa Bay Rays,Cleveland Guardians,+100,-120,6,5
+26 Sep 2022,,Baltimore Orioles,Boston Red Sox,+110,-132,14,8
+26 Sep 2022,,New York Yankees,Toronto Blue Jays,-111,-111,2,3
+26 Sep 2022,,Atlanta Braves,Washington Nationals,-263,+215,8,0
+26 Sep 2022,,Cincinnati Reds,Pittsburgh Pirates,-105,-116,3,8
+25 Sep 2022,,Boston Red Sox,New York Yankees,+160,-182,0,2
+25 Sep 2022,,St.Louis Cardinals,Los Angeles Dodgers,+135,-156,1,4
+25 Sep 2022,,New York Mets,Athletics,-323,+254,13,4
+25 Sep 2022,,San Francisco Giants,Arizona Diamondbacks,+110,-132,3,2
+25 Sep 2022,,San Diego Padres,Colorado Rockies,-156,+135,13,6
+25 Sep 2022,,Cleveland Guardians,Texas Rangers,-132,+110,10,4
+25 Sep 2022,,Detroit Tigers,Chicago White Sox,+195,-238,4,1
+25 Sep 2022,,Seattle Mariners,Kansas City Royals,-182,+160,12,13
+25 Sep 2022,,Los Angeles Angels,Minnesota Twins,-116,-105,10,3
+25 Sep 2022,,Milwaukee Brewers,Cincinnati Reds,-152,+129,1,2
+25 Sep 2022,,Washington Nationals,Miami Marlins,+154,-175,6,1
+25 Sep 2022,,Chicago Cubs,Pittsburgh Pirates,+120,-141,8,3
+25 Sep 2022,,Toronto Blue Jays,Tampa Bay Rays,+120,-141,7,1
+25 Sep 2022,,Atlanta Braves,Philadelphia Phillies,-147,+125,8,7
+25 Sep 2022,,Houston Astros,Baltimore Orioles,-167,+145,6,3
+24 Sep 2022,,St.Louis Cardinals,Los Angeles Dodgers,+129,-152,2,6
+24 Sep 2022,,San Francisco Giants,Arizona Diamondbacks,+100,-120,2,5
+24 Sep 2022,,San Diego Padres,Colorado Rockies,-152,+129,9,3
+24 Sep 2022,,Detroit Tigers,Chicago White Sox,+220,-270,7,2
+24 Sep 2022,,Seattle Mariners,Kansas City Royals,-182,+160,6,5
+24 Sep 2022,,Los Angeles Angels,Minnesota Twins,-105,-116,4,8
+24 Sep 2022,,Houston Astros,Baltimore Orioles,-156,+135,11,10
+24 Sep 2022,,Cleveland Guardians,Texas Rangers,-147,+125,4,2
+24 Sep 2022,,Milwaukee Brewers,Cincinnati Reds,-156,+135,10,2
+24 Sep 2022,,Chicago Cubs,Pittsburgh Pirates,-105,-116,0,6
+24 Sep 2022,,Washington Nationals,Miami Marlins,+160,-182,1,4
+24 Sep 2022,,Toronto Blue Jays,Tampa Bay Rays,+120,-141,3,1
+24 Sep 2022,,New York Mets,Athletics,-400,+309,4,10
+24 Sep 2022,,Atlanta Braves,Philadelphia Phillies,-120,+100,6,3
+24 Sep 2022,,Boston Red Sox,New York Yankees,+135,-156,5,7
+23 Sep 2022,,St.Louis Cardinals,Los Angeles Dodgers,+165,-185,11,0
+23 Sep 2022,,San Francisco Giants,Arizona Diamondbacks,+110,-132,6,5
+23 Sep 2022,,New York Mets,Athletics,-400,+190,9,2
+23 Sep 2022,,Detroit Tigers,Chicago White Sox,+165,-185,5,3
+23 Sep 2022,,San Diego Padres,Colorado Rockies,-200,+170,3,4
+23 Sep 2022,,Seattle Mariners,Kansas City Royals,-172,-135,1,5
+23 Sep 2022,,Los Angeles Angels,Minnesota Twins,+114,-135,4,2
+23 Sep 2022,,Cleveland Guardians,Texas Rangers,-125,+104,6,3
+23 Sep 2022,,Toronto Blue Jays,Tampa Bay Rays,-111,-111,6,10
+23 Sep 2022,,Atlanta Braves,Philadelphia Phillies,-135,+114,1,9
+23 Sep 2022,,Houston Astros,Baltimore Orioles,-182,+160,0,6
+23 Sep 2022,,Boston Red Sox,New York Yankees,+150,-172,4,5
+23 Sep 2022,,Milwaukee Brewers,Cincinnati Reds,-222,+179,5,3
+23 Sep 2022,,Washington Nationals,Miami Marlins,+185,-227,2,5
+23 Sep 2022,,Chicago Cubs,Pittsburgh Pirates,-111,-111,6,5
+22 Sep 2022,,Arizona Diamondbacks,Los Angeles Dodgers,+179,-222,2,3
+22 Sep 2022,,Cleveland Guardians,Chicago White Sox,-152,+129,4,2
+22 Sep 2022,,Atlanta Braves,Philadelphia Phillies,+120,-141,0,1
+22 Sep 2022,,Boston Red Sox,New York Yankees,+185,-227,4,5
+22 Sep 2022,,Houston Astros,Baltimore Orioles,-152,+129,0,2
+22 Sep 2022,,Milwaukee Brewers,Cincinnati Reds,-167,+145,5,1
+22 Sep 2022,,Toronto Blue Jays,Tampa Bay Rays,-125,+104,5,10
+22 Sep 2022,,Chicago Cubs,Pittsburgh Pirates,-116,-105,3,2
+22 Sep 2022,,St.Louis Cardinals,San Diego Padres,+135,-156,5,4
+22 Sep 2022,,Seattle Mariners,Athletics,-250,+204,9,5
+22 Sep 2022,,San Francisco Giants,Colorado Rockies,-120,+100,3,0
+22 Sep 2022,,Minnesota Twins,Kansas City Royals,-132,+110,1,4
+22 Sep 2022,,Los Angeles Angels,Texas Rangers,+160,-182,3,5
+21 Sep 2022,,Arizona Diamondbacks,Los Angeles Dodgers,+179,-222,6,1
+21 Sep 2022,,Seattle Mariners,Athletics,-238,+195,1,2
+21 Sep 2022,,St.Louis Cardinals,San Diego Padres,+120,-141,0,1
+21 Sep 2022,,San Francisco Giants,Colorado Rockies,-141,+120,6,1
+21 Sep 2022,,Cleveland Guardians,Chicago White Sox,-135,+114,8,2
+21 Sep 2022,,Minnesota Twins,Kansas City Royals,-132,+110,2,5
+21 Sep 2022,,Los Angeles Angels,Texas Rangers,+120,-141,2,7
+21 Sep 2022,,Detroit Tigers,Baltimore Orioles,+129,-152,1,8
+21 Sep 2022,,Pittsburgh Pirates,New York Yankees,+229,-286,2,14
+21 Sep 2022,,Toronto Blue Jays,Philadelphia Phillies,-105,-116,3,4
+21 Sep 2022,,Boston Red Sox,Cincinnati Reds,-152,+129,1,5
+21 Sep 2022,,Chicago Cubs,Miami Marlins,-105,-116,4,3
+21 Sep 2022,,Houston Astros,Tampa Bay Rays,-135,+114,5,2
+21 Sep 2022,,New York Mets,Milwaukee Brewers,-135,+114,0,6
+21 Sep 2022,,Washington Nationals,Atlanta Braves,+215,-263,3,2
+20 Sep 2022,,Seattle Mariners,Athletics,-222,+179,1,4
+20 Sep 2022,,St.Louis Cardinals,San Diego Padres,+104,-125,0,5
+20 Sep 2022,,San Francisco Giants,Colorado Rockies,-135,+114,6,3
+20 Sep 2022,,Cleveland Guardians,Chicago White Sox,+110,-132,10,7
+20 Sep 2022,,Minnesota Twins,Kansas City Royals,-141,+120,4,5
+20 Sep 2022,,Los Angeles Angels,Texas Rangers,+114,-135,5,2
+20 Sep 2022,,New York Mets,Milwaukee Brewers,-125,+104,7,5
+20 Sep 2022,,Washington Nationals,Atlanta Braves,+265,-333,2,3
+20 Sep 2022,,Detroit Tigers,Baltimore Orioles,+145,-167,3,2
+20 Sep 2022,,Pittsburgh Pirates,New York Yankees,+245,-312,8,9
+20 Sep 2022,,Toronto Blue Jays,Philadelphia Phillies,-105,-116,18,11
+20 Sep 2022,,Boston Red Sox,Cincinnati Reds,-125,+104,5,3
+20 Sep 2022,,Chicago Cubs,Miami Marlins,+150,-172,2,1
+20 Sep 2022,,Houston Astros,Tampa Bay Rays,-125,+104,5,0
+19 Sep 2022,,Arizona Diamondbacks,Los Angeles Dodgers,+235,-294,2,5
+19 Sep 2022,,San Francisco Giants,Colorado Rockies,-125,+104,10,7
+19 Sep 2022,,New York Mets,Milwaukee Brewers,+100,-120,7,2
+19 Sep 2022,,Washington Nationals,Atlanta Braves,+265,-333,2,5
+19 Sep 2022,,Detroit Tigers,Baltimore Orioles,+170,-200,11,0
+19 Sep 2022,,Chicago Cubs,Miami Marlins,+129,-152,3,10
+19 Sep 2022,,Houston Astros,Tampa Bay Rays,+110,-132,4,0
+19 Sep 2022,,Seattle Mariners,Los Angeles Angels,-141,+120,9,1
+19 Sep 2022,,Minnesota Twins,Cleveland Guardians,+104,-125,4,11
+18 Sep 2022,,Los Angeles Dodgers,San Francisco Giants,-182,+160,4,3
+18 Sep 2022,,San Diego Padres,Arizona Diamondbacks,-152,+129,6,1
+18 Sep 2022,,Seattle Mariners,Los Angeles Angels,+110,-132,1,5
+18 Sep 2022,,Colorado Rockies,Chicago Cubs,+104,-125,4,3
+18 Sep 2022,,Cincinnati Reds,St.Louis Cardinals,+210,-250,3,0
+18 Sep 2022,,Athletics,Houston Astros,+270,-345,2,11
+18 Sep 2022,,New York Yankees,Milwaukee Brewers,-182,+160,12,8
+18 Sep 2022,,Minnesota Twins,Cleveland Guardians,-111,-111,3,0
+18 Sep 2022,,Pittsburgh Pirates,New York Mets,+375,-500,3,7
+18 Sep 2022,,Baltimore Orioles,Toronto Blue Jays,+170,-200,5,4
+18 Sep 2022,,Philadelphia Phillies,Atlanta Braves,+215,-263,2,5
+18 Sep 2022,,Kansas City Royals,Boston Red Sox,+170,-200,3,13
+18 Sep 2022,,Miami Marlins,Washington Nationals,-175,+154,3,1
+18 Sep 2022,,Texas Rangers,Tampa Bay Rays,+170,-200,3,5
+18 Sep 2022,,Chicago White Sox,Detroit Tigers,-161,+140,11,5
+17 Sep 2022,,Seattle Mariners,Los Angeles Angels,-116,-105,1,2
+17 Sep 2022,,Los Angeles Dodgers,San Francisco Giants,-167,+145,7,2
+17 Sep 2022,,San Diego Padres,Arizona Diamondbacks,-147,+125,2,0
+17 Sep 2022,,Philadelphia Phillies,Atlanta Braves,-116,-250,3,4
+17 Sep 2022,,Athletics,Houston Astros,+290,-370,8,5
+17 Sep 2022,,New York Yankees,Milwaukee Brewers,-167,-141,1,4
+17 Sep 2022,,Pittsburgh Pirates,New York Mets,+350,-455,1,5
+17 Sep 2022,,Chicago White Sox,Detroit Tigers,-161,+140,4,3
+17 Sep 2022,,Texas Rangers,Tampa Bay Rays,+170,-200,1,5
+17 Sep 2022,,Kansas City Royals,Boston Red Sox,+120,-141,9,0
+17 Sep 2022,,Miami Marlins,Washington Nationals,-132,+110,3,5
+17 Sep 2022,,Baltimore Orioles,Toronto Blue Jays,+145,-167,3,6
+17 Sep 2022,,Colorado Rockies,Chicago Cubs,+120,-141,3,1
+17 Sep 2022,,Cincinnati Reds,St.Louis Cardinals,,,1,5
+16 Sep 2022,,Los Angeles Dodgers,San Francisco Giants,-167,+145,5,0
+16 Sep 2022,,San Diego Padres,Arizona Diamondbacks,-105,-116,12,3
+16 Sep 2022,,Seattle Mariners,Los Angeles Angels,-111,-111,7,8
+16 Sep 2022,,Cincinnati Reds,St.Louis Cardinals,+229,-286,5,6
+16 Sep 2022,,New York Yankees,Milwaukee Brewers,-105,-116,6,7
+16 Sep 2022,,Athletics,Houston Astros,+229,-286,0,5
+16 Sep 2022,,Philadelphia Phillies,Atlanta Braves,-111,-111,2,7
+16 Sep 2022,,Kansas City Royals,Boston Red Sox,+140,-161,1,2
+16 Sep 2022,,Chicago White Sox,Detroit Tigers,-152,+129,2,3
+16 Sep 2022,,Minnesota Twins,Cleveland Guardians,+140,-161,3,4
+16 Sep 2022,,Pittsburgh Pirates,New York Mets,+254,-323,3,4
+16 Sep 2022,,Texas Rangers,Tampa Bay Rays,+140,-161,4,3
+16 Sep 2022,,Baltimore Orioles,Toronto Blue Jays,+140,-161,3,6
+16 Sep 2022,,Miami Marlins,Washington Nationals,-125,+104,4,5
+16 Sep 2022,,Colorado Rockies,Chicago Cubs,+110,-132,1,2
+15 Sep 2022,,San Diego Padres,Arizona Diamondbacks,-172,+150,0,4
+15 Sep 2022,,Cincinnati Reds,St.Louis Cardinals,+229,-286,3,2
+15 Sep 2022,,Kansas City Royals,Minnesota Twins,+150,-172,2,3
+15 Sep 2022,,Athletics,Houston Astros,+290,-370,2,5
+15 Sep 2022,,Pittsburgh Pirates,New York Mets,+215,-263,1,7
+15 Sep 2022,,Philadelphia Phillies,Miami Marlins,-132,+110,3,5
+15 Sep 2022,,Tampa Bay Rays,Toronto Blue Jays,+110,-132,11,0
+15 Sep 2022,,Chicago White Sox,Cleveland Guardians,-152,+129,8,2
+14 Sep 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-125,+104,3,5
+14 Sep 2022,,Athletics,Texas Rangers,+140,-161,8,7
+14 Sep 2022,,Milwaukee Brewers,St.Louis Cardinals,-125,+104,1,4
+14 Sep 2022,,Kansas City Royals,Minnesota Twins,+150,-172,0,4
+14 Sep 2022,,New York Yankees,Boston Red Sox,-132,+110,5,3
+14 Sep 2022,,Chicago Cubs,New York Mets,+175,-213,6,3
+14 Sep 2022,,Tampa Bay Rays,Toronto Blue Jays,+125,-147,1,5
+14 Sep 2022,,Baltimore Orioles,Washington Nationals,-152,+129,6,2
+14 Sep 2022,,Philadelphia Phillies,Miami Marlins,-152,+129,6,1
+14 Sep 2022,,San Diego Padres,Seattle Mariners,+150,-172,1,6
+14 Sep 2022,,Atlanta Braves,San Francisco Giants,-132,+110,1,4
+14 Sep 2022,,Colorado Rockies,Chicago White Sox,+210,-250,3,0
+14 Sep 2022,,Los Angeles Angels,Cleveland Guardians,-105,-116,3,5
+14 Sep 2022,,Houston Astros,Detroit Tigers,-227,+185,2,1
+14 Sep 2022,,Pittsburgh Pirates,Cincinnati Reds,+135,-156,10,4
+13 Sep 2022,,Atlanta Braves,San Francisco Giants,-120,+100,5,1
+13 Sep 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-213,+175,4,0
+13 Sep 2022,,San Diego Padres,Seattle Mariners,+140,-161,2,0
+13 Sep 2022,,Colorado Rockies,Chicago White Sox,+204,-250,2,4
+13 Sep 2022,,Athletics,Texas Rangers,+140,-161,7,8
+13 Sep 2022,,Milwaukee Brewers,St.Louis Cardinals,-120,+100,8,4
+13 Sep 2022,,Kansas City Royals,Minnesota Twins,+170,-200,3,6
+13 Sep 2022,,New York Yankees,Boston Red Sox,-132,+110,7,6
+13 Sep 2022,,Chicago Cubs,New York Mets,+350,-455,4,1
+13 Sep 2022,,Baltimore Orioles,Washington Nationals,-141,+120,4,3
+13 Sep 2022,,Houston Astros,Detroit Tigers,-270,+220,6,3
+13 Sep 2022,,Philadelphia Phillies,Miami Marlins,-135,+114,2,1
+13 Sep 2022,,Los Angeles Angels,Cleveland Guardians,+110,-132,1,3
+12 Sep 2022,,Atlanta Braves,San Francisco Giants,-156,+135,2,3
+12 Sep 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-200,+170,6,0
+12 Sep 2022,,Chicago Cubs,New York Mets,+320,-400,5,2
+12 Sep 2022,,Tampa Bay Rays,Toronto Blue Jays,+150,-172,2,3
+12 Sep 2022,,Pittsburgh Pirates,Cincinnati Reds,+114,-135,6,3
+12 Sep 2022,,Houston Astros,Detroit Tigers,-222,+179,7,0
+12 Sep 2022,,Los Angeles Angels,Cleveland Guardians,+125,-147,4,5
+11 Sep 2022,,San Francisco Giants,Chicago Cubs,+100,-120,4,2
+11 Sep 2022,,Atlanta Braves,Seattle Mariners,-132,+110,7,8
+11 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-132,+110,11,2
+11 Sep 2022,,Chicago White Sox,Athletics,-167,+145,3,10
+11 Sep 2022,,Arizona Diamondbacks,Colorado Rockies,-161,+140,12,6
+11 Sep 2022,,Toronto Blue Jays,Texas Rangers,-120,+100,1,4
+11 Sep 2022,,Cincinnati Reds,Milwaukee Brewers,+225,-278,6,7
+11 Sep 2022,,Cleveland Guardians,Minnesota Twins,-147,+125,4,1
+11 Sep 2022,,Detroit Tigers,Kansas City Royals,+140,-161,0,4
+11 Sep 2022,,Los Angeles Angels,Houston Astros,+229,-286,4,12
+11 Sep 2022,,New York Mets,Miami Marlins,-147,+125,9,3
+11 Sep 2022,,Tampa Bay Rays,New York Yankees,+110,-132,4,10
+11 Sep 2022,,St.Louis Cardinals,Pittsburgh Pirates,-167,+145,4,3
+11 Sep 2022,,Boston Red Sox,Baltimore Orioles,+104,-125,1,0
+11 Sep 2022,,Washington Nationals,Philadelphia Phillies,+240,-303,5,7
+10 Sep 2022,,Atlanta Braves,Seattle Mariners,-120,+100,1,3
+10 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-125,+104,8,4
+10 Sep 2022,,Arizona Diamondbacks,Colorado Rockies,-167,+145,1,4
+10 Sep 2022,,St.Louis Cardinals,Pittsburgh Pirates,-222,+179,7,5
+10 Sep 2022,,Cincinnati Reds,Milwaukee Brewers,+235,-294,1,5
+10 Sep 2022,,Los Angeles Angels,Houston Astros,+114,-250,6,1
+10 Sep 2022,,Cleveland Guardians,Minnesota Twins,-120,+100,6,4
+10 Sep 2022,,Toronto Blue Jays,Texas Rangers,-213,+175,11,7
+10 Sep 2022,,New York Mets,Miami Marlins,-141,+120,11,3
+10 Sep 2022,,Washington Nationals,Philadelphia Phillies,+254,-323,5,8
+10 Sep 2022,,Boston Red Sox,Baltimore Orioles,+100,-120,17,4
+10 Sep 2022,,Detroit Tigers,Kansas City Royals,+110,-132,8,4
+10 Sep 2022,,Chicago White Sox,Athletics,-185,+165,10,2
+10 Sep 2022,,San Francisco Giants,Chicago Cubs,-120,+100,5,2
+10 Sep 2022,,Tampa Bay Rays,New York Yankees,-116,-105,3,10
+09 Sep 2022,,Chicago White Sox,Athletics,-182,+160,5,3
+09 Sep 2022,,Atlanta Braves,Seattle Mariners,-135,+114,6,4
+09 Sep 2022,,Los Angeles Dodgers,San Diego Padres,-152,+129,4,5
+09 Sep 2022,,Arizona Diamondbacks,Colorado Rockies,-116,-105,10,13
+09 Sep 2022,,Cincinnati Reds,Milwaukee Brewers,+170,-200,8,2
+09 Sep 2022,,Cleveland Guardians,Minnesota Twins,-125,+104,7,6
+09 Sep 2022,,Detroit Tigers,Kansas City Royals,+114,-135,10,2
+09 Sep 2022,,Los Angeles Angels,Houston Astros,+114,-135,3,4
+09 Sep 2022,,Toronto Blue Jays,Texas Rangers,-200,+170,4,3
+09 Sep 2022,,Boston Red Sox,Baltimore Orioles,+100,-120,2,3
+09 Sep 2022,,Tampa Bay Rays,New York Yankees,-105,-116,4,2
+09 Sep 2022,,Washington Nationals,Philadelphia Phillies,+210,-250,3,5
+09 Sep 2022,,New York Mets,Miami Marlins,-156,+135,3,6
+09 Sep 2022,,St.Louis Cardinals,Pittsburgh Pirates,-222,+179,2,8
+09 Sep 2022,,San Francisco Giants,Chicago Cubs,-147,+125,2,4
+08 Sep 2022,,Chicago White Sox,Athletics,-156,+135,14,2
+08 Sep 2022,,Minnesota Twins,New York Yankees,+129,-152,4,3
+08 Sep 2022,,Miami Marlins,Philadelphia Phillies,+120,-141,6,5
+08 Sep 2022,,Cincinnati Reds,Chicago Cubs,+125,-147,4,3
+08 Sep 2022,,Washington Nationals,St.Louis Cardinals,+229,-286,11,6
+07 Sep 2022,,Arizona Diamondbacks,San Diego Padres,+195,-238,3,6
+07 Sep 2022,,Cleveland Guardians,Kansas City Royals,-147,+125,1,2
+07 Sep 2022,,Texas Rangers,Houston Astros,+240,-303,3,4
+07 Sep 2022,,Washington Nationals,St.Louis Cardinals,+240,-303,5,6
+07 Sep 2022,,Cincinnati Reds,Chicago Cubs,+129,-152,7,1
+07 Sep 2022,,Toronto Blue Jays,Baltimore Orioles,-147,+125,4,1
+07 Sep 2022,,Miami Marlins,Philadelphia Phillies,+110,-132,3,4
+07 Sep 2022,,Boston Red Sox,Tampa Bay Rays,+160,-182,0,1
+07 Sep 2022,,Chicago White Sox,Seattle Mariners,+170,-200,9,6
+07 Sep 2022,,San Francisco Giants,Los Angeles Dodgers,+204,-250,3,7
+07 Sep 2022,,Detroit Tigers,Los Angeles Angels,+190,-233,5,4
+07 Sep 2022,,Atlanta Braves,Athletics,-312,+250,7,3
+07 Sep 2022,,Milwaukee Brewers,Colorado Rockies,-141,+120,4,8
+07 Sep 2022,,Minnesota Twins,New York Yankees,,,4,5
+07 Sep 2022,,New York Mets,Pittsburgh Pirates,,,5,1
+06 Sep 2022,,San Francisco Giants,Los Angeles Dodgers,+220,-270,3,6
+06 Sep 2022,,Arizona Diamondbacks,San Diego Padres,+175,-213,5,6
+06 Sep 2022,,Atlanta Braves,Athletics,-270,+220,10,9
+06 Sep 2022,,Chicago White Sox,Seattle Mariners,+135,-156,0,3
+06 Sep 2022,,Detroit Tigers,Los Angeles Angels,+175,-213,4,5
+06 Sep 2022,,Milwaukee Brewers,Colorado Rockies,-141,+120,7,10
+06 Sep 2022,,Cleveland Guardians,Kansas City Royals,-200,+170,4,1
+06 Sep 2022,,Texas Rangers,Houston Astros,+220,-270,4,3
+06 Sep 2022,,Washington Nationals,St.Louis Cardinals,+250,-312,1,4
+06 Sep 2022,,Cincinnati Reds,Chicago Cubs,+140,-161,3,9
+06 Sep 2022,,Toronto Blue Jays,Baltimore Orioles,-147,+125,6,9
+06 Sep 2022,,Miami Marlins,Philadelphia Phillies,+160,-182,2,3
+06 Sep 2022,,Boston Red Sox,Tampa Bay Rays,+120,-141,4,8
+06 Sep 2022,,New York Mets,Pittsburgh Pirates,-227,+185,2,8
+05 Sep 2022,,San Francisco Giants,Los Angeles Dodgers,+190,-233,7,4
+05 Sep 2022,,Detroit Tigers,Los Angeles Angels,+125,-147,0,10
+05 Sep 2022,,Cleveland Guardians,Kansas City Royals,-182,+160,6,5
+05 Sep 2022,,Texas Rangers,Houston Astros,+220,-270,0,1
+05 Sep 2022,,Arizona Diamondbacks,San Diego Padres,+145,-167,5,0
+05 Sep 2022,,Chicago White Sox,Seattle Mariners,+125,-147,3,2
+05 Sep 2022,,Washington Nationals,St.Louis Cardinals,+215,-263,6,0
+05 Sep 2022,,Boston Red Sox,Tampa Bay Rays,-111,-111,3,4
+05 Sep 2022,,Milwaukee Brewers,Colorado Rockies,-147,+125,6,4
+05 Sep 2022,,Toronto Blue Jays,Baltimore Orioles,,,8,4
+05 Sep 2022,,Minnesota Twins,New York Yankees,+145,-167,2,5
+04 Sep 2022,,San Diego Padres,Los Angeles Dodgers,+140,-161,4,9
+04 Sep 2022,,Milwaukee Brewers,Arizona Diamondbacks,+150,-172,1,5
+04 Sep 2022,,Houston Astros,Los Angeles Angels,-185,+165,9,1
+04 Sep 2022,,Philadelphia Phillies,San Francisco Giants,-105,-116,3,5
+04 Sep 2022,,Colorado Rockies,Cincinnati Reds,,,0,10
+04 Sep 2022,,Seattle Mariners,Cleveland Guardians,-125,+104,6,3
+04 Sep 2022,,Chicago Cubs,St.Louis Cardinals,+165,-185,0,2
+04 Sep 2022,,Minnesota Twins,Chicago White Sox,+114,-135,5,1
+04 Sep 2022,,Kansas City Royals,Detroit Tigers,+104,-125,3,2
+04 Sep 2022,,Washington Nationals,New York Mets,+245,-312,7,1
+04 Sep 2022,,New York Yankees,Tampa Bay Rays,-125,+104,2,1
+04 Sep 2022,,Athletics,Baltimore Orioles,+165,-185,5,0
+04 Sep 2022,,Miami Marlins,Atlanta Braves,+215,-263,1,7
+04 Sep 2022,,Texas Rangers,Boston Red Sox,+100,-120,2,5
+04 Sep 2022,,Colorado Rockies,Cincinnati Reds,,,8,4
+04 Sep 2022,,Toronto Blue Jays,Pittsburgh Pirates,-213,+175,4,3
+03 Sep 2022,,San Diego Padres,Los Angeles Dodgers,+195,-238,1,12
+03 Sep 2022,,Houston Astros,Los Angeles Angels,-161,+140,1,2
+03 Sep 2022,,Milwaukee Brewers,Arizona Diamondbacks,-200,+170,8,6
+03 Sep 2022,,Miami Marlins,Atlanta Braves,+220,-270,1,2
+03 Sep 2022,,Chicago Cubs,St.Louis Cardinals,+170,-200,4,8
+03 Sep 2022,,Seattle Mariners,Cleveland Guardians,-135,+114,4,0
+03 Sep 2022,,Washington Nationals,New York Mets,+254,-323,7,1
+03 Sep 2022,,Minnesota Twins,Chicago White Sox,+104,-125,0,13
+03 Sep 2022,,Athletics,Baltimore Orioles,+165,-185,1,8
+03 Sep 2022,,Toronto Blue Jays,Pittsburgh Pirates,-222,+179,4,1
+03 Sep 2022,,Kansas City Royals,Detroit Tigers,+100,-120,12,2
+03 Sep 2022,,New York Yankees,Tampa Bay Rays,+114,-135,1,2
+03 Sep 2022,,Texas Rangers,Boston Red Sox,+140,-161,3,5
+03 Sep 2022,,Philadelphia Phillies,San Francisco Giants,-125,+104,4,5
+02 Sep 2022,,Philadelphia Phillies,San Francisco Giants,-125,+104,1,13
+02 Sep 2022,,San Diego Padres,Los Angeles Dodgers,+179,-222,7,1
+02 Sep 2022,,Milwaukee Brewers,Arizona Diamondbacks,-172,+150,1,2
+02 Sep 2022,,Houston Astros,Los Angeles Angels,+100,-120,4,2
+02 Sep 2022,,Chicago Cubs,St.Louis Cardinals,+179,-222,0,8
+02 Sep 2022,,Minnesota Twins,Chicago White Sox,+120,-141,3,4
+02 Sep 2022,,Miami Marlins,Atlanta Braves,+170,-200,1,8
+02 Sep 2022,,Texas Rangers,Boston Red Sox,+170,-200,1,9
+02 Sep 2022,,Seattle Mariners,Cleveland Guardians,-135,+114,6,1
+02 Sep 2022,,Kansas City Royals,Detroit Tigers,-111,-111,4,5
+02 Sep 2022,,Washington Nationals,New York Mets,+350,-455,3,7
+02 Sep 2022,,New York Yankees,Tampa Bay Rays,+120,-141,0,9
+02 Sep 2022,,Athletics,Baltimore Orioles,+140,-161,2,5
+02 Sep 2022,,Colorado Rockies,Cincinnati Reds,+100,-120,2,3
+02 Sep 2022,,Toronto Blue Jays,Pittsburgh Pirates,-244,+200,4,0
+01 Sep 2022,,Milwaukee Brewers,Arizona Diamondbacks,-116,-105,0,5
+01 Sep 2022,,Colorado Rockies,Atlanta Braves,+320,-400,0,3
+01 Sep 2022,,Texas Rangers,Boston Red Sox,+165,-185,8,9
+01 Sep 2022,,Baltimore Orioles,Cleveland Guardians,+160,-182,3,0
+01 Sep 2022,,Los Angeles Dodgers,New York Mets,-141,+120,3,5
+01 Sep 2022,,Athletics,Washington Nationals,-105,-116,5,7
+01 Sep 2022,,Kansas City Royals,Chicago White Sox,+154,-175,1,7
+01 Sep 2022,,Seattle Mariners,Detroit Tigers,-152,+129,7,0
+31 Aug 2022,,Philadelphia Phillies,Arizona Diamondbacks,-135,+114,18,2
+31 Aug 2022,,New York Yankees,Los Angeles Angels,-200,+170,2,3
+31 Aug 2022,,Kansas City Royals,Chicago White Sox,+175,-213,2,4
+31 Aug 2022,,Boston Red Sox,Minnesota Twins,+104,-125,6,5
+31 Aug 2022,,Colorado Rockies,Atlanta Braves,+325,-435,2,3
+31 Aug 2022,,Seattle Mariners,Detroit Tigers,-152,+129,5,3
+31 Aug 2022,,Los Angeles Dodgers,New York Mets,-141,+120,1,2
+31 Aug 2022,,Chicago Cubs,Toronto Blue Jays,+190,-233,7,5
+31 Aug 2022,,Athletics,Washington Nationals,-116,-105,1,5
+31 Aug 2022,,St.Louis Cardinals,Cincinnati Reds,-244,+200,5,3
+31 Aug 2022,,Tampa Bay Rays,Miami Marlins,-161,+140,2,1
+31 Aug 2022,,Baltimore Orioles,Cleveland Guardians,+167,-192,4,0
+31 Aug 2022,,San Diego Padres,San Francisco Giants,-156,+135,5,4
+31 Aug 2022,,Pittsburgh Pirates,Milwaukee Brewers,+229,-286,1,6
+31 Aug 2022,,Houston Astros,Texas Rangers,-135,+114,5,3
+30 Aug 2022,,San Diego Padres,San Francisco Giants,-135,+114,4,3
+30 Aug 2022,,Philadelphia Phillies,Arizona Diamondbacks,-141,+120,3,12
+30 Aug 2022,,New York Yankees,Los Angeles Angels,-200,+170,7,4
+30 Aug 2022,,Kansas City Royals,Chicago White Sox,+165,-185,9,7
+30 Aug 2022,,Pittsburgh Pirates,Milwaukee Brewers,+154,-175,4,2
+30 Aug 2022,,Houston Astros,Texas Rangers,-147,+125,4,2
+30 Aug 2022,,Boston Red Sox,Minnesota Twins,+114,-135,5,10
+30 Aug 2022,,Colorado Rockies,Atlanta Braves,+265,-333,3,2
+30 Aug 2022,,Seattle Mariners,Detroit Tigers,-161,+140,9,3
+30 Aug 2022,,Los Angeles Dodgers,New York Mets,+114,-135,4,3
+30 Aug 2022,,Chicago Cubs,Toronto Blue Jays,+185,-227,3,5
+30 Aug 2022,,Athletics,Washington Nationals,-116,-105,10,6
+30 Aug 2022,,St.Louis Cardinals,Cincinnati Reds,-233,+190,1,5
+30 Aug 2022,,Tampa Bay Rays,Miami Marlins,-185,+165,7,2
+30 Aug 2022,,Baltimore Orioles,Cleveland Guardians,+145,-167,1,5
+29 Aug 2022,,San Diego Padres,San Francisco Giants,-125,+104,6,5
+29 Aug 2022,,Philadelphia Phillies,Arizona Diamondbacks,-132,+110,7,13
+29 Aug 2022,,New York Yankees,Los Angeles Angels,-172,+150,3,4
+29 Aug 2022,,Pittsburgh Pirates,Milwaukee Brewers,+265,-333,5,7
+29 Aug 2022,,Boston Red Sox,Minnesota Twins,+114,-135,2,4
+29 Aug 2022,,Chicago Cubs,Toronto Blue Jays,+195,-238,4,5
+29 Aug 2022,,St.Louis Cardinals,Cincinnati Reds,-213,+175,13,4
+29 Aug 2022,,Los Angeles Dodgers,Miami Marlins,-167,+145,3,2
+28 Aug 2022,,Atlanta Braves,St.Louis Cardinals,+125,-147,3,6
+28 Aug 2022,,Cleveland Guardians,Seattle Mariners,+129,-152,0,4
+28 Aug 2022,,New York Yankees,Athletics,-200,+170,1,4
+28 Aug 2022,,Detroit Tigers,Texas Rangers,+150,-172,9,8
+28 Aug 2022,,Arizona Diamondbacks,Chicago White Sox,+160,-182,3,2
+28 Aug 2022,,Baltimore Orioles,Houston Astros,+200,-244,1,3
+28 Aug 2022,,Chicago Cubs,Milwaukee Brewers,+154,-175,7,9
+28 Aug 2022,,San Diego Padres,Kansas City Royals,-200,+170,7,15
+28 Aug 2022,,San Francisco Giants,Minnesota Twins,-111,-111,3,8
+28 Aug 2022,,Colorado Rockies,New York Mets,+270,-345,1,0
+28 Aug 2022,,Los Angeles Angels,Toronto Blue Jays,+215,-263,8,3
+28 Aug 2022,,Tampa Bay Rays,Boston Red Sox,-105,-116,12,4
+28 Aug 2022,,Cincinnati Reds,Washington Nationals,-116,-105,2,3
+28 Aug 2022,,Pittsburgh Pirates,Philadelphia Phillies,+210,-250,5,0
+28 Aug 2022,,Los Angeles Dodgers,Miami Marlins,-263,+215,8,1
+27 Aug 2022,,Cleveland Guardians,Seattle Mariners,+129,-152,4,3
+27 Aug 2022,,New York Yankees,Athletics,-233,+190,2,3
+27 Aug 2022,,Atlanta Braves,St.Louis Cardinals,-105,-116,5,6
+27 Aug 2022,,San Francisco Giants,Minnesota Twins,+100,-120,2,3
+27 Aug 2022,,Arizona Diamondbacks,Chicago White Sox,+154,-175,10,5
+27 Aug 2022,,Baltimore Orioles,Houston Astros,+215,-263,3,1
+27 Aug 2022,,Chicago Cubs,Milwaukee Brewers,+145,-167,0,7
+27 Aug 2022,,Colorado Rockies,New York Mets,+275,-357,0,3
+27 Aug 2022,,San Diego Padres,Kansas City Royals,-182,+160,4,3
+27 Aug 2022,,Cincinnati Reds,Washington Nationals,-120,+100,6,2
+27 Aug 2022,,Detroit Tigers,Texas Rangers,+145,-167,11,2
+27 Aug 2022,,Los Angeles Dodgers,Miami Marlins,-278,+225,1,2
+27 Aug 2022,,Pittsburgh Pirates,Philadelphia Phillies,+250,-312,0,6
+27 Aug 2022,,Tampa Bay Rays,Boston Red Sox,-125,+104,1,5
+27 Aug 2022,,Los Angeles Angels,Toronto Blue Jays,+129,-152,2,0
+26 Aug 2022,,Cleveland Guardians,Seattle Mariners,-116,-185,2,3
+26 Aug 2022,,New York Yankees,Athletics,-244,+200,3,2
+26 Aug 2022,,Atlanta Braves,St.Louis Cardinals,-111,-111,11,4
+26 Aug 2022,,Arizona Diamondbacks,Chicago White Sox,+145,-167,7,2
+26 Aug 2022,,Baltimore Orioles,Houston Astros,+167,-192,2,0
+26 Aug 2022,,Chicago Cubs,Milwaukee Brewers,+167,-192,4,3
+26 Aug 2022,,San Diego Padres,Kansas City Royals,-182,+160,13,5
+26 Aug 2022,,San Francisco Giants,Minnesota Twins,+110,-132,0,9
+26 Aug 2022,,Detroit Tigers,Texas Rangers,+140,-161,6,7
+26 Aug 2022,,Tampa Bay Rays,Boston Red Sox,-116,-105,8,9
+26 Aug 2022,,Colorado Rockies,New York Mets,+215,-263,6,7
+26 Aug 2022,,Los Angeles Angels,Toronto Blue Jays,+129,-152,12,0
+26 Aug 2022,,Cincinnati Reds,Washington Nationals,+104,-125,7,3
+26 Aug 2022,,Pittsburgh Pirates,Philadelphia Phillies,+229,-286,4,7
+26 Aug 2022,,Los Angeles Dodgers,Miami Marlins,-175,+154,10,6
+25 Aug 2022,,New York Yankees,Athletics,-213,+175,13,4
+25 Aug 2022,,Minnesota Twins,Houston Astros,+140,-161,3,6
+25 Aug 2022,,Toronto Blue Jays,Boston Red Sox,-182,+160,6,5
+25 Aug 2022,,Colorado Rockies,New York Mets,+275,-357,1,3
+25 Aug 2022,,Chicago White Sox,Baltimore Orioles,-125,+104,3,4
+25 Aug 2022,,Cincinnati Reds,Philadelphia Phillies,+290,-370,0,4
+25 Aug 2022,,Cleveland Guardians,Seattle Mariners,-116,-105,1,3
+25 Aug 2022,,St.Louis Cardinals,Chicago Cubs,-105,-116,8,3
+25 Aug 2022,,Los Angeles Angels,Tampa Bay Rays,+175,-213,3,8
+24 Aug 2022,,Milwaukee Brewers,Los Angeles Dodgers,+210,-250,6,12
+24 Aug 2022,,Arizona Diamondbacks,Kansas City Royals,-132,+110,3,5
+24 Aug 2022,,Minnesota Twins,Houston Astros,+167,-192,3,5
+24 Aug 2022,,St.Louis Cardinals,Chicago Cubs,-132,+110,1,7
+24 Aug 2022,,Toronto Blue Jays,Boston Red Sox,-167,+145,3,2
+24 Aug 2022,,Los Angeles Angels,Tampa Bay Rays,+165,-185,3,4
+24 Aug 2022,,Chicago White Sox,Baltimore Orioles,-105,-116,5,3
+24 Aug 2022,,Cincinnati Reds,Philadelphia Phillies,+254,-323,5,7
+24 Aug 2022,,Cleveland Guardians,San Diego Padres,+150,-172,7,0
+24 Aug 2022,,Washington Nationals,Seattle Mariners,+250,-312,3,1
+24 Aug 2022,,Miami Marlins,Athletics,-125,+104,2,3
+24 Aug 2022,,Texas Rangers,Colorado Rockies,-135,+114,16,4
+24 Aug 2022,,San Francisco Giants,Detroit Tigers,-156,+135,1,6
+24 Aug 2022,,Atlanta Braves,Pittsburgh Pirates,-250,+204,14,2
+23 Aug 2022,,Milwaukee Brewers,Los Angeles Dodgers,+135,-156,1,10
+23 Aug 2022,,Washington Nationals,Seattle Mariners,+250,-312,2,4
+23 Aug 2022,,Miami Marlins,Athletics,-120,+100,5,3
+23 Aug 2022,,Cleveland Guardians,San Diego Padres,+140,-161,3,1
+23 Aug 2022,,Texas Rangers,Colorado Rockies,-125,+104,6,7
+23 Aug 2022,,Arizona Diamondbacks,Kansas City Royals,-125,+104,7,3
+23 Aug 2022,,Minnesota Twins,Houston Astros,+195,-238,2,4
+23 Aug 2022,,Toronto Blue Jays,Boston Red Sox,-147,+125,9,3
+23 Aug 2022,,San Francisco Giants,Detroit Tigers,-167,+145,3,1
+23 Aug 2022,,Los Angeles Angels,Tampa Bay Rays,+215,-263,1,11
+23 Aug 2022,,Atlanta Braves,Pittsburgh Pirates,-238,+195,6,1
+23 Aug 2022,,Chicago White Sox,Baltimore Orioles,-125,+104,3,5
+23 Aug 2022,,Cincinnati Reds,Philadelphia Phillies,+175,-213,6,7
+23 Aug 2022,,New York Mets,New York Yankees,+110,-132,2,4
+22 Aug 2022,,Milwaukee Brewers,Los Angeles Dodgers,+125,-147,4,0
+22 Aug 2022,,Miami Marlins,Athletics,-135,+114,3,0
+22 Aug 2022,,St.Louis Cardinals,Chicago Cubs,-172,+150,1,0
+22 Aug 2022,,Los Angeles Angels,Tampa Bay Rays,+160,-182,1,2
+22 Aug 2022,,Texas Rangers,Minnesota Twins,+175,-213,2,1
+22 Aug 2022,,Atlanta Braves,Pittsburgh Pirates,-278,+225,2,1
+22 Aug 2022,,Cincinnati Reds,Philadelphia Phillies,+179,-222,1,4
+22 Aug 2022,,New York Mets,New York Yankees,-167,+145,2,4
+22 Aug 2022,,Chicago White Sox,Kansas City Royals,-156,+135,4,6
+21 Aug 2022,,Boston Red Sox,Baltimore Orioles,-116,-105,3,5
+21 Aug 2022,,St.Louis Cardinals,Arizona Diamondbacks,-132,+110,6,4
+21 Aug 2022,,Miami Marlins,Los Angeles Dodgers,+150,-172,3,10
+21 Aug 2022,,Washington Nationals,San Diego Padres,+245,-312,1,2
+21 Aug 2022,,Seattle Mariners,Athletics,-222,+179,3,5
+21 Aug 2022,,San Francisco Giants,Colorado Rockies,-132,+110,9,8
+21 Aug 2022,,Milwaukee Brewers,Chicago Cubs,-156,+135,5,2
+21 Aug 2022,,Texas Rangers,Minnesota Twins,+160,-182,7,0
+21 Aug 2022,,Los Angeles Angels,Detroit Tigers,-185,+165,0,4
+21 Aug 2022,,Kansas City Royals,Tampa Bay Rays,+165,-185,2,3
+21 Aug 2022,,Houston Astros,Atlanta Braves,+140,-161,5,4
+21 Aug 2022,,Cincinnati Reds,Pittsburgh Pirates,+100,-120,9,5
+21 Aug 2022,,New York Mets,Philadelphia Phillies,+110,-132,10,9
+21 Aug 2022,,Toronto Blue Jays,New York Yankees,+100,-120,2,4
+20 Aug 2022,,Miami Marlins,Los Angeles Dodgers,+160,-182,0,7
+20 Aug 2022,,Washington Nationals,San Diego Padres,+229,-286,1,2
+20 Aug 2022,,St.Louis Cardinals,Arizona Diamondbacks,-141,+120,16,7
+20 Aug 2022,,San Francisco Giants,Colorado Rockies,-135,+114,3,4
+20 Aug 2022,,Seattle Mariners,Athletics,-213,+175,3,4
+20 Aug 2022,,Houston Astros,Atlanta Braves,+125,-147,4,5
+20 Aug 2022,,Texas Rangers,Minnesota Twins,+160,-182,4,3
+20 Aug 2022,,Cincinnati Reds,Pittsburgh Pirates,+100,-120,10,1
+20 Aug 2022,,Chicago White Sox,Cleveland Guardians,-132,+110,2,0
+20 Aug 2022,,Kansas City Royals,Tampa Bay Rays,+170,-200,2,5
+20 Aug 2022,,Boston Red Sox,Baltimore Orioles,-132,+110,4,3
+20 Aug 2022,,Milwaukee Brewers,Chicago Cubs,-125,+104,5,6
+20 Aug 2022,,Los Angeles Angels,Detroit Tigers,-167,+145,3,4
+20 Aug 2022,,New York Mets,Philadelphia Phillies,,,8,2
+20 Aug 2022,,Toronto Blue Jays,New York Yankees,+165,-185,5,2
+19 Aug 2022,,Miami Marlins,Los Angeles Dodgers,+220,-270,1,2
+19 Aug 2022,,St.Louis Cardinals,Arizona Diamondbacks,-135,+114,5,1
+19 Aug 2022,,Seattle Mariners,Athletics,-175,+154,10,2
+19 Aug 2022,,Washington Nationals,San Diego Padres,+265,-333,6,3
+19 Aug 2022,,San Francisco Giants,Colorado Rockies,-167,+145,4,7
+19 Aug 2022,,Texas Rangers,Minnesota Twins,+145,-167,1,2
+19 Aug 2022,,Houston Astros,Atlanta Braves,+125,-147,2,6
+19 Aug 2022,,Chicago White Sox,Cleveland Guardians,+140,-161,2,5
+19 Aug 2022,,Los Angeles Angels,Detroit Tigers,-147,+125,1,0
+19 Aug 2022,,Kansas City Royals,Tampa Bay Rays,+195,-238,3,2
+19 Aug 2022,,Boston Red Sox,Baltimore Orioles,-120,+100,10,15
+19 Aug 2022,,Cincinnati Reds,Pittsburgh Pirates,-105,-116,4,5
+19 Aug 2022,,New York Mets,Philadelphia Phillies,+100,-120,7,2
+19 Aug 2022,,Toronto Blue Jays,New York Yankees,+167,-192,4,0
+19 Aug 2022,,Milwaukee Brewers,Chicago Cubs,-147,+125,7,8
+18 Aug 2022,,Washington Nationals,San Diego Padres,+280,-370,3,1
+18 Aug 2022,,New York Mets,Atlanta Braves,-141,+120,2,3
+18 Aug 2022,,Kansas City Royals,Tampa Bay Rays,+170,-200,1,7
+18 Aug 2022,,Boston Red Sox,Pittsburgh Pirates,-156,+135,2,8
+18 Aug 2022,,Toronto Blue Jays,New York Yankees,+110,-132,9,2
+18 Aug 2022,,Arizona Diamondbacks,San Francisco Giants,+135,-156,5,0
+18 Aug 2022,,Chicago Cubs,Baltimore Orioles,+140,-161,3,2
+18 Aug 2022,,Houston Astros,Chicago White Sox,-135,+114,21,5
+18 Aug 2022,,Los Angeles Dodgers,Milwaukee Brewers,+100,-120,3,5
+18 Aug 2022,,Athletics,Texas Rangers,+170,-200,3,10
+18 Aug 2022,,Colorado Rockies,St.Louis Cardinals,+204,-250,0,13
+17 Aug 2022,,Arizona Diamondbacks,San Francisco Giants,+125,-147,3,2
+17 Aug 2022,,Houston Astros,Chicago White Sox,-125,+104,3,2
+17 Aug 2022,,Los Angeles Dodgers,Milwaukee Brewers,-116,-105,2,1
+17 Aug 2022,,Athletics,Texas Rangers,+165,-185,7,2
+17 Aug 2022,,Colorado Rockies,St.Louis Cardinals,+175,-213,1,5
+17 Aug 2022,,New York Mets,Atlanta Braves,-156,+135,9,7
+17 Aug 2022,,Detroit Tigers,Cleveland Guardians,+179,-222,4,8
+17 Aug 2022,,Boston Red Sox,Pittsburgh Pirates,-161,+140,8,3
+17 Aug 2022,,Tampa Bay Rays,New York Yankees,+114,-135,7,8
+17 Aug 2022,,San Diego Padres,Miami Marlins,-167,+145,10,3
+17 Aug 2022,,Seattle Mariners,Los Angeles Angels,-182,+160,11,7
+17 Aug 2022,,Baltimore Orioles,Toronto Blue Jays,+150,-172,1,6
+17 Aug 2022,,Kansas City Royals,Minnesota Twins,+175,-213,0,4
+17 Aug 2022,,Chicago Cubs,Washington Nationals,-161,+140,3,2
+17 Aug 2022,,Philadelphia Phillies,Cincinnati Reds,-161,+140,0,1
+16 Aug 2022,,Arizona Diamondbacks,San Francisco Giants,+179,-222,1,2
+16 Aug 2022,,Seattle Mariners,Los Angeles Angels,-175,+154,8,2
+16 Aug 2022,,Houston Astros,Chicago White Sox,-147,+125,3,4
+16 Aug 2022,,Los Angeles Dodgers,Milwaukee Brewers,-167,+145,4,5
+16 Aug 2022,,Athletics,Texas Rangers,+145,-167,5,1
+16 Aug 2022,,Colorado Rockies,St.Louis Cardinals,+170,-200,4,5
+16 Aug 2022,,Kansas City Royals,Minnesota Twins,+160,-182,0,9
+16 Aug 2022,,New York Mets,Atlanta Braves,-141,+120,0,5
+16 Aug 2022,,Detroit Tigers,Cleveland Guardians,+179,-222,4,3
+16 Aug 2022,,Baltimore Orioles,Toronto Blue Jays,+150,-172,4,2
+16 Aug 2022,,Boston Red Sox,Pittsburgh Pirates,-141,+120,5,3
+16 Aug 2022,,Chicago Cubs,Washington Nationals,-147,+125,7,5
+16 Aug 2022,,Tampa Bay Rays,New York Yankees,+129,-152,3,1
+16 Aug 2022,,Philadelphia Phillies,Cincinnati Reds,-156,+135,11,4
+16 Aug 2022,,San Diego Padres,Miami Marlins,-141,+120,3,4
+15 Aug 2022,,Arizona Diamondbacks,San Francisco Giants,-105,-116,1,6
+15 Aug 2022,,Seattle Mariners,Los Angeles Angels,-161,+140,6,2
+15 Aug 2022,,Houston Astros,Chicago White Sox,-125,+104,2,4
+15 Aug 2022,,Los Angeles Dodgers,Milwaukee Brewers,+104,-125,4,0
+15 Aug 2022,,Athletics,Texas Rangers,+140,-161,1,2
+15 Aug 2022,,Kansas City Royals,Minnesota Twins,+167,-192,2,4
+15 Aug 2022,,New York Mets,Atlanta Braves,+125,-147,1,13
+15 Aug 2022,,Baltimore Orioles,Toronto Blue Jays,+195,-238,7,3
+15 Aug 2022,,Chicago Cubs,Washington Nationals,-156,+135,4,5
+15 Aug 2022,,Tampa Bay Rays,New York Yankees,+150,-172,4,0
+15 Aug 2022,,Philadelphia Phillies,Cincinnati Reds,-175,+154,4,3
+15 Aug 2022,,San Diego Padres,Miami Marlins,-156,+135,0,3
+15 Aug 2022,,Detroit Tigers,Cleveland Guardians,,,1,4
+14 Aug 2022,,New York Yankees,Boston Red Sox,-132,+110,0,3
+14 Aug 2022,,Minnesota Twins,Los Angeles Angels,-141,+120,2,4
+14 Aug 2022,,Pittsburgh Pirates,San Francisco Giants,+220,-270,7,8
+14 Aug 2022,,Arizona Diamondbacks,Colorado Rockies,+104,-125,7,4
+14 Aug 2022,,Seattle Mariners,Texas Rangers,-125,+104,3,5
+14 Aug 2022,,Milwaukee Brewers,St.Louis Cardinals,+129,-152,3,6
+14 Aug 2022,,Athletics,Houston Astros,+220,-270,3,6
+14 Aug 2022,,Detroit Tigers,Chicago White Sox,+175,-213,3,5
+14 Aug 2022,,Los Angeles Dodgers,Kansas City Royals,-233,+190,0,4
+14 Aug 2022,,Atlanta Braves,Miami Marlins,-125,+104,3,1
+14 Aug 2022,,Baltimore Orioles,Tampa Bay Rays,+150,-172,1,4
+14 Aug 2022,,Chicago Cubs,Cincinnati Reds,-152,+129,5,8
+14 Aug 2022,,Philadelphia Phillies,New York Mets,+120,-141,0,6
+14 Aug 2022,,Cleveland Guardians,Toronto Blue Jays,+129,-152,7,2
+14 Aug 2022,,San Diego Padres,Washington Nationals,-286,+229,6,0
+13 Aug 2022,,Minnesota Twins,Los Angeles Angels,-132,+110,3,5
+13 Aug 2022,,Pittsburgh Pirates,San Francisco Giants,+204,-250,0,2
+13 Aug 2022,,Arizona Diamondbacks,Colorado Rockies,+110,-132,6,0
+13 Aug 2022,,New York Yankees,Boston Red Sox,-147,+125,3,2
+13 Aug 2022,,Milwaukee Brewers,St.Louis Cardinals,+120,-141,3,2
+13 Aug 2022,,Seattle Mariners,Texas Rangers,-120,+100,4,7
+13 Aug 2022,,Athletics,Houston Astros,+220,-270,0,8
+13 Aug 2022,,Detroit Tigers,Chicago White Sox,+170,-200,4,6
+13 Aug 2022,,Los Angeles Dodgers,Kansas City Royals,-238,+195,13,3
+13 Aug 2022,,Philadelphia Phillies,New York Mets,+114,-135,0,1
+13 Aug 2022,,San Diego Padres,Washington Nationals,-263,+215,3,4
+13 Aug 2022,,Chicago Cubs,Cincinnati Reds,-141,+120,7,2
+13 Aug 2022,,Baltimore Orioles,Tampa Bay Rays,+175,-213,2,8
+13 Aug 2022,,Cleveland Guardians,Toronto Blue Jays,+100,-120,1,2
+12 Aug 2022,,Pittsburgh Pirates,San Francisco Giants,+225,-278,3,5
+12 Aug 2022,,Minnesota Twins,Los Angeles Angels,-116,-105,4,0
+12 Aug 2022,,Arizona Diamondbacks,Colorado Rockies,-147,+125,3,5
+12 Aug 2022,,Milwaukee Brewers,St.Louis Cardinals,-132,+110,1,3
+12 Aug 2022,,Athletics,Houston Astros,+280,-370,5,7
+12 Aug 2022,,Los Angeles Dodgers,Kansas City Royals,-238,+195,8,3
+12 Aug 2022,,Seattle Mariners,Texas Rangers,-111,-111,6,2
+12 Aug 2022,,Baltimore Orioles,Tampa Bay Rays,+125,-147,10,3
+12 Aug 2022,,New York Yankees,Boston Red Sox,-147,+125,2,3
+12 Aug 2022,,Detroit Tigers,Chicago White Sox,+179,-222,0,2
+12 Aug 2022,,Philadelphia Phillies,New York Mets,+165,-185,2,1
+12 Aug 2022,,Cleveland Guardians,Toronto Blue Jays,+135,-156,8,0
+12 Aug 2022,,San Diego Padres,Washington Nationals,-294,+235,10,5
+12 Aug 2022,,Atlanta Braves,Miami Marlins,-141,+120,4,3
+11 Aug 2022,,Chicago Cubs,Cincinnati Reds,-105,-116,4,2
+11 Aug 2022,,Baltimore Orioles,Boston Red Sox,-105,-116,3,4
+11 Aug 2022,,Pittsburgh Pirates,Arizona Diamondbacks,+150,-172,3,9
+11 Aug 2022,,St.Louis Cardinals,Colorado Rockies,-111,-111,6,8
+11 Aug 2022,,Chicago White Sox,Kansas City Royals,-175,+154,3,5
+11 Aug 2022,,Texas Rangers,Houston Astros,+225,-278,3,7
+11 Aug 2022,,Cleveland Guardians,Detroit Tigers,-152,+129,4,3
+11 Aug 2022,,Miami Marlins,Philadelphia Phillies,+140,-161,3,0
+10 Aug 2022,,Minnesota Twins,Los Angeles Dodgers,+170,-200,5,8
+10 Aug 2022,,Pittsburgh Pirates,Arizona Diamondbacks,+165,-185,6,4
+10 Aug 2022,,St.Louis Cardinals,Colorado Rockies,-125,+104,9,5
+10 Aug 2022,,Chicago White Sox,Kansas City Royals,-175,+154,3,8
+10 Aug 2022,,Texas Rangers,Houston Astros,+240,-303,8,4
+10 Aug 2022,,Atlanta Braves,Boston Red Sox,-152,+129,8,4
+10 Aug 2022,,Cleveland Guardians,Detroit Tigers,-161,+140,3,2
+10 Aug 2022,,Miami Marlins,Philadelphia Phillies,+150,-172,3,4
+10 Aug 2022,,New York Yankees,Seattle Mariners,-125,+104,3,4
+10 Aug 2022,,San Francisco Giants,San Diego Padres,+140,-161,7,13
+10 Aug 2022,,Los Angeles Angels,Athletics,+114,-135,5,4
+10 Aug 2022,,Washington Nationals,Chicago Cubs,+145,-167,2,4
+10 Aug 2022,,Tampa Bay Rays,Milwaukee Brewers,+135,-156,3,4
+10 Aug 2022,,Cincinnati Reds,New York Mets,+260,-323,2,10
+09 Aug 2022,,Minnesota Twins,Los Angeles Dodgers,+210,-250,3,10
+09 Aug 2022,,New York Yankees,Seattle Mariners,-132,+110,0,1
+09 Aug 2022,,Pittsburgh Pirates,Arizona Diamondbacks,+150,-172,4,6
+09 Aug 2022,,Los Angeles Angels,Athletics,-175,+154,5,1
+09 Aug 2022,,San Francisco Giants,San Diego Padres,+145,-167,4,7
+09 Aug 2022,,St.Louis Cardinals,Colorado Rockies,-156,+135,5,16
+09 Aug 2022,,Texas Rangers,Houston Astros,+260,-323,5,7
+09 Aug 2022,,Tampa Bay Rays,Milwaukee Brewers,+145,-167,3,5
+09 Aug 2022,,Washington Nationals,Chicago Cubs,+160,-182,6,5
+09 Aug 2022,,Atlanta Braves,Boston Red Sox,-147,+125,9,7
+09 Aug 2022,,Cincinnati Reds,New York Mets,+254,-323,2,6
+09 Aug 2022,,Cleveland Guardians,Detroit Tigers,-161,+140,5,2
+09 Aug 2022,,Toronto Blue Jays,Baltimore Orioles,-152,+129,5,6
+09 Aug 2022,,Miami Marlins,Philadelphia Phillies,+114,-135,1,4
+08 Aug 2022,,New York Yankees,Seattle Mariners,-132,+110,9,4
+08 Aug 2022,,Pittsburgh Pirates,Arizona Diamondbacks,+140,-161,0,3
+08 Aug 2022,,Los Angeles Angels,Athletics,-175,+154,1,0
+08 Aug 2022,,San Francisco Giants,San Diego Padres,+160,-182,1,0
+08 Aug 2022,,Washington Nationals,Chicago Cubs,+167,-192,3,6
+08 Aug 2022,,Cincinnati Reds,New York Mets,+245,-312,1,5
+08 Aug 2022,,Toronto Blue Jays,Baltimore Orioles,-175,+154,4,7
+07 Aug 2022,,San Diego Padres,Los Angeles Dodgers,+114,-135,0,4
+07 Aug 2022,,Colorado Rockies,Arizona Diamondbacks,+135,-156,4,6
+07 Aug 2022,,Atlanta Braves,New York Mets,+129,-152,2,5
+07 Aug 2022,,Los Angeles Angels,Seattle Mariners,+135,-156,3,6
+07 Aug 2022,,San Francisco Giants,Athletics,-200,+170,6,4
+07 Aug 2022,,Chicago White Sox,Texas Rangers,-141,+120,8,2
+07 Aug 2022,,Miami Marlins,Chicago Cubs,+120,-141,3,0
+07 Aug 2022,,New York Yankees,St.Louis Cardinals,-135,+114,9,12
+07 Aug 2022,,Boston Red Sox,Kansas City Royals,-156,+135,5,13
+07 Aug 2022,,Cincinnati Reds,Milwaukee Brewers,+235,-294,4,2
+07 Aug 2022,,Toronto Blue Jays,Minnesota Twins,-185,+165,3,2
+07 Aug 2022,,Tampa Bay Rays,Detroit Tigers,-185,+165,7,0
+07 Aug 2022,,Pittsburgh Pirates,Baltimore Orioles,+160,-182,8,1
+07 Aug 2022,,Washington Nationals,Philadelphia Phillies,+254,-323,1,13
+07 Aug 2022,,Houston Astros,Cleveland Guardians,-132,+110,0,1
+06 Aug 2022,,San Diego Padres,Los Angeles Dodgers,+114,-135,3,8
+06 Aug 2022,,Colorado Rockies,Arizona Diamondbacks,+140,-161,3,2
+06 Aug 2022,,Cincinnati Reds,Milwaukee Brewers,+220,-270,7,5
+06 Aug 2022,,New York Yankees,St.Louis Cardinals,-125,+104,0,1
+06 Aug 2022,,Boston Red Sox,Kansas City Royals,-141,+120,4,5
+06 Aug 2022,,Toronto Blue Jays,Minnesota Twins,-156,+135,3,7
+06 Aug 2022,,San Francisco Giants,Athletics,-244,+200,7,3
+06 Aug 2022,,Chicago White Sox,Texas Rangers,-147,+125,0,8
+06 Aug 2022,,Houston Astros,Cleveland Guardians,-147,+125,1,4
+06 Aug 2022,,Tampa Bay Rays,Detroit Tigers,-263,+215,1,9
+06 Aug 2022,,Washington Nationals,Philadelphia Phillies,+240,-303,5,11
+06 Aug 2022,,Pittsburgh Pirates,Baltimore Orioles,+145,-167,3,6
+06 Aug 2022,,Miami Marlins,Chicago Cubs,-116,-105,0,4
+05 Aug 2022,,Los Angeles Angels,Seattle Mariners,+170,-200,4,3
+05 Aug 2022,,San Diego Padres,Los Angeles Dodgers,+129,-152,1,8
+05 Aug 2022,,Colorado Rockies,Arizona Diamondbacks,+150,-172,5,6
+05 Aug 2022,,New York Yankees,St.Louis Cardinals,-120,+100,3,4
+05 Aug 2022,,Boston Red Sox,Kansas City Royals,-135,+114,7,4
+05 Aug 2022,,Cincinnati Reds,Milwaukee Brewers,+167,-192,1,5
+05 Aug 2022,,Toronto Blue Jays,Minnesota Twins,-125,+104,5,6
+05 Aug 2022,,Chicago White Sox,Texas Rangers,-125,+104,2,1
+05 Aug 2022,,Atlanta Braves,New York Mets,+110,-132,9,6
+05 Aug 2022,,Houston Astros,Cleveland Guardians,-156,+135,9,3
+05 Aug 2022,,Tampa Bay Rays,Detroit Tigers,-250,+204,5,3
+05 Aug 2022,,Pittsburgh Pirates,Baltimore Orioles,+125,-147,0,1
+05 Aug 2022,,Washington Nationals,Philadelphia Phillies,+204,-250,2,7
+05 Aug 2022,,Miami Marlins,Chicago Cubs,+125,-147,1,2
+04 Aug 2022,,Boston Red Sox,Kansas City Royals,-147,+125,3,7
+04 Aug 2022,,Chicago White Sox,Texas Rangers,-167,+145,2,3
+04 Aug 2022,,Chicago Cubs,St.Louis Cardinals,,,2,7
+04 Aug 2022,,Toronto Blue Jays,Minnesota Twins,-132,+110,9,3
+04 Aug 2022,,Atlanta Braves,New York Mets,+104,-125,4,6
+04 Aug 2022,,Houston Astros,Cleveland Guardians,-175,+154,6,0
+04 Aug 2022,,Tampa Bay Rays,Detroit Tigers,-182,+160,6,2
+04 Aug 2022,,Washington Nationals,Philadelphia Phillies,+195,-238,4,5
+04 Aug 2022,,Colorado Rockies,San Diego Padres,+240,-303,7,3
+04 Aug 2022,,Athletics,Los Angeles Angels,+100,-120,8,7
+04 Aug 2022,,Los Angeles Dodgers,San Francisco Giants,-227,+185,5,3
+04 Aug 2022,,Chicago Cubs,St.Louis Cardinals,,,3,4
+04 Aug 2022,,Milwaukee Brewers,Pittsburgh Pirates,-263,+215,4,5
+03 Aug 2022,,Los Angeles Dodgers,San Francisco Giants,-213,+175,3,0
+03 Aug 2022,,Colorado Rockies,San Diego Padres,+245,-312,1,9
+03 Aug 2022,,Athletics,Los Angeles Angels,+100,-120,3,1
+03 Aug 2022,,Milwaukee Brewers,Pittsburgh Pirates,-244,+200,7,8
+03 Aug 2022,,Cincinnati Reds,Miami Marlins,+179,-222,0,3
+03 Aug 2022,,New York Mets,Washington Nationals,-323,+260,9,5
+03 Aug 2022,,Boston Red Sox,Houston Astros,+165,-185,1,6
+03 Aug 2022,,Kansas City Royals,Chicago White Sox,+120,-141,1,4
+03 Aug 2022,,Baltimore Orioles,Texas Rangers,+140,-161,6,3
+03 Aug 2022,,Arizona Diamondbacks,Cleveland Guardians,+185,-227,4,7
+03 Aug 2022,,Detroit Tigers,Minnesota Twins,+179,-222,1,4
+03 Aug 2022,,Seattle Mariners,New York Yankees,+150,-172,7,3
+03 Aug 2022,,Philadelphia Phillies,Atlanta Braves,+120,-141,3,1
+03 Aug 2022,,Toronto Blue Jays,Tampa Bay Rays,-132,+110,2,3
+02 Aug 2022,,Colorado Rockies,San Diego Padres,+165,-185,2,3
+02 Aug 2022,,Los Angeles Dodgers,San Francisco Giants,-156,+135,9,5
+02 Aug 2022,,Athletics,Los Angeles Angels,+104,-125,1,3
+02 Aug 2022,,Boston Red Sox,Houston Astros,+175,-213,2,1
+02 Aug 2022,,Kansas City Royals,Chicago White Sox,+145,-167,2,9
+02 Aug 2022,,Baltimore Orioles,Texas Rangers,+140,-161,8,2
+02 Aug 2022,,Chicago Cubs,St.Louis Cardinals,+165,-185,0,6
+02 Aug 2022,,Detroit Tigers,Minnesota Twins,+195,-238,5,3
+02 Aug 2022,,Philadelphia Phillies,Atlanta Braves,+120,-141,1,13
+02 Aug 2022,,Arizona Diamondbacks,Cleveland Guardians,+120,-141,6,3
+02 Aug 2022,,Toronto Blue Jays,Tampa Bay Rays,-141,+120,3,1
+02 Aug 2022,,Milwaukee Brewers,Pittsburgh Pirates,-286,+229,3,5
+02 Aug 2022,,New York Mets,Washington Nationals,-233,+190,1,5
+02 Aug 2022,,Seattle Mariners,New York Yankees,+150,-172,8,6
+02 Aug 2022,,Cincinnati Reds,Miami Marlins,+175,-213,2,1
+02 Aug 2022,,Colorado Rockies,San Diego Padres,+200,-244,5,13
+01 Aug 2022,,Los Angeles Dodgers,San Francisco Giants,-147,+125,8,2
+01 Aug 2022,,Colorado Rockies,San Diego Padres,+175,-213,1,4
+01 Aug 2022,,Boston Red Sox,Houston Astros,+154,-175,3,2
+01 Aug 2022,,Kansas City Royals,Chicago White Sox,+154,-175,2,1
+01 Aug 2022,,Baltimore Orioles,Texas Rangers,+104,-125,7,2
+01 Aug 2022,,Detroit Tigers,Minnesota Twins,+167,-192,3,5
+01 Aug 2022,,Arizona Diamondbacks,Cleveland Guardians,+114,-135,5,6
+01 Aug 2022,,New York Mets,Washington Nationals,-303,+240,7,3
+01 Aug 2022,,Seattle Mariners,New York Yankees,+150,-172,2,7
+01 Aug 2022,,Cincinnati Reds,Miami Marlins,+104,-125,3,1
+31 Jul 2022,,Chicago Cubs,San Francisco Giants,+154,-175,0,4
+31 Jul 2022,,Minnesota Twins,San Diego Padres,+120,-141,2,3
+31 Jul 2022,,Texas Rangers,Los Angeles Angels,+110,-132,5,2
+31 Jul 2022,,Los Angeles Dodgers,Colorado Rockies,-200,+170,7,3
+31 Jul 2022,,Athletics,Chicago White Sox,+235,-294,1,4
+31 Jul 2022,,Seattle Mariners,Houston Astros,+125,-147,2,3
+31 Jul 2022,,Baltimore Orioles,Cincinnati Reds,+110,-132,2,3
+31 Jul 2022,,Cleveland Guardians,Tampa Bay Rays,+200,-244,5,3
+31 Jul 2022,,New York Mets,Miami Marlins,-135,+114,9,3
+31 Jul 2022,,Arizona Diamondbacks,Atlanta Braves,+195,-238,0,1
+31 Jul 2022,,Milwaukee Brewers,Boston Red Sox,-141,+120,2,7
+31 Jul 2022,,Kansas City Royals,New York Yankees,+225,-278,8,6
+31 Jul 2022,,Philadelphia Phillies,Pittsburgh Pirates,-182,+160,8,2
+31 Jul 2022,,St.Louis Cardinals,Washington Nationals,-120,+100,5,0
+31 Jul 2022,,Detroit Tigers,Toronto Blue Jays,+235,-294,1,4
+30 Jul 2022,,Texas Rangers,Los Angeles Angels,+104,-125,7,9
+30 Jul 2022,,Chicago Cubs,San Francisco Giants,+167,-192,4,5
+30 Jul 2022,,Los Angeles Dodgers,Colorado Rockies,-175,+154,3,5
+30 Jul 2022,,Arizona Diamondbacks,Atlanta Braves,+195,-238,2,6
+30 Jul 2022,,Athletics,Chicago White Sox,+229,-286,2,3
+30 Jul 2022,,Minnesota Twins,San Diego Padres,+114,-135,7,4
+30 Jul 2022,,Philadelphia Phillies,Pittsburgh Pirates,-182,+160,2,1
+30 Jul 2022,,St.Louis Cardinals,Washington Nationals,-147,+125,6,7
+30 Jul 2022,,Seattle Mariners,Houston Astros,+120,-141,5,4
+30 Jul 2022,,Baltimore Orioles,Cincinnati Reds,+100,-120,2,8
+30 Jul 2022,,New York Mets,Miami Marlins,-152,+129,4,0
+30 Jul 2022,,Milwaukee Brewers,Boston Red Sox,-116,-105,9,4
+30 Jul 2022,,Detroit Tigers,Toronto Blue Jays,+235,-294,3,5
+30 Jul 2022,,Kansas City Royals,New York Yankees,+254,-323,2,8
+30 Jul 2022,,Cleveland Guardians,Tampa Bay Rays,+120,-141,4,6
+29 Jul 2022,,Chicago Cubs,San Francisco Giants,+110,-132,4,2
+29 Jul 2022,,Minnesota Twins,San Diego Padres,+114,-135,1,10
+29 Jul 2022,,Texas Rangers,Los Angeles Angels,+100,-120,7,2
+29 Jul 2022,,Los Angeles Dodgers,Colorado Rockies,-233,+190,5,4
+29 Jul 2022,,Athletics,Chicago White Sox,+160,-182,7,3
+29 Jul 2022,,Seattle Mariners,Houston Astros,+165,-185,1,11
+29 Jul 2022,,Arizona Diamondbacks,Atlanta Braves,+195,-238,2,5
+29 Jul 2022,,Milwaukee Brewers,Boston Red Sox,+100,-120,4,1
+29 Jul 2022,,Cleveland Guardians,Tampa Bay Rays,+104,-125,4,1
+29 Jul 2022,,Detroit Tigers,Toronto Blue Jays,+225,-278,4,2
+29 Jul 2022,,Kansas City Royals,New York Yankees,+220,-270,5,11
+29 Jul 2022,,Philadelphia Phillies,Pittsburgh Pirates,-167,+145,4,2
+29 Jul 2022,,St.Louis Cardinals,Washington Nationals,-152,+129,6,2
+29 Jul 2022,,Baltimore Orioles,Cincinnati Reds,-105,-116,6,2
+29 Jul 2022,,New York Mets,Miami Marlins,-120,+100,6,4
+28 Jul 2022,,Chicago Cubs,San Francisco Giants,+114,-135,2,4
+28 Jul 2022,,Texas Rangers,Los Angeles Angels,+100,-120,2,0
+28 Jul 2022,,Los Angeles Dodgers,Colorado Rockies,-222,+179,13,0
+28 Jul 2022,,Seattle Mariners,Houston Astros,+165,-185,2,4
+28 Jul 2022,,Cleveland Guardians,Boston Red Sox,-132,+110,2,4
+28 Jul 2022,,Detroit Tigers,Toronto Blue Jays,+200,-244,3,5
+28 Jul 2022,,Kansas City Royals,New York Yankees,+275,-357,0,1
+28 Jul 2022,,Philadelphia Phillies,Pittsburgh Pirates,-132,+110,8,7
+28 Jul 2022,,Tampa Bay Rays,Baltimore Orioles,+104,-125,0,3
+28 Jul 2022,,Miami Marlins,Cincinnati Reds,+114,-135,7,6
+27 Jul 2022,,Cleveland Guardians,Boston Red Sox,-116,-105,7,6
+27 Jul 2022,,New York Yankees,New York Mets,+165,-185,2,3
+27 Jul 2022,,St.Louis Cardinals,Toronto Blue Jays,+220,-270,6,1
+27 Jul 2022,,Tampa Bay Rays,Baltimore Orioles,-105,-116,6,4
+27 Jul 2022,,Miami Marlins,Cincinnati Reds,+140,-161,3,5
+27 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-116,-105,3,5
+27 Jul 2022,,Texas Rangers,Seattle Mariners,-125,+104,2,4
+27 Jul 2022,,Houston Astros,Athletics,-222,+179,2,4
+27 Jul 2022,,Chicago White Sox,Colorado Rockies,-132,+110,5,6
+27 Jul 2022,,Washington Nationals,Los Angeles Dodgers,+220,-270,1,7
+27 Jul 2022,,Los Angeles Angels,Kansas City Royals,+110,-132,4,0
+27 Jul 2022,,Minnesota Twins,Milwaukee Brewers,+179,-222,4,10
+27 Jul 2022,,San Diego Padres,Detroit Tigers,-141,+120,3,4
+27 Jul 2022,,Atlanta Braves,Philadelphia Phillies,-147,+125,2,7
+26 Jul 2022,,Washington Nationals,Los Angeles Dodgers,+225,-278,8,3
+26 Jul 2022,,Texas Rangers,Seattle Mariners,+154,-175,4,5
+26 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-120,+100,3,7
+26 Jul 2022,,Houston Astros,Athletics,-200,+170,3,5
+26 Jul 2022,,Chicago White Sox,Colorado Rockies,-141,+120,2,1
+26 Jul 2022,,Los Angeles Angels,Kansas City Royals,+110,-132,6,0
+26 Jul 2022,,Minnesota Twins,Milwaukee Brewers,+167,-192,6,7
+26 Jul 2022,,Cleveland Guardians,Boston Red Sox,+114,-135,8,3
+26 Jul 2022,,San Diego Padres,Detroit Tigers,-135,+114,6,4
+26 Jul 2022,,New York Yankees,New York Mets,-116,-105,3,6
+26 Jul 2022,,St.Louis Cardinals,Toronto Blue Jays,+210,-250,3,10
+26 Jul 2022,,Atlanta Braves,Philadelphia Phillies,-147,+125,6,3
+26 Jul 2022,,Tampa Bay Rays,Baltimore Orioles,-125,+104,3,5
+26 Jul 2022,,Miami Marlins,Cincinnati Reds,+140,-161,2,1
+26 Jul 2022,,Pittsburgh Pirates,Chicago Cubs,+170,-200,2,4
+25 Jul 2022,,Washington Nationals,Los Angeles Dodgers,+215,-263,4,1
+25 Jul 2022,,Texas Rangers,Seattle Mariners,+140,-161,3,4
+25 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-105,-116,0,7
+25 Jul 2022,,Houston Astros,Athletics,-222,+179,5,7
+25 Jul 2022,,Colorado Rockies,Milwaukee Brewers,+170,-200,2,0
+25 Jul 2022,,Los Angeles Angels,Kansas City Royals,-105,-116,0,7
+25 Jul 2022,,Pittsburgh Pirates,Chicago Cubs,+150,-172,2,3
+25 Jul 2022,,Cleveland Guardians,Boston Red Sox,-111,-111,1,3
+25 Jul 2022,,San Diego Padres,Detroit Tigers,-172,+150,4,12
+25 Jul 2022,,Atlanta Braves,Philadelphia Phillies,-120,+100,4,6
+25 Jul 2022,,Tampa Bay Rays,Baltimore Orioles,-200,+170,1,5
+25 Jul 2022,,Miami Marlins,Cincinnati Reds,-116,-105,2,11
+24 Jul 2022,,San Diego Padres,New York Mets,+125,-147,5,8
+24 Jul 2022,,Washington Nationals,Arizona Diamondbacks,+104,-125,4,3
+24 Jul 2022,,Houston Astros,Seattle Mariners,-116,-105,8,5
+24 Jul 2022,,San Francisco Giants,Los Angeles Dodgers,+190,-233,4,7
+24 Jul 2022,,Texas Rangers,Athletics,-147,+125,11,8
+24 Jul 2022,,Cleveland Guardians,Chicago White Sox,+135,-156,3,6
+24 Jul 2022,,Colorado Rockies,Milwaukee Brewers,+165,-185,9,10
+24 Jul 2022,,Tampa Bay Rays,Kansas City Royals,-152,+129,2,4
+24 Jul 2022,,St.Louis Cardinals,Cincinnati Reds,-167,+145,3,6
+24 Jul 2022,,Minnesota Twins,Detroit Tigers,-172,+150,9,1
+24 Jul 2022,,Los Angeles Angels,Atlanta Braves,+179,-222,9,1
+24 Jul 2022,,New York Yankees,Baltimore Orioles,-175,+154,6,0
+24 Jul 2022,,Toronto Blue Jays,Boston Red Sox,-161,+140,8,4
+24 Jul 2022,,Miami Marlins,Pittsburgh Pirates,-172,+150,6,5
+24 Jul 2022,,Chicago Cubs,Philadelphia Phillies,+100,-120,4,3
+23 Jul 2022,,Texas Rangers,Athletics,-132,+110,1,3
+23 Jul 2022,,Washington Nationals,Arizona Diamondbacks,+140,-161,2,7
+23 Jul 2022,,Los Angeles Angels,Atlanta Braves,+167,-192,2,7
+23 Jul 2022,,San Francisco Giants,Los Angeles Dodgers,+175,-213,2,4
+23 Jul 2022,,Colorado Rockies,Milwaukee Brewers,+170,-200,4,9
+23 Jul 2022,,Tampa Bay Rays,Kansas City Royals,-105,-116,3,6
+23 Jul 2022,,San Diego Padres,New York Mets,+100,-120,2,1
+23 Jul 2022,,New York Yankees,Baltimore Orioles,-172,+150,3,6
+23 Jul 2022,,Miami Marlins,Pittsburgh Pirates,-172,+150,0,1
+23 Jul 2022,,St.Louis Cardinals,Cincinnati Reds,-135,+114,6,3
+23 Jul 2022,,Minnesota Twins,Detroit Tigers,-172,+150,8,4
+23 Jul 2022,,Chicago Cubs,Philadelphia Phillies,+125,-147,6,2
+23 Jul 2022,,Toronto Blue Jays,Boston Red Sox,-175,+154,4,1
+23 Jul 2022,,Houston Astros,Seattle Mariners,-161,+140,3,1
+23 Jul 2022,,Cleveland Guardians,Chicago White Sox,,,7,4
+22 Jul 2022,,Houston Astros,Seattle Mariners,-132,+110,5,2
+22 Jul 2022,,San Francisco Giants,Los Angeles Dodgers,+150,-172,1,5
+22 Jul 2022,,Washington Nationals,Arizona Diamondbacks,+129,-152,1,10
+22 Jul 2022,,Texas Rangers,Athletics,-125,+104,4,5
+22 Jul 2022,,Los Angeles Angels,Atlanta Braves,+170,-200,1,8
+22 Jul 2022,,Cleveland Guardians,Chicago White Sox,+140,-161,8,2
+22 Jul 2022,,Colorado Rockies,Milwaukee Brewers,+229,-286,5,6
+22 Jul 2022,,Tampa Bay Rays,Kansas City Royals,-147,+125,7,3
+22 Jul 2022,,San Diego Padres,New York Mets,+129,-152,4,1
+22 Jul 2022,,Toronto Blue Jays,Boston Red Sox,-125,+104,28,5
+22 Jul 2022,,New York Yankees,Baltimore Orioles,-238,+195,7,6
+22 Jul 2022,,Chicago Cubs,Philadelphia Phillies,+140,-161,15,2
+22 Jul 2022,,Miami Marlins,Pittsburgh Pirates,-111,-111,8,1
+22 Jul 2022,,St.Louis Cardinals,Cincinnati Reds,-152,+129,5,9
+21 Jul 2022,,San Francisco Giants,Los Angeles Dodgers,+120,-141,6,9
+21 Jul 2022,,Detroit Tigers,Athletics,+140,-161,0,5
+21 Jul 2022,,Detroit Tigers,Athletics,-152,+129,7,2
+21 Jul 2022,,Texas Rangers,Miami Marlins,+114,-135,8,0
+19 Jul 2022,,American League,National League,-105,-116,3,2
+17 Jul 2022,,Arizona Diamondbacks,San Diego Padres,+140,-161,3,1
+17 Jul 2022,,Milwaukee Brewers,San Francisco Giants,+140,-161,5,9
+17 Jul 2022,,Pittsburgh Pirates,Colorado Rockies,+145,-167,8,3
+17 Jul 2022,,Seattle Mariners,Texas Rangers,-135,+114,6,2
+17 Jul 2022,,New York Mets,Chicago Cubs,-141,+120,2,3
+17 Jul 2022,,Athletics,Houston Astros,+229,-286,4,3
+17 Jul 2022,,Chicago White Sox,Minnesota Twins,-125,+104,11,0
+17 Jul 2022,,Baltimore Orioles,Tampa Bay Rays,+129,-152,5,7
+17 Jul 2022,,Philadelphia Phillies,Miami Marlins,-135,+114,4,0
+17 Jul 2022,,Atlanta Braves,Washington Nationals,-286,+229,3,7
+17 Jul 2022,,Boston Red Sox,New York Yankees,+165,-185,2,13
+17 Jul 2022,,Kansas City Royals,Toronto Blue Jays,+265,-333,2,4
+16 Jul 2022,,Los Angeles Dodgers,Los Angeles Angels,-213,+175,7,1
+16 Jul 2022,,Arizona Diamondbacks,San Diego Padres,+140,-161,3,4
+16 Jul 2022,,New York Mets,Chicago Cubs,,,4,3
+16 Jul 2022,,Boston Red Sox,New York Yankees,+145,-167,1,14
+16 Jul 2022,,Milwaukee Brewers,San Francisco Giants,+150,-172,1,2
+16 Jul 2022,,Athletics,Houston Astros,+280,-370,0,5
+16 Jul 2022,,Baltimore Orioles,Tampa Bay Rays,+104,-125,6,4
+16 Jul 2022,,Detroit Tigers,Cleveland Guardians,+145,-167,0,10
+16 Jul 2022,,Philadelphia Phillies,Miami Marlins,-111,-111,10,0
+16 Jul 2022,,Atlanta Braves,Washington Nationals,-250,+210,6,3
+16 Jul 2022,,Seattle Mariners,Texas Rangers,-156,+135,3,2
+16 Jul 2022,,Pittsburgh Pirates,Colorado Rockies,+125,-147,0,2
+16 Jul 2022,,Kansas City Royals,Toronto Blue Jays,+260,-323,5,6
+16 Jul 2022,,Cincinnati Reds,St.Louis Cardinals,+150,-172,3,11
+16 Jul 2022,,Chicago White Sox,Minnesota Twins,+114,-135,3,6
+15 Jul 2022,,Milwaukee Brewers,San Francisco Giants,+110,-132,5,8
+15 Jul 2022,,Arizona Diamondbacks,San Diego Padres,+167,-192,3,5
+15 Jul 2022,,Los Angeles Dodgers,Los Angeles Angels,-182,+160,9,1
+15 Jul 2022,,Pittsburgh Pirates,Colorado Rockies,+104,-125,2,13
+15 Jul 2022,,Cincinnati Reds,St.Louis Cardinals,+150,-172,3,7
+15 Jul 2022,,Athletics,Houston Astros,+175,-213,5,1
+15 Jul 2022,,Chicago White Sox,Minnesota Twins,+100,-120,6,2
+15 Jul 2022,,Seattle Mariners,Texas Rangers,-141,+120,8,3
+15 Jul 2022,,Baltimore Orioles,Tampa Bay Rays,+104,-125,4,5
+15 Jul 2022,,Detroit Tigers,Cleveland Guardians,+150,-172,5,6
+15 Jul 2022,,Kansas City Royals,Toronto Blue Jays,+270,-345,1,8
+15 Jul 2022,,Atlanta Braves,Washington Nationals,-244,+200,8,4
+15 Jul 2022,,Boston Red Sox,New York Yankees,+140,-161,5,4
+15 Jul 2022,,Philadelphia Phillies,Miami Marlins,+154,-175,2,1
+14 Jul 2022,,Milwaukee Brewers,San Francisco Giants,-120,+100,3,2
+14 Jul 2022,,Houston Astros,Los Angeles Angels,-185,+165,3,2
+14 Jul 2022,,New York Mets,Chicago Cubs,-135,+114,8,0
+14 Jul 2022,,Seattle Mariners,Texas Rangers,+104,-125,6,5
+14 Jul 2022,,Chicago White Sox,Minnesota Twins,+114,-135,12,2
+14 Jul 2022,,Los Angeles Dodgers,St.Louis Cardinals,-152,+129,4,0
+14 Jul 2022,,Boston Red Sox,Tampa Bay Rays,+104,-125,4,5
+14 Jul 2022,,Detroit Tigers,Cleveland Guardians,+165,-185,0,4
+14 Jul 2022,,Kansas City Royals,Toronto Blue Jays,+325,-435,3,1
+14 Jul 2022,,Atlanta Braves,Washington Nationals,-200,+170,5,4
+14 Jul 2022,,Cincinnati Reds,New York Yankees,+165,-185,7,6
+14 Jul 2022,,San Diego Padres,Colorado Rockies,-135,+114,5,8
+14 Jul 2022,,Pittsburgh Pirates,Miami Marlins,+140,-161,2,3
+13 Jul 2022,,Houston Astros,Los Angeles Angels,-156,+135,1,7
+13 Jul 2022,,San Diego Padres,Colorado Rockies,-135,+114,6,10
+13 Jul 2022,,Athletics,Texas Rangers,+165,-185,2,5
+13 Jul 2022,,Baltimore Orioles,Chicago Cubs,+135,-156,7,1
+13 Jul 2022,,Los Angeles Dodgers,St.Louis Cardinals,-152,+129,7,6
+13 Jul 2022,,Boston Red Sox,Tampa Bay Rays,+165,-185,1,4
+13 Jul 2022,,Chicago White Sox,Cleveland Guardians,-116,-105,2,1
+13 Jul 2022,,Philadelphia Phillies,Toronto Blue Jays,+104,-125,2,8
+13 Jul 2022,,Cincinnati Reds,New York Yankees,+167,-192,6,7
+13 Jul 2022,,Pittsburgh Pirates,Miami Marlins,+140,-161,4,5
+13 Jul 2022,,Seattle Mariners,Washington Nationals,,,2,1
+13 Jul 2022,,Arizona Diamondbacks,San Francisco Giants,+110,-132,3,4
+13 Jul 2022,,Detroit Tigers,Kansas City Royals,+100,-120,2,5
+13 Jul 2022,,Milwaukee Brewers,Minnesota Twins,+110,-132,1,4
+13 Jul 2022,,New York Mets,Atlanta Braves,+135,-156,7,3
+12 Jul 2022,,Arizona Diamondbacks,San Francisco Giants,+195,-238,0,13
+12 Jul 2022,,Houston Astros,Los Angeles Angels,+114,-135,6,5
+12 Jul 2022,,San Diego Padres,Colorado Rockies,-161,+140,3,5
+12 Jul 2022,,Detroit Tigers,Kansas City Royals,+104,-125,7,5
+12 Jul 2022,,Athletics,Texas Rangers,+167,-192,14,7
+12 Jul 2022,,Baltimore Orioles,Chicago Cubs,+100,-120,4,2
+12 Jul 2022,,Los Angeles Dodgers,St.Louis Cardinals,-152,+129,6,7
+12 Jul 2022,,Milwaukee Brewers,Minnesota Twins,+120,-141,6,3
+12 Jul 2022,,New York Mets,Atlanta Braves,+129,-152,1,4
+12 Jul 2022,,Boston Red Sox,Tampa Bay Rays,+145,-167,2,3
+12 Jul 2022,,Philadelphia Phillies,Toronto Blue Jays,+165,-185,3,4
+12 Jul 2022,,Cincinnati Reds,New York Yankees,+260,-323,4,3
+12 Jul 2022,,Pittsburgh Pirates,Miami Marlins,+167,-192,3,2
+12 Jul 2022,,Chicago White Sox,Cleveland Guardians,,,1,4
+11 Jul 2022,,Arizona Diamondbacks,San Francisco Giants,+179,-222,4,3
+11 Jul 2022,,San Diego Padres,Colorado Rockies,-135,+114,6,5
+11 Jul 2022,,Detroit Tigers,Kansas City Royals,,,3,7
+11 Jul 2022,,Athletics,Texas Rangers,+150,-172,8,10
+11 Jul 2022,,New York Mets,Atlanta Braves,+140,-161,4,1
+11 Jul 2022,,Philadelphia Phillies,St.Louis Cardinals,-132,+110,1,6
+11 Jul 2022,,Boston Red Sox,Tampa Bay Rays,-125,+104,5,10
+11 Jul 2022,,Chicago White Sox,Cleveland Guardians,-120,+100,4,8
+11 Jul 2022,,Pittsburgh Pirates,Miami Marlins,+150,-172,5,1
+10 Jul 2022,,New York Yankees,Boston Red Sox,-141,+120,6,11
+10 Jul 2022,,Colorado Rockies,Arizona Diamondbacks,-111,-111,3,2
+10 Jul 2022,,Chicago Cubs,Los Angeles Dodgers,+220,-270,9,11
+10 Jul 2022,,San Francisco Giants,San Diego Padres,+100,-120,12,0
+10 Jul 2022,,Toronto Blue Jays,Seattle Mariners,+104,-125,5,6
+10 Jul 2022,,Houston Astros,Athletics,-175,+154,6,1
+10 Jul 2022,,Minnesota Twins,Texas Rangers,-105,-116,6,5
+10 Jul 2022,,Philadelphia Phillies,St.Louis Cardinals,+100,-120,3,4
+10 Jul 2022,,Pittsburgh Pirates,Milwaukee Brewers,+150,-172,8,6
+10 Jul 2022,,Detroit Tigers,Chicago White Sox,+165,-185,2,4
+10 Jul 2022,,Cleveland Guardians,Kansas City Royals,-116,-105,1,5
+10 Jul 2022,,Tampa Bay Rays,Cincinnati Reds,-135,+114,5,10
+10 Jul 2022,,Miami Marlins,New York Mets,-111,-111,2,0
+10 Jul 2022,,Washington Nationals,Atlanta Braves,+185,-227,3,4
+10 Jul 2022,,Los Angeles Angels,Baltimore Orioles,-111,-111,5,9
+09 Jul 2022,,Chicago Cubs,Los Angeles Dodgers,+215,-263,2,4
+09 Jul 2022,,Toronto Blue Jays,Seattle Mariners,-135,+114,1,2
+09 Jul 2022,,New York Yankees,Boston Red Sox,-135,+114,5,6
+09 Jul 2022,,San Francisco Giants,San Diego Padres,+104,-125,3,1
+09 Jul 2022,,Colorado Rockies,Arizona Diamondbacks,+104,-125,2,9
+09 Jul 2022,,Washington Nationals,Atlanta Braves,+204,-250,3,4
+09 Jul 2022,,Tampa Bay Rays,Cincinnati Reds,-152,+129,4,5
+09 Jul 2022,,Cleveland Guardians,Kansas City Royals,-141,+120,13,1
+09 Jul 2022,,Miami Marlins,New York Mets,+154,-175,4,5
+09 Jul 2022,,Pittsburgh Pirates,Milwaukee Brewers,+235,-294,4,3
+09 Jul 2022,,Houston Astros,Athletics,-323,+254,2,3
+09 Jul 2022,,Los Angeles Angels,Baltimore Orioles,-125,+104,0,1
+09 Jul 2022,,Minnesota Twins,Texas Rangers,+110,-132,7,9
+09 Jul 2022,,Philadelphia Phillies,St.Louis Cardinals,+110,-132,1,0
+09 Jul 2022,,Detroit Tigers,Chicago White Sox,+145,-167,0,8
+08 Jul 2022,,Chicago Cubs,Los Angeles Dodgers,+175,-213,3,4
+08 Jul 2022,,Toronto Blue Jays,Seattle Mariners,-132,+110,2,5
+08 Jul 2022,,Colorado Rockies,Arizona Diamondbacks,-105,-116,6,5
+08 Jul 2022,,Houston Astros,Athletics,-175,+154,8,3
+08 Jul 2022,,San Francisco Giants,San Diego Padres,-111,-111,3,6
+08 Jul 2022,,Philadelphia Phillies,St.Louis Cardinals,-111,-111,2,0
+08 Jul 2022,,Detroit Tigers,Chicago White Sox,+160,-182,7,5
+08 Jul 2022,,Cleveland Guardians,Kansas City Royals,-120,+100,3,4
+08 Jul 2022,,Pittsburgh Pirates,Milwaukee Brewers,+215,-263,3,4
+08 Jul 2022,,Minnesota Twins,Texas Rangers,+100,-120,5,6
+08 Jul 2022,,Washington Nationals,Atlanta Braves,+210,-250,2,12
+08 Jul 2022,,New York Yankees,Boston Red Sox,-156,+135,12,5
+08 Jul 2022,,Miami Marlins,New York Mets,+160,-182,5,2
+08 Jul 2022,,Los Angeles Angels,Baltimore Orioles,-116,-105,4,5
+08 Jul 2022,,Tampa Bay Rays,Cincinnati Reds,-156,+135,1,2
+07 Jul 2022,,Chicago Cubs,Los Angeles Dodgers,+195,-238,3,5
+07 Jul 2022,,Toronto Blue Jays,Seattle Mariners,-111,-111,3,8
+07 Jul 2022,,Colorado Rockies,Arizona Diamondbacks,+140,-161,4,3
+07 Jul 2022,,San Francisco Giants,San Diego Padres,+125,-147,1,2
+07 Jul 2022,,Detroit Tigers,Chicago White Sox,+145,-167,2,1
+07 Jul 2022,,St.Louis Cardinals,Atlanta Braves,+210,-250,3,2
+07 Jul 2022,,New York Yankees,Boston Red Sox,-161,+140,6,5
+07 Jul 2022,,Miami Marlins,New York Mets,+140,-161,0,10
+07 Jul 2022,,Los Angeles Angels,Baltimore Orioles,-116,-105,1,4
+07 Jul 2022,,Washington Nationals,Philadelphia Phillies,+150,-172,3,5
+07 Jul 2022,,Pittsburgh Pirates,Cincinnati Reds,,,4,2
+07 Jul 2022,,Kansas City Royals,Houston Astros,+275,-357,2,5
+06 Jul 2022,,Colorado Rockies,Los Angeles Dodgers,+260,-323,1,2
+06 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-132,+110,7,5
+06 Jul 2022,,New York Yankees,Pittsburgh Pirates,-213,+175,16,0
+06 Jul 2022,,Kansas City Royals,Houston Astros,+275,-357,7,4
+06 Jul 2022,,St.Louis Cardinals,Atlanta Braves,+170,-200,0,3
+06 Jul 2022,,Tampa Bay Rays,Boston Red Sox,+100,-120,7,1
+06 Jul 2022,,Texas Rangers,Baltimore Orioles,-111,-111,1,2
+06 Jul 2022,,Washington Nationals,Philadelphia Phillies,+185,-227,3,2
+06 Jul 2022,,New York Mets,Cincinnati Reds,-172,+150,8,3
+06 Jul 2022,,Los Angeles Angels,Miami Marlins,-161,+140,5,2
+06 Jul 2022,,Toronto Blue Jays,Athletics,-213,+175,2,1
+06 Jul 2022,,Chicago Cubs,Milwaukee Brewers,+220,-270,2,1
+06 Jul 2022,,Minnesota Twins,Chicago White Sox,+104,-125,8,9
+06 Jul 2022,,Cleveland Guardians,Detroit Tigers,-167,+145,2,8
+05 Jul 2022,,Colorado Rockies,Los Angeles Dodgers,+179,-222,2,5
+05 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-132,+110,2,6
+05 Jul 2022,,Toronto Blue Jays,Athletics,-172,+150,3,5
+05 Jul 2022,,Chicago Cubs,Milwaukee Brewers,+114,-250,8,3
+05 Jul 2022,,Minnesota Twins,Chicago White Sox,-111,-111,8,2
+05 Jul 2022,,Kansas City Royals,Houston Astros,+215,-263,7,9
+05 Jul 2022,,St.Louis Cardinals,Atlanta Braves,+167,-192,1,7
+05 Jul 2022,,Tampa Bay Rays,Boston Red Sox,+100,-120,8,4
+05 Jul 2022,,Cleveland Guardians,Detroit Tigers,-161,+140,4,11
+05 Jul 2022,,Texas Rangers,Baltimore Orioles,-116,-105,9,10
+05 Jul 2022,,New York Yankees,Pittsburgh Pirates,-200,+170,2,5
+05 Jul 2022,,Washington Nationals,Philadelphia Phillies,+145,-167,0,11
+05 Jul 2022,,New York Mets,Cincinnati Reds,-161,+140,0,1
+05 Jul 2022,,Los Angeles Angels,Miami Marlins,-156,+135,1,2
+05 Jul 2022,,Seattle Mariners,San Diego Padres,+110,-132,6,2
+04 Jul 2022,,Colorado Rockies,Los Angeles Dodgers,+195,-238,3,5
+04 Jul 2022,,Toronto Blue Jays,Athletics,-175,+154,1,5
+04 Jul 2022,,Minnesota Twins,Chicago White Sox,+110,-132,6,3
+04 Jul 2022,,St.Louis Cardinals,Atlanta Braves,+129,-152,3,6
+04 Jul 2022,,New York Mets,Cincinnati Reds,-182,+160,7,4
+04 Jul 2022,,Cleveland Guardians,Detroit Tigers,-132,+110,3,5
+04 Jul 2022,,Seattle Mariners,San Diego Padres,+110,-132,8,2
+04 Jul 2022,,San Francisco Giants,Arizona Diamondbacks,-200,+170,3,8
+04 Jul 2022,,Chicago Cubs,Milwaukee Brewers,+125,-147,2,5
+04 Jul 2022,,Kansas City Royals,Houston Astros,+215,-263,6,7
+04 Jul 2022,,Tampa Bay Rays,Boston Red Sox,+100,-120,0,4
+04 Jul 2022,,Cleveland Guardians,Detroit Tigers,-147,+125,1,4
+04 Jul 2022,,Texas Rangers,Baltimore Orioles,-111,-111,6,7
+04 Jul 2022,,Miami Marlins,Washington Nationals,-105,-116,3,2
+03 Jul 2022,,St.Louis Cardinals,Philadelphia Phillies,+145,-167,0,4
+03 Jul 2022,,Athletics,Seattle Mariners,+125,-147,1,2
+03 Jul 2022,,San Diego Padres,Los Angeles Dodgers,+175,-213,4,2
+03 Jul 2022,,Chicago White Sox,San Francisco Giants,+114,-135,13,4
+03 Jul 2022,,Arizona Diamondbacks,Colorado Rockies,-120,+100,5,6
+03 Jul 2022,,Boston Red Sox,Chicago Cubs,-105,-116,4,2
+03 Jul 2022,,Baltimore Orioles,Minnesota Twins,+135,-156,3,1
+03 Jul 2022,,Los Angeles Angels,Houston Astros,+190,-233,2,4
+03 Jul 2022,,Atlanta Braves,Cincinnati Reds,-175,+154,3,4
+03 Jul 2022,,New York Yankees,Cleveland Guardians,-167,+145,0,2
+03 Jul 2022,,Texas Rangers,New York Mets,+110,-132,1,4
+03 Jul 2022,,Tampa Bay Rays,Toronto Blue Jays,+110,-132,7,3
+03 Jul 2022,,Miami Marlins,Washington Nationals,-132,+110,7,4
+03 Jul 2022,,Milwaukee Brewers,Pittsburgh Pirates,-222,+179,2,0
+03 Jul 2022,,Kansas City Royals,Detroit Tigers,+125,-147,7,4
+02 Jul 2022,,Arizona Diamondbacks,Colorado Rockies,-120,+100,7,11
+02 Jul 2022,,Boston Red Sox,Chicago Cubs,-152,+129,1,3
+02 Jul 2022,,San Diego Padres,Los Angeles Dodgers,+167,-192,2,7
+02 Jul 2022,,New York Yankees,Cleveland Guardians,-182,+160,6,1
+02 Jul 2022,,Tampa Bay Rays,Toronto Blue Jays,+110,-132,11,5
+02 Jul 2022,,Athletics,Seattle Mariners,+135,-156,1,2
+02 Jul 2022,,Atlanta Braves,Cincinnati Reds,-156,+135,4,1
+02 Jul 2022,,Kansas City Royals,Detroit Tigers,+104,-125,3,4
+02 Jul 2022,,Los Angeles Angels,Houston Astros,+179,-222,1,9
+02 Jul 2022,,Texas Rangers,New York Mets,+125,-147,7,3
+02 Jul 2022,,Chicago White Sox,San Francisco Giants,+125,-147,5,3
+02 Jul 2022,,Miami Marlins,Washington Nationals,-111,-111,5,3
+02 Jul 2022,,Milwaukee Brewers,Pittsburgh Pirates,-233,+190,4,7
+02 Jul 2022,,St.Louis Cardinals,Philadelphia Phillies,+104,-125,7,6
+02 Jul 2022,,Baltimore Orioles,Minnesota Twins,+195,-238,3,4
+02 Jul 2022,,New York Yankees,Cleveland Guardians,-323,+254,13,4
+01 Jul 2022,,Chicago White Sox,San Francisco Giants,+120,-141,1,0
+01 Jul 2022,,Athletics,Seattle Mariners,+165,-185,3,1
+01 Jul 2022,,San Diego Padres,Los Angeles Dodgers,+125,-147,1,5
+01 Jul 2022,,Arizona Diamondbacks,Colorado Rockies,+125,-147,9,3
+01 Jul 2022,,Baltimore Orioles,Minnesota Twins,+175,-213,2,3
+01 Jul 2022,,Los Angeles Angels,Houston Astros,+114,-135,1,8
+01 Jul 2022,,Kansas City Royals,Detroit Tigers,-105,-116,3,1
+01 Jul 2022,,Texas Rangers,New York Mets,+160,-182,3,4
+01 Jul 2022,,Milwaukee Brewers,Pittsburgh Pirates,-222,+179,19,2
+01 Jul 2022,,Atlanta Braves,Cincinnati Reds,-161,+140,9,1
+01 Jul 2022,,Miami Marlins,Washington Nationals,-125,+104,6,3
+01 Jul 2022,,St.Louis Cardinals,Philadelphia Phillies,+110,-132,3,5
+01 Jul 2022,,Tampa Bay Rays,Toronto Blue Jays,+125,-147,2,9
+01 Jul 2022,,Boston Red Sox,Chicago Cubs,-147,+125,5,6
+30 Jun 2022,,Athletics,Seattle Mariners,+170,-200,6,8
+30 Jun 2022,,San Diego Padres,Los Angeles Dodgers,+160,-182,1,3
+30 Jun 2022,,Cincinnati Reds,Chicago Cubs,+114,-135,7,15
+30 Jun 2022,,Tampa Bay Rays,Toronto Blue Jays,+125,-147,1,4
+30 Jun 2022,,Milwaukee Brewers,Pittsburgh Pirates,-200,+170,7,8
+30 Jun 2022,,New York Yankees,Houston Astros,-141,+120,1,2
+30 Jun 2022,,Atlanta Braves,Philadelphia Phillies,+129,-152,4,14
+30 Jun 2022,,Minnesota Twins,Cleveland Guardians,+129,-152,3,5
+29 Jun 2022,,Chicago White Sox,Los Angeles Angels,+170,-200,1,4
+29 Jun 2022,,Los Angeles Dodgers,Colorado Rockies,-222,+179,8,4
+29 Jun 2022,,Cincinnati Reds,Chicago Cubs,+104,-125,3,8
+29 Jun 2022,,Miami Marlins,St.Louis Cardinals,-135,+114,4,3
+29 Jun 2022,,Minnesota Twins,Cleveland Guardians,+129,-152,6,7
+29 Jun 2022,,Boston Red Sox,Toronto Blue Jays,+150,-172,6,5
+29 Jun 2022,,Atlanta Braves,Philadelphia Phillies,+114,-135,4,1
+29 Jun 2022,,Baltimore Orioles,Seattle Mariners,,,3,9
+29 Jun 2022,,Detroit Tigers,San Francisco Giants,+170,-200,3,2
+29 Jun 2022,,San Diego Padres,Arizona Diamondbacks,-132,+110,4,0
+29 Jun 2022,,Texas Rangers,Kansas City Royals,-120,+100,1,2
+29 Jun 2022,,Houston Astros,New York Mets,-152,+129,2,0
+29 Jun 2022,,Athletics,New York Yankees,+275,-357,3,5
+29 Jun 2022,,Pittsburgh Pirates,Washington Nationals,+135,-156,8,7
+29 Jun 2022,,Milwaukee Brewers,Tampa Bay Rays,+110,-132,5,3
+28 Jun 2022,,Baltimore Orioles,Seattle Mariners,+114,-135,0,2
+28 Jun 2022,,Detroit Tigers,San Francisco Giants,+175,-213,3,4
+28 Jun 2022,,San Diego Padres,Arizona Diamondbacks,-141,+120,6,7
+28 Jun 2022,,Chicago White Sox,Los Angeles Angels,+145,-167,11,4
+28 Jun 2022,,Los Angeles Dodgers,Colorado Rockies,-182,+160,4,7
+28 Jun 2022,,Texas Rangers,Kansas City Royals,-120,+100,8,3
+28 Jun 2022,,Cincinnati Reds,Chicago Cubs,+110,-132,5,3
+28 Jun 2022,,Miami Marlins,St.Louis Cardinals,-120,+100,3,5
+28 Jun 2022,,Houston Astros,New York Mets,-125,+104,9,1
+28 Jun 2022,,Milwaukee Brewers,Tampa Bay Rays,+100,-120,5,3
+28 Jun 2022,,Boston Red Sox,Toronto Blue Jays,+125,-147,5,6
+28 Jun 2022,,Athletics,New York Yankees,+229,-286,1,2
+28 Jun 2022,,Atlanta Braves,Philadelphia Phillies,-141,+120,5,3
+28 Jun 2022,,Pittsburgh Pirates,Washington Nationals,+114,-135,1,3
+27 Jun 2022,,Baltimore Orioles,Seattle Mariners,+165,-185,9,2
+27 Jun 2022,,Chicago White Sox,Los Angeles Angels,+120,-141,3,4
+27 Jun 2022,,Los Angeles Dodgers,Colorado Rockies,-222,+179,0,4
+27 Jun 2022,,Texas Rangers,Kansas City Royals,-147,+125,10,4
+27 Jun 2022,,Miami Marlins,St.Louis Cardinals,+140,-161,0,9
+27 Jun 2022,,Minnesota Twins,Cleveland Guardians,-132,+110,11,1
+27 Jun 2022,,Boston Red Sox,Toronto Blue Jays,+120,-141,2,7
+27 Jun 2022,,Athletics,New York Yankees,+240,-303,5,9
+27 Jun 2022,,Pittsburgh Pirates,Washington Nationals,+104,-125,2,3
+26 Jun 2022,,Los Angeles Dodgers,Atlanta Braves,-120,+100,5,3
+26 Jun 2022,,Detroit Tigers,Arizona Diamondbacks,+104,-125,7,11
+26 Jun 2022,,Philadelphia Phillies,San Diego Padres,+145,-167,8,5
+26 Jun 2022,,Seattle Mariners,Los Angeles Angels,+120,-141,1,2
+26 Jun 2022,,Cincinnati Reds,San Francisco Giants,+145,-167,10,3
+26 Jun 2022,,Washington Nationals,Texas Rangers,+150,-172,6,4
+26 Jun 2022,,Chicago Cubs,St.Louis Cardinals,+150,-172,6,5
+26 Jun 2022,,Athletics,Kansas City Royals,+154,-175,5,3
+26 Jun 2022,,Baltimore Orioles,Chicago White Sox,+185,-227,3,4
+26 Jun 2022,,Colorado Rockies,Minnesota Twins,+185,-227,3,6
+26 Jun 2022,,Toronto Blue Jays,Milwaukee Brewers,-156,+135,3,10
+26 Jun 2022,,Boston Red Sox,Cleveland Guardians,-116,-105,8,3
+26 Jun 2022,,Pittsburgh Pirates,Tampa Bay Rays,+210,-250,2,4
+26 Jun 2022,,Houston Astros,New York Yankees,+165,-185,3,6
+26 Jun 2022,,New York Mets,Miami Marlins,-152,+129,2,3
+25 Jun 2022,,Detroit Tigers,Arizona Diamondbacks,+135,-156,6,3
+25 Jun 2022,,Philadelphia Phillies,San Diego Padres,+120,-141,4,2
+25 Jun 2022,,Seattle Mariners,Los Angeles Angels,+120,-141,5,3
+25 Jun 2022,,Los Angeles Dodgers,Atlanta Braves,-111,-111,3,5
+25 Jun 2022,,Cincinnati Reds,San Francisco Giants,+129,-152,2,9
+25 Jun 2022,,Colorado Rockies,Minnesota Twins,+170,-200,0,6
+25 Jun 2022,,Boston Red Sox,Cleveland Guardians,-111,-111,4,2
+25 Jun 2022,,Athletics,Kansas City Royals,+150,-172,9,7
+25 Jun 2022,,New York Mets,Miami Marlins,-147,+125,5,3
+25 Jun 2022,,Toronto Blue Jays,Milwaukee Brewers,+170,-200,4,5
+25 Jun 2022,,Washington Nationals,Texas Rangers,+125,-147,2,3
+25 Jun 2022,,Chicago Cubs,St.Louis Cardinals,+185,-227,3,5
+25 Jun 2022,,Baltimore Orioles,Chicago White Sox,+175,-213,6,2
+25 Jun 2022,,Pittsburgh Pirates,Tampa Bay Rays,+154,-175,5,6
+25 Jun 2022,,Houston Astros,New York Yankees,+165,-185,3,0
+24 Jun 2022,,Cincinnati Reds,San Francisco Giants,+204,-250,4,2
+24 Jun 2022,,Detroit Tigers,Arizona Diamondbacks,+129,-152,5,1
+24 Jun 2022,,Philadelphia Phillies,San Diego Padres,+100,-120,0,1
+24 Jun 2022,,Seattle Mariners,Los Angeles Angels,+104,-125,4,3
+24 Jun 2022,,Chicago Cubs,St.Louis Cardinals,+145,-167,3,0
+24 Jun 2022,,Athletics,Kansas City Royals,+129,-152,1,3
+24 Jun 2022,,Baltimore Orioles,Chicago White Sox,+150,-172,4,1
+24 Jun 2022,,Colorado Rockies,Minnesota Twins,+160,-182,1,0
+24 Jun 2022,,Toronto Blue Jays,Milwaukee Brewers,+129,-152,9,4
+24 Jun 2022,,Washington Nationals,Texas Rangers,+135,-156,2,1
+24 Jun 2022,,Los Angeles Dodgers,Atlanta Braves,-132,+110,4,1
+24 Jun 2022,,Boston Red Sox,Cleveland Guardians,+129,-152,6,3
+24 Jun 2022,,Pittsburgh Pirates,Tampa Bay Rays,+160,-182,3,4
+24 Jun 2022,,Houston Astros,New York Yankees,+125,-147,3,1
+24 Jun 2022,,New York Mets,Miami Marlins,-147,+125,5,3
+23 Jun 2022,,Philadelphia Phillies,San Diego Padres,-125,+104,6,2
+23 Jun 2022,,Baltimore Orioles,Chicago White Sox,+150,-172,4,0
+23 Jun 2022,,Houston Astros,New York Yankees,-105,-116,6,7
+23 Jun 2022,,Seattle Mariners,Athletics,-120,+100,2,1
+23 Jun 2022,,St.Louis Cardinals,Milwaukee Brewers,+104,-125,4,6
+23 Jun 2022,,Cleveland Guardians,Minnesota Twins,+114,-135,0,1
+23 Jun 2022,,Chicago Cubs,Pittsburgh Pirates,-116,-105,7,8
+23 Jun 2022,,Los Angeles Dodgers,Cincinnati Reds,-233,+190,10,5
+23 Jun 2022,,San Francisco Giants,Atlanta Braves,+125,-147,6,7
+23 Jun 2022,,Colorado Rockies,Miami Marlins,+129,-152,2,3
+22 Jun 2022,,Kansas City Royals,Los Angeles Angels,+179,-222,0,5
+22 Jun 2022,,Seattle Mariners,Athletics,-135,+114,9,0
+22 Jun 2022,,St.Louis Cardinals,Milwaukee Brewers,+100,-120,5,4
+22 Jun 2022,,Cleveland Guardians,Minnesota Twins,+125,-147,11,10
+22 Jun 2022,,San Francisco Giants,Atlanta Braves,+135,-156,3,4
+22 Jun 2022,,Detroit Tigers,Boston Red Sox,+120,-141,2,6
+22 Jun 2022,,New York Yankees,Tampa Bay Rays,-156,+135,5,4
+22 Jun 2022,,Washington Nationals,Baltimore Orioles,+135,-156,0,7
+22 Jun 2022,,Chicago Cubs,Pittsburgh Pirates,-120,+100,14,5
+22 Jun 2022,,Los Angeles Dodgers,Cincinnati Reds,-213,+175,8,4
+22 Jun 2022,,Colorado Rockies,Miami Marlins,+110,-132,4,7
+22 Jun 2022,,Arizona Diamondbacks,San Diego Padres,+145,-167,4,10
+22 Jun 2022,,Philadelphia Phillies,Texas Rangers,-147,+125,2,4
+22 Jun 2022,,Toronto Blue Jays,Chicago White Sox,-120,+100,9,5
+22 Jun 2022,,New York Mets,Houston Astros,+120,-141,3,5
+21 Jun 2022,,Arizona Diamondbacks,San Diego Padres,+120,-141,2,3
+21 Jun 2022,,Seattle Mariners,Athletics,-125,+104,8,2
+21 Jun 2022,,Kansas City Royals,Los Angeles Angels,+179,-222,12,11
+21 Jun 2022,,Toronto Blue Jays,Chicago White Sox,-120,+100,6,7
+21 Jun 2022,,New York Mets,Houston Astros,+110,-132,2,8
+21 Jun 2022,,St.Louis Cardinals,Milwaukee Brewers,-116,-105,6,2
+21 Jun 2022,,Philadelphia Phillies,Texas Rangers,-147,+125,0,7
+21 Jun 2022,,Cleveland Guardians,Minnesota Twins,+125,-147,6,5
+21 Jun 2022,,San Francisco Giants,Atlanta Braves,+100,-120,12,10
+21 Jun 2022,,Detroit Tigers,Boston Red Sox,+125,-147,4,5
+21 Jun 2022,,New York Yankees,Tampa Bay Rays,-135,+114,4,5
+21 Jun 2022,,Washington Nationals,Baltimore Orioles,+104,-125,3,0
+21 Jun 2022,,Chicago Cubs,Pittsburgh Pirates,+129,-152,1,7
+21 Jun 2022,,Los Angeles Dodgers,Cincinnati Reds,-167,+145,8,2
+21 Jun 2022,,Colorado Rockies,Miami Marlins,+160,-182,8,9
+20 Jun 2022,,Arizona Diamondbacks,San Diego Padres,+150,-172,1,4
+20 Jun 2022,,Kansas City Royals,Los Angeles Angels,+160,-182,6,2
+20 Jun 2022,,Toronto Blue Jays,Chicago White Sox,-132,+110,7,8
+20 Jun 2022,,St.Louis Cardinals,Milwaukee Brewers,+150,-172,0,2
+20 Jun 2022,,San Francisco Giants,Atlanta Braves,+129,-152,1,2
+20 Jun 2022,,Detroit Tigers,Boston Red Sox,+167,-192,2,5
+20 Jun 2022,,New York Yankees,Tampa Bay Rays,-147,+125,4,2
+20 Jun 2022,,Chicago Cubs,Pittsburgh Pirates,+114,-135,1,12
+20 Jun 2022,,Miami Marlins,New York Mets,+145,-167,0,6
+19 Jun 2022,,Chicago White Sox,Houston Astros,+129,-152,3,4
+19 Jun 2022,,Minnesota Twins,Arizona Diamondbacks,-132,+110,1,7
+19 Jun 2022,,Cleveland Guardians,Los Angeles Dodgers,+150,-172,5,3
+19 Jun 2022,,Los Angeles Angels,Seattle Mariners,+150,-172,4,0
+19 Jun 2022,,Kansas City Royals,Athletics,-152,+129,0,4
+19 Jun 2022,,San Diego Padres,Colorado Rockies,-152,+129,3,8
+19 Jun 2022,,Atlanta Braves,Chicago Cubs,-156,+135,6,0
+19 Jun 2022,,Milwaukee Brewers,Cincinnati Reds,-141,+120,6,3
+19 Jun 2022,,Texas Rangers,Detroit Tigers,-156,+135,3,7
+19 Jun 2022,,Miami Marlins,New York Mets,+129,-152,6,2
+19 Jun 2022,,New York Yankees,Toronto Blue Jays,-167,+145,9,10
+19 Jun 2022,,Tampa Bay Rays,Baltimore Orioles,-161,+140,1,2
+19 Jun 2022,,St.Louis Cardinals,Boston Red Sox,+140,-161,4,6
+19 Jun 2022,,San Francisco Giants,Pittsburgh Pirates,-185,+165,3,4
+19 Jun 2022,,Philadelphia Phillies,Washington Nationals,-167,+145,3,9
+18 Jun 2022,,Minnesota Twins,Arizona Diamondbacks,-120,+100,11,1
+18 Jun 2022,,San Diego Padres,Colorado Rockies,-135,+114,4,5
+18 Jun 2022,,St.Louis Cardinals,Boston Red Sox,+114,-135,11,2
+18 Jun 2022,,Cleveland Guardians,Los Angeles Dodgers,+229,-286,1,7
+18 Jun 2022,,Philadelphia Phillies,Washington Nationals,-161,+140,2,1
+18 Jun 2022,,Chicago White Sox,Houston Astros,+204,-250,7,0
+18 Jun 2022,,Milwaukee Brewers,Cincinnati Reds,-105,-116,7,3
+18 Jun 2022,,Texas Rangers,Detroit Tigers,-120,+100,7,14
+18 Jun 2022,,Miami Marlins,New York Mets,+150,-172,2,3
+18 Jun 2022,,Kansas City Royals,Athletics,-105,-116,2,0
+18 Jun 2022,,Tampa Bay Rays,Baltimore Orioles,-167,+145,7,6
+18 Jun 2022,,San Francisco Giants,Pittsburgh Pirates,-172,+150,7,5
+18 Jun 2022,,New York Yankees,Toronto Blue Jays,+125,-147,4,0
+18 Jun 2022,,Atlanta Braves,Chicago Cubs,-213,+175,3,6
+17 Jun 2022,,Cleveland Guardians,Los Angeles Dodgers,+179,-222,2,1
+17 Jun 2022,,Los Angeles Angels,Seattle Mariners,+120,-141,1,8
+17 Jun 2022,,Minnesota Twins,Arizona Diamondbacks,-105,-116,2,7
+17 Jun 2022,,Kansas City Royals,Athletics,+145,-167,5,1
+17 Jun 2022,,San Diego Padres,Colorado Rockies,-141,+120,4,10
+17 Jun 2022,,Chicago White Sox,Houston Astros,+167,-192,3,13
+17 Jun 2022,,St.Louis Cardinals,Boston Red Sox,-111,-111,5,6
+17 Jun 2022,,Texas Rangers,Detroit Tigers,-135,+114,7,0
+17 Jun 2022,,Miami Marlins,New York Mets,+175,-213,4,10
+17 Jun 2022,,New York Yankees,Toronto Blue Jays,+104,-125,12,3
+17 Jun 2022,,San Francisco Giants,Pittsburgh Pirates,-213,+175,2,0
+17 Jun 2022,,Milwaukee Brewers,Cincinnati Reds,+100,-120,5,4
+17 Jun 2022,,Tampa Bay Rays,Baltimore Orioles,-167,+145,0,1
+17 Jun 2022,,Atlanta Braves,Chicago Cubs,-182,+160,0,1
+16 Jun 2022,,Los Angeles Angels,Seattle Mariners,+110,-132,4,1
+16 Jun 2022,,Texas Rangers,Detroit Tigers,-116,-105,3,1
+16 Jun 2022,,Milwaukee Brewers,New York Mets,+110,-132,4,5
+16 Jun 2022,,Tampa Bay Rays,New York Yankees,+150,-172,1,2
+16 Jun 2022,,Philadelphia Phillies,Washington Nationals,-213,+175,10,1
+16 Jun 2022,,Cleveland Guardians,Colorado Rockies,-141,+120,4,2
+16 Jun 2022,,Baltimore Orioles,Toronto Blue Jays,+215,-263,10,2
+16 Jun 2022,,San Diego Padres,Chicago Cubs,-185,+165,6,4
+16 Jun 2022,,Athletics,Boston Red Sox,+160,-182,4,3
+15 Jun 2022,,Los Angeles Angels,Los Angeles Dodgers,+175,-213,1,4
+15 Jun 2022,,Cleveland Guardians,Colorado Rockies,-125,+104,7,5
+15 Jun 2022,,San Diego Padres,Chicago Cubs,+120,-141,19,5
+15 Jun 2022,,Pittsburgh Pirates,St.Louis Cardinals,+170,-200,6,4
+15 Jun 2022,,Athletics,Boston Red Sox,+114,-135,1,10
+15 Jun 2022,,Milwaukee Brewers,New York Mets,+110,-132,10,2
+15 Jun 2022,,Baltimore Orioles,Toronto Blue Jays,+200,-244,6,7
+15 Jun 2022,,Atlanta Braves,Washington Nationals,-222,+179,8,2
+15 Jun 2022,,Tampa Bay Rays,New York Yankees,+120,-141,3,4
+15 Jun 2022,,Minnesota Twins,Seattle Mariners,-147,+125,5,0
+15 Jun 2022,,Kansas City Royals,San Francisco Giants,+175,-213,3,2
+15 Jun 2022,,Cincinnati Reds,Arizona Diamondbacks,+120,-141,4,7
+15 Jun 2022,,Houston Astros,Texas Rangers,-161,+140,9,2
+15 Jun 2022,,Chicago White Sox,Detroit Tigers,-105,-116,13,0
+15 Jun 2022,,Miami Marlins,Philadelphia Phillies,+145,-167,1,3
+14 Jun 2022,,Los Angeles Angels,Los Angeles Dodgers,+165,-185,0,2
+14 Jun 2022,,Minnesota Twins,Seattle Mariners,-135,+114,0,5
+14 Jun 2022,,Kansas City Royals,San Francisco Giants,+204,-250,2,4
+14 Jun 2022,,Cincinnati Reds,Arizona Diamondbacks,+110,-132,5,3
+14 Jun 2022,,Cleveland Guardians,Colorado Rockies,-105,-116,4,3
+14 Jun 2022,,San Diego Padres,Chicago Cubs,-135,+114,12,5
+14 Jun 2022,,Houston Astros,Texas Rangers,-120,+100,4,3
+14 Jun 2022,,Athletics,Boston Red Sox,+185,-227,1,6
+14 Jun 2022,,Chicago White Sox,Detroit Tigers,-182,+160,5,1
+14 Jun 2022,,Milwaukee Brewers,New York Mets,-120,+100,0,4
+14 Jun 2022,,Baltimore Orioles,Toronto Blue Jays,+215,-263,6,5
+14 Jun 2022,,Atlanta Braves,Washington Nationals,-172,+150,10,4
+14 Jun 2022,,Miami Marlins,Philadelphia Phillies,+129,-152,11,9
+14 Jun 2022,,Tampa Bay Rays,New York Yankees,+120,-141,0,2
+14 Jun 2022,,Pittsburgh Pirates,St.Louis Cardinals,,,1,3
+13 Jun 2022,,Minnesota Twins,Seattle Mariners,-105,-116,3,2
+13 Jun 2022,,Kansas City Royals,San Francisco Giants,+215,-263,2,6
+13 Jun 2022,,Cincinnati Reds,Arizona Diamondbacks,+104,-125,5,4
+13 Jun 2022,,San Diego Padres,Chicago Cubs,-132,+110,4,1
+13 Jun 2022,,Houston Astros,Texas Rangers,-132,+110,3,5
+13 Jun 2022,,Pittsburgh Pirates,St.Louis Cardinals,+165,-185,5,7
+13 Jun 2022,,Chicago White Sox,Detroit Tigers,-135,+114,9,5
+13 Jun 2022,,Baltimore Orioles,Toronto Blue Jays,+175,-213,1,11
+13 Jun 2022,,Atlanta Braves,Washington Nationals,-156,+135,9,5
+13 Jun 2022,,Miami Marlins,Philadelphia Phillies,+129,-152,2,3
+12 Jun 2022,,New York Mets,Los Angeles Angels,+110,-132,4,1
+12 Jun 2022,,Boston Red Sox,Seattle Mariners,+129,-152,2,0
+12 Jun 2022,,Colorado Rockies,San Diego Padres,+165,-185,4,2
+12 Jun 2022,,Los Angeles Dodgers,San Francisco Giants,-152,+129,0,2
+12 Jun 2022,,Cincinnati Reds,St.Louis Cardinals,+140,-161,7,6
+12 Jun 2022,,Baltimore Orioles,Kansas City Royals,+120,-141,10,7
+12 Jun 2022,,Texas Rangers,Chicago White Sox,+125,-147,8,6
+12 Jun 2022,,Miami Marlins,Houston Astros,+210,-250,4,9
+12 Jun 2022,,Tampa Bay Rays,Minnesota Twins,-120,+100,6,0
+12 Jun 2022,,Toronto Blue Jays,Detroit Tigers,-132,+110,6,0
+12 Jun 2022,,Arizona Diamondbacks,Philadelphia Phillies,+165,-185,13,1
+12 Jun 2022,,Pittsburgh Pirates,Atlanta Braves,+200,-244,3,5
+12 Jun 2022,,Chicago Cubs,New York Yankees,+175,-213,4,18
+12 Jun 2022,,Milwaukee Brewers,Washington Nationals,-132,+110,4,1
+12 Jun 2022,,Athletics,Cleveland Guardians,+154,-175,3,6
+11 Jun 2022,,Boston Red Sox,Seattle Mariners,+104,-125,6,7
+11 Jun 2022,,New York Mets,Los Angeles Angels,-111,-111,6,11
+11 Jun 2022,,Chicago Cubs,New York Yankees,+195,-238,0,8
+11 Jun 2022,,Los Angeles Dodgers,San Francisco Giants,-125,+104,2,3
+11 Jun 2022,,Athletics,Cleveland Guardians,+114,-135,10,5
+11 Jun 2022,,Pittsburgh Pirates,Atlanta Braves,+210,-250,4,10
+11 Jun 2022,,Baltimore Orioles,Kansas City Royals,-116,-105,6,4
+11 Jun 2022,,Toronto Blue Jays,Detroit Tigers,-278,+225,1,3
+11 Jun 2022,,Miami Marlins,Houston Astros,+229,-286,5,1
+11 Jun 2022,,Arizona Diamondbacks,Philadelphia Phillies,+200,-244,0,4
+11 Jun 2022,,Milwaukee Brewers,Washington Nationals,-152,+129,6,8
+11 Jun 2022,,Cincinnati Reds,St.Louis Cardinals,+160,-182,4,5
+11 Jun 2022,,Texas Rangers,Chicago White Sox,+135,-156,11,9
+11 Jun 2022,,Tampa Bay Rays,Minnesota Twins,-147,+125,5,6
+10 Jun 2022,,Los Angeles Dodgers,San Francisco Giants,-167,+145,2,7
+10 Jun 2022,,Boston Red Sox,Seattle Mariners,-116,-105,4,3
+10 Jun 2022,,Colorado Rockies,San Diego Padres,+215,-263,0,9
+10 Jun 2022,,New York Mets,Los Angeles Angels,-135,+114,7,3
+10 Jun 2022,,Cincinnati Reds,St.Louis Cardinals,+160,-182,0,2
+10 Jun 2022,,Baltimore Orioles,Kansas City Royals,-116,-105,1,8
+10 Jun 2022,,Texas Rangers,Chicago White Sox,+129,-152,3,8
+10 Jun 2022,,Miami Marlins,Houston Astros,+210,-250,7,4
+10 Jun 2022,,Tampa Bay Rays,Minnesota Twins,+104,-125,4,9
+10 Jun 2022,,Pittsburgh Pirates,Atlanta Braves,+215,-263,2,4
+10 Jun 2022,,Athletics,Cleveland Guardians,+100,-120,2,3
+10 Jun 2022,,Toronto Blue Jays,Detroit Tigers,-227,+185,10,1
+10 Jun 2022,,Arizona Diamondbacks,Philadelphia Phillies,+175,-213,5,7
+10 Jun 2022,,Chicago Cubs,New York Yankees,+215,-263,1,2
+10 Jun 2022,,Milwaukee Brewers,Washington Nationals,-156,+135,5,11
+09 Jun 2022,,Boston Red Sox,Los Angeles Angels,+110,-132,2,5
+09 Jun 2022,,Baltimore Orioles,Kansas City Royals,-105,-116,5,7
+09 Jun 2022,,New York Yankees,Minnesota Twins,-213,+175,10,7
+09 Jun 2022,,Pittsburgh Pirates,Atlanta Braves,+185,-227,1,3
+09 Jun 2022,,Athletics,Cleveland Guardians,+145,-167,4,8
+09 Jun 2022,,Washington Nationals,Miami Marlins,+125,-147,4,7
+09 Jun 2022,,Colorado Rockies,San Francisco Giants,+210,-250,4,2
+09 Jun 2022,,Los Angeles Dodgers,Chicago White Sox,-135,+114,11,9
+09 Jun 2022,,Philadelphia Phillies,Milwaukee Brewers,+145,-167,8,3
+09 Jun 2022,,St.Louis Cardinals,Tampa Bay Rays,+145,-167,1,2
+09 Jun 2022,,Arizona Diamondbacks,Cincinnati Reds,+120,-141,5,4
+08 Jun 2022,,Colorado Rockies,San Francisco Giants,+200,-244,1,2
+08 Jun 2022,,New York Mets,San Diego Padres,+114,-135,2,13
+08 Jun 2022,,Boston Red Sox,Los Angeles Angels,+110,-132,1,0
+08 Jun 2022,,Los Angeles Dodgers,Chicago White Sox,-125,+104,4,1
+08 Jun 2022,,Philadelphia Phillies,Milwaukee Brewers,+150,-172,10,0
+08 Jun 2022,,New York Yankees,Minnesota Twins,-200,+170,1,8
+08 Jun 2022,,Athletics,Atlanta Braves,+210,-250,2,13
+08 Jun 2022,,Texas Rangers,Cleveland Guardians,+150,-172,0,4
+08 Jun 2022,,St.Louis Cardinals,Tampa Bay Rays,+150,-172,3,11
+08 Jun 2022,,Arizona Diamondbacks,Cincinnati Reds,+120,-141,7,0
+08 Jun 2022,,Seattle Mariners,Houston Astros,+114,-135,6,3
+08 Jun 2022,,Washington Nationals,Miami Marlins,+110,-132,1,2
+08 Jun 2022,,Toronto Blue Jays,Kansas City Royals,-141,+120,4,8
+08 Jun 2022,,Detroit Tigers,Pittsburgh Pirates,+104,-125,3,1
+07 Jun 2022,,Colorado Rockies,San Francisco Giants,+179,-222,5,3
+07 Jun 2022,,New York Mets,San Diego Padres,-105,-116,0,7
+07 Jun 2022,,Boston Red Sox,Los Angeles Angels,-135,+114,6,5
+07 Jun 2022,,Los Angeles Dodgers,Chicago White Sox,-167,+145,0,4
+07 Jun 2022,,Seattle Mariners,Houston Astros,+125,-147,1,4
+07 Jun 2022,,Toronto Blue Jays,Kansas City Royals,-152,+129,7,0
+07 Jun 2022,,Philadelphia Phillies,Milwaukee Brewers,-125,+104,3,2
+07 Jun 2022,,New York Yankees,Minnesota Twins,-172,+150,10,4
+07 Jun 2022,,Athletics,Atlanta Braves,+204,-250,2,3
+07 Jun 2022,,St.Louis Cardinals,Tampa Bay Rays,+129,-152,2,4
+07 Jun 2022,,Chicago Cubs,Baltimore Orioles,-125,+104,3,9
+07 Jun 2022,,Detroit Tigers,Pittsburgh Pirates,+110,-132,5,3
+07 Jun 2022,,Arizona Diamondbacks,Cincinnati Reds,+100,-120,8,14
+07 Jun 2022,,Washington Nationals,Miami Marlins,+165,-185,2,12
+07 Jun 2022,,Texas Rangers,Cleveland Guardians,,,6,3
+07 Jun 2022,,Texas Rangers,Cleveland Guardians,,,3,6
+06 Jun 2022,,New York Mets,San Diego Padres,+110,-132,11,5
+06 Jun 2022,,Boston Red Sox,Los Angeles Angels,+104,-125,1,0
+06 Jun 2022,,Seattle Mariners,Houston Astros,+215,-263,7,4
+06 Jun 2022,,Toronto Blue Jays,Kansas City Royals,-213,+175,8,0
+06 Jun 2022,,Arizona Diamondbacks,Cincinnati Reds,+100,-120,0,7
+05 Jun 2022,,St.Louis Cardinals,Chicago Cubs,-135,+114,5,3
+05 Jun 2022,,New York Mets,Los Angeles Dodgers,+160,-182,5,4
+05 Jun 2022,,Boston Red Sox,Athletics,-105,-116,5,2
+05 Jun 2022,,Atlanta Braves,Colorado Rockies,-156,+135,8,7
+05 Jun 2022,,Seattle Mariners,Texas Rangers,+120,-141,6,5
+05 Jun 2022,,Houston Astros,Kansas City Royals,-233,+190,7,4
+05 Jun 2022,,San Diego Padres,Milwaukee Brewers,+110,-132,6,4
+05 Jun 2022,,Chicago White Sox,Tampa Bay Rays,-105,-116,6,5
+05 Jun 2022,,Washington Nationals,Cincinnati Reds,+165,-185,5,4
+05 Jun 2022,,San Francisco Giants,Miami Marlins,-125,+104,5,1
+05 Jun 2022,,Minnesota Twins,Toronto Blue Jays,+215,-263,8,6
+05 Jun 2022,,Arizona Diamondbacks,Pittsburgh Pirates,-152,+129,0,3
+05 Jun 2022,,Cleveland Guardians,Baltimore Orioles,-116,-105,3,2
+05 Jun 2022,,Los Angeles Angels,Philadelphia Phillies,+100,-120,7,9
+05 Jun 2022,,Detroit Tigers,New York Yankees,+240,-303,4,5
+04 Jun 2022,,New York Mets,Los Angeles Dodgers,+165,-185,9,4
+04 Jun 2022,,Los Angeles Angels,Philadelphia Phillies,-105,-116,2,7
+04 Jun 2022,,Chicago White Sox,Tampa Bay Rays,+104,-125,3,2
+04 Jun 2022,,Washington Nationals,Cincinnati Reds,+110,-132,10,8
+04 Jun 2022,,Houston Astros,Kansas City Royals,-200,+170,0,6
+04 Jun 2022,,San Francisco Giants,Miami Marlins,-111,-111,4,5
+04 Jun 2022,,San Diego Padres,Milwaukee Brewers,+114,-135,4,0
+04 Jun 2022,,Boston Red Sox,Athletics,-152,+129,8,0
+04 Jun 2022,,Arizona Diamondbacks,Pittsburgh Pirates,+104,-125,1,2
+04 Jun 2022,,Cleveland Guardians,Baltimore Orioles,-120,+100,4,5
+04 Jun 2022,,Seattle Mariners,Texas Rangers,+104,-125,2,3
+04 Jun 2022,,Minnesota Twins,Toronto Blue Jays,+165,-185,3,12
+04 Jun 2022,,Detroit Tigers,New York Yankees,+280,-370,0,3
+03 Jun 2022,,New York Mets,Los Angeles Dodgers,+165,-185,1,6
+03 Jun 2022,,Boston Red Sox,Athletics,-125,+104,7,2
+03 Jun 2022,,Atlanta Braves,Colorado Rockies,-152,+129,3,1
+03 Jun 2022,,Houston Astros,Kansas City Royals,-132,+110,10,3
+03 Jun 2022,,San Diego Padres,Milwaukee Brewers,+104,-125,7,0
+03 Jun 2022,,Seattle Mariners,Texas Rangers,-105,-116,4,3
+03 Jun 2022,,Chicago White Sox,Tampa Bay Rays,-105,-116,3,6
+03 Jun 2022,,Minnesota Twins,Toronto Blue Jays,+140,-161,9,3
+03 Jun 2022,,Arizona Diamondbacks,Pittsburgh Pirates,+104,-125,8,6
+03 Jun 2022,,Cleveland Guardians,Baltimore Orioles,-132,+110,6,3
+03 Jun 2022,,Detroit Tigers,New York Yankees,+229,-286,0,13
+03 Jun 2022,,Los Angeles Angels,Philadelphia Phillies,+110,-132,0,10
+03 Jun 2022,,Washington Nationals,Cincinnati Reds,+114,-135,8,5
+03 Jun 2022,,San Francisco Giants,Miami Marlins,-111,-111,15,6
+03 Jun 2022,,St.Louis Cardinals,Chicago Cubs,-111,-111,14,5
+02 Jun 2022,,New York Mets,Los Angeles Dodgers,+145,-167,0,2
+02 Jun 2022,,Atlanta Braves,Colorado Rockies,-172,+150,13,6
+02 Jun 2022,,St.Louis Cardinals,Chicago Cubs,-111,-111,5,7
+02 Jun 2022,,San Diego Padres,Milwaukee Brewers,+125,-147,4,5
+02 Jun 2022,,Seattle Mariners,Baltimore Orioles,-116,-105,7,6
+02 Jun 2022,,Los Angeles Angels,New York Yankees,+129,-152,1,2
+02 Jun 2022,,Washington Nationals,Cincinnati Reds,+100,-120,1,8
+02 Jun 2022,,San Francisco Giants,Miami Marlins,-141,+120,0,3
+02 Jun 2022,,Chicago White Sox,Toronto Blue Jays,+160,-182,3,8
+02 Jun 2022,,Tampa Bay Rays,Texas Rangers,-135,+114,3,1
+02 Jun 2022,,Minnesota Twins,Detroit Tigers,-141,+120,2,3
+02 Jun 2022,,Los Angeles Angels,New York Yankees,+100,-120,1,6
+01 Jun 2022,,Pittsburgh Pirates,Los Angeles Dodgers,+215,-263,8,4
+01 Jun 2022,,Milwaukee Brewers,Chicago Cubs,-116,-105,3,4
+01 Jun 2022,,Tampa Bay Rays,Texas Rangers,-125,+104,4,3
+01 Jun 2022,,Cincinnati Reds,Boston Red Sox,+170,-200,1,7
+01 Jun 2022,,Minnesota Twins,Detroit Tigers,-132,+110,0,5
+01 Jun 2022,,Chicago White Sox,Toronto Blue Jays,+167,-192,3,7
+01 Jun 2022,,Seattle Mariners,Baltimore Orioles,-125,+104,2,9
+01 Jun 2022,,Miami Marlins,Colorado Rockies,,,12,13
+01 Jun 2022,,San Francisco Giants,Philadelphia Phillies,+104,-125,5,6
+01 Jun 2022,,Atlanta Braves,Arizona Diamondbacks,-147,+125,6,0
+01 Jun 2022,,Houston Astros,Athletics,-233,+190,5,4
+01 Jun 2022,,San Diego Padres,St.Louis Cardinals,-132,+110,2,5
+01 Jun 2022,,Kansas City Royals,Cleveland Guardians,+120,-141,0,4
+01 Jun 2022,,Washington Nationals,New York Mets,+210,-250,0,5
+31 May 2022,,Pittsburgh Pirates,Los Angeles Dodgers,+215,-263,5,3
+31 May 2022,,Atlanta Braves,Arizona Diamondbacks,-156,+135,7,8
+31 May 2022,,Houston Astros,Athletics,-213,+175,3,1
+31 May 2022,,Milwaukee Brewers,Chicago Cubs,-125,+104,7,8
+31 May 2022,,Tampa Bay Rays,Texas Rangers,-125,+104,0,3
+31 May 2022,,San Diego Padres,St.Louis Cardinals,-116,-105,2,3
+31 May 2022,,Cincinnati Reds,Boston Red Sox,+167,-192,2,1
+31 May 2022,,Washington Nationals,New York Mets,+195,-238,0,10
+31 May 2022,,Chicago White Sox,Toronto Blue Jays,+110,-132,5,6
+31 May 2022,,Seattle Mariners,Baltimore Orioles,-152,+129,10,0
+31 May 2022,,Los Angeles Angels,New York Yankees,+150,-172,1,9
+31 May 2022,,San Francisco Giants,Philadelphia Phillies,+100,-120,7,4
+31 May 2022,,Kansas City Royals,Cleveland Guardians,+120,-141,3,8
+30 May 2022,,Pittsburgh Pirates,Los Angeles Dodgers,+280,-370,6,5
+30 May 2022,,Atlanta Braves,Arizona Diamondbacks,-167,+145,2,6
+30 May 2022,,Tampa Bay Rays,Texas Rangers,-141,+120,5,9
+30 May 2022,,Milwaukee Brewers,Chicago Cubs,,,3,1
+30 May 2022,,Baltimore Orioles,Boston Red Sox,+150,-172,10,0
+30 May 2022,,Washington Nationals,New York Mets,+150,-172,5,13
+30 May 2022,,Kansas City Royals,Cleveland Guardians,+140,-161,3,7
+30 May 2022,,Miami Marlins,Colorado Rockies,-152,+129,1,7
+30 May 2022,,Houston Astros,Athletics,-161,+140,5,1
+30 May 2022,,San Francisco Giants,Philadelphia Phillies,-120,+100,5,4
+30 May 2022,,San Diego Padres,St.Louis Cardinals,+104,-125,3,6
+30 May 2022,,Minnesota Twins,Detroit Tigers,-141,+120,5,7
+29 May 2022,,Philadelphia Phillies,New York Mets,-125,+104,4,5
+29 May 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-213,+175,3,1
+29 May 2022,,Houston Astros,Seattle Mariners,-147,+125,2,1
+29 May 2022,,Pittsburgh Pirates,San Diego Padres,+160,-182,2,4
+29 May 2022,,Texas Rangers,Athletics,-120,+100,5,6
+29 May 2022,,Toronto Blue Jays,Los Angeles Angels,+135,-156,11,10
+29 May 2022,,Milwaukee Brewers,St.Louis Cardinals,-147,+125,8,0
+29 May 2022,,Chicago Cubs,Chicago White Sox,+129,-152,4,5
+29 May 2022,,Kansas City Royals,Minnesota Twins,+170,-200,3,7
+29 May 2022,,Cleveland Guardians,Detroit Tigers,-167,+145,1,2
+29 May 2022,,New York Yankees,Tampa Bay Rays,+120,-141,2,4
+29 May 2022,,Miami Marlins,Atlanta Braves,+185,-227,3,6
+29 May 2022,,Baltimore Orioles,Boston Red Sox,+165,-185,2,12
+29 May 2022,,Colorado Rockies,Washington Nationals,+104,-125,5,6
+29 May 2022,,San Francisco Giants,Cincinnati Reds,-152,+129,6,4
+28 May 2022,,Houston Astros,Seattle Mariners,-152,+129,0,6
+28 May 2022,,Pittsburgh Pirates,San Diego Padres,+175,-213,4,2
+28 May 2022,,Toronto Blue Jays,Los Angeles Angels,+100,-120,6,5
+28 May 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-213,+175,3,2
+28 May 2022,,Chicago Cubs,Chicago White Sox,+150,-172,5,1
+28 May 2022,,Philadelphia Phillies,New York Mets,+104,-125,2,8
+28 May 2022,,Colorado Rockies,Washington Nationals,,,3,2
+28 May 2022,,Miami Marlins,Atlanta Braves,+104,-125,4,1
+28 May 2022,,San Francisco Giants,Cincinnati Reds,-182,+160,2,3
+28 May 2022,,Cleveland Guardians,Detroit Tigers,-156,+135,8,1
+28 May 2022,,New York Yankees,Tampa Bay Rays,-152,+129,1,3
+28 May 2022,,Texas Rangers,Athletics,-111,-111,11,4
+28 May 2022,,Milwaukee Brewers,St.Louis Cardinals,-116,-105,3,8
+28 May 2022,,Kansas City Royals,Minnesota Twins,+145,-167,7,3
+28 May 2022,,Colorado Rockies,Washington Nationals,,,7,13
+27 May 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-175,+154,6,4
+27 May 2022,,Texas Rangers,Athletics,-125,+104,8,5
+27 May 2022,,Houston Astros,Seattle Mariners,-125,+104,1,6
+27 May 2022,,Pittsburgh Pirates,San Diego Padres,+204,-250,3,4
+27 May 2022,,Toronto Blue Jays,Los Angeles Angels,-111,-111,4,3
+27 May 2022,,Milwaukee Brewers,St.Louis Cardinals,-111,-111,2,4
+27 May 2022,,Kansas City Royals,Minnesota Twins,+140,-161,7,10
+27 May 2022,,Miami Marlins,Atlanta Braves,+104,-125,4,6
+27 May 2022,,Baltimore Orioles,Boston Red Sox,+154,-175,12,8
+27 May 2022,,Philadelphia Phillies,New York Mets,+104,-125,6,8
+27 May 2022,,New York Yankees,Tampa Bay Rays,-147,+125,2,0
+27 May 2022,,San Francisco Giants,Cincinnati Reds,-222,+179,1,5
+26 May 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-185,+165,14,1
+26 May 2022,,Texas Rangers,Athletics,-132,+110,4,1
+26 May 2022,,Toronto Blue Jays,Los Angeles Angels,-116,-105,6,3
+26 May 2022,,Boston Red Sox,Chicago White Sox,-125,+104,16,7
+26 May 2022,,Milwaukee Brewers,St.Louis Cardinals,+100,-120,4,3
+26 May 2022,,Kansas City Royals,Minnesota Twins,+165,-185,3,2
+26 May 2022,,Philadelphia Phillies,Atlanta Braves,-116,-105,4,1
+26 May 2022,,Cleveland Guardians,Detroit Tigers,-167,-135,3,4
+26 May 2022,,Colorado Rockies,Washington Nationals,-111,-111,3,7
+26 May 2022,,New York Yankees,Tampa Bay Rays,-111,-111,7,2
+26 May 2022,,Chicago Cubs,Cincinnati Reds,-116,-105,5,20
+25 May 2022,,Texas Rangers,Los Angeles Angels,+154,-175,7,2
+25 May 2022,,Boston Red Sox,Chicago White Sox,-105,-116,1,3
+25 May 2022,,Cleveland Guardians,Houston Astros,+160,-182,1,2
+25 May 2022,,Philadelphia Phillies,Atlanta Braves,+100,-120,4,8
+25 May 2022,,Baltimore Orioles,New York Yankees,+140,-161,0,2
+25 May 2022,,Chicago Cubs,Cincinnati Reds,-116,-105,3,4
+25 May 2022,,Miami Marlins,Tampa Bay Rays,+160,-182,4,5
+25 May 2022,,Athletics,Seattle Mariners,+154,-175,4,2
+25 May 2022,,Milwaukee Brewers,San Diego Padres,+120,-141,2,1
+25 May 2022,,Los Angeles Dodgers,Washington Nationals,-213,+175,0,1
+25 May 2022,,New York Mets,San Francisco Giants,-105,-116,3,9
+25 May 2022,,Detroit Tigers,Minnesota Twins,+170,-200,4,2
+25 May 2022,,Colorado Rockies,Pittsburgh Pirates,+110,-132,5,10
+24 May 2022,,New York Mets,San Francisco Giants,-105,-116,12,13
+24 May 2022,,Kansas City Royals,Arizona Diamondbacks,+175,-213,6,8
+24 May 2022,,Athletics,Seattle Mariners,+145,-167,7,5
+24 May 2022,,Milwaukee Brewers,San Diego Padres,+104,-125,4,1
+24 May 2022,,Texas Rangers,Los Angeles Angels,+145,-167,3,5
+24 May 2022,,Boston Red Sox,Chicago White Sox,+160,-182,16,3
+24 May 2022,,Cleveland Guardians,Houston Astros,+167,-192,3,7
+24 May 2022,,Toronto Blue Jays,St.Louis Cardinals,-141,+120,8,1
+24 May 2022,,Detroit Tigers,Minnesota Twins,+170,-200,0,2
+24 May 2022,,Philadelphia Phillies,Atlanta Braves,+120,-141,5,6
+24 May 2022,,Baltimore Orioles,New York Yankees,+175,-213,6,7
+24 May 2022,,Los Angeles Dodgers,Washington Nationals,-227,+185,9,4
+24 May 2022,,Chicago Cubs,Cincinnati Reds,+104,-125,11,4
+24 May 2022,,Miami Marlins,Tampa Bay Rays,+140,-161,0,4
+24 May 2022,,Colorado Rockies,Pittsburgh Pirates,+100,-120,2,1
+23 May 2022,,New York Mets,San Francisco Giants,+114,-135,13,3
+23 May 2022,,Kansas City Royals,Arizona Diamondbacks,+167,-192,5,9
+23 May 2022,,Athletics,Seattle Mariners,+140,-161,6,7
+23 May 2022,,Milwaukee Brewers,San Diego Padres,-135,+114,2,3
+23 May 2022,,Cleveland Guardians,Houston Astros,+160,-182,6,1
+23 May 2022,,Toronto Blue Jays,St.Louis Cardinals,+100,-120,3,7
+23 May 2022,,Detroit Tigers,Minnesota Twins,+185,-227,4,5
+23 May 2022,,Philadelphia Phillies,Atlanta Braves,+125,-147,7,3
+23 May 2022,,Baltimore Orioles,New York Yankees,+215,-263,6,4
+23 May 2022,,Los Angeles Dodgers,Washington Nationals,-244,+200,10,1
+23 May 2022,,Chicago Cubs,Cincinnati Reds,-105,-116,7,4
+23 May 2022,,Colorado Rockies,Pittsburgh Pirates,+125,-147,1,2
+22 May 2022,,Chicago White Sox,New York Yankees,+154,-175,5,0
+22 May 2022,,Athletics,Los Angeles Angels,+175,-213,1,4
+22 May 2022,,San Diego Padres,San Francisco Giants,+120,-141,10,1
+22 May 2022,,New York Mets,Colorado Rockies,-116,-105,2,0
+22 May 2022,,Chicago White Sox,New York Yankees,+135,-156,3,1
+22 May 2022,,Arizona Diamondbacks,Chicago Cubs,+114,-135,4,5
+22 May 2022,,Texas Rangers,Houston Astros,+170,-200,2,5
+22 May 2022,,Minnesota Twins,Kansas City Royals,+100,-120,7,6
+22 May 2022,,Washington Nationals,Milwaukee Brewers,+210,-250,8,2
+22 May 2022,,Atlanta Braves,Miami Marlins,-105,-116,3,4
+22 May 2022,,Detroit Tigers,Cleveland Guardians,+165,-185,4,2
+22 May 2022,,Cincinnati Reds,Toronto Blue Jays,+210,-250,3,2
+22 May 2022,,Tampa Bay Rays,Baltimore Orioles,-172,+150,6,7
+22 May 2022,,Seattle Mariners,Boston Red Sox,+110,-132,4,8
+22 May 2022,,Los Angeles Dodgers,Philadelphia Phillies,-141,+120,3,4
+22 May 2022,,St.Louis Cardinals,Pittsburgh Pirates,-167,+145,18,4
+21 May 2022,,Athletics,Los Angeles Angels,+125,-147,3,5
+21 May 2022,,Texas Rangers,Houston Astros,+167,-192,1,2
+21 May 2022,,Minnesota Twins,Kansas City Royals,-156,+135,9,2
+21 May 2022,,Washington Nationals,Milwaukee Brewers,+210,-250,1,5
+21 May 2022,,Tampa Bay Rays,Baltimore Orioles,-156,+135,6,1
+21 May 2022,,St.Louis Cardinals,Pittsburgh Pirates,-135,+114,5,4
+21 May 2022,,Atlanta Braves,Miami Marlins,-152,+129,4,3
+21 May 2022,,Los Angeles Dodgers,Philadelphia Phillies,+100,-120,7,4
+21 May 2022,,Seattle Mariners,Boston Red Sox,+140,-161,5,6
+21 May 2022,,San Diego Padres,San Francisco Giants,+145,-167,2,1
+21 May 2022,,New York Mets,Colorado Rockies,,,5,1
+21 May 2022,,Cincinnati Reds,Toronto Blue Jays,+220,-270,1,3
+21 May 2022,,Arizona Diamondbacks,Chicago Cubs,+120,-141,7,6
+21 May 2022,,Chicago White Sox,New York Yankees,+185,-227,5,7
+20 May 2022,,San Diego Padres,San Francisco Giants,+129,-152,8,7
+20 May 2022,,Athletics,Los Angeles Angels,+140,-161,4,2
+20 May 2022,,Texas Rangers,Houston Astros,+210,-250,3,0
+20 May 2022,,Minnesota Twins,Kansas City Royals,-147,+125,6,4
+20 May 2022,,Washington Nationals,Milwaukee Brewers,+175,-213,0,7
+20 May 2022,,Seattle Mariners,Boston Red Sox,+125,-147,3,7
+20 May 2022,,Detroit Tigers,Cleveland Guardians,+160,-182,1,6
+20 May 2022,,Cincinnati Reds,Toronto Blue Jays,+215,-263,1,2
+20 May 2022,,Tampa Bay Rays,Baltimore Orioles,-152,+129,6,8
+20 May 2022,,Los Angeles Dodgers,Philadelphia Phillies,-147,+125,4,1
+20 May 2022,,Atlanta Braves,Miami Marlins,-132,+110,5,3
+20 May 2022,,St.Louis Cardinals,Pittsburgh Pirates,-135,+114,5,3
+20 May 2022,,Arizona Diamondbacks,Chicago Cubs,+125,-147,10,6
+19 May 2022,,Texas Rangers,Houston Astros,+150,-172,1,5
+19 May 2022,,Arizona Diamondbacks,Chicago Cubs,+110,-132,3,1
+19 May 2022,,Seattle Mariners,Boston Red Sox,+104,-125,6,12
+19 May 2022,,Chicago White Sox,Kansas City Royals,-141,+120,7,4
+19 May 2022,,Cincinnati Reds,Cleveland Guardians,+114,-135,4,2
+19 May 2022,,St.Louis Cardinals,New York Mets,+165,-185,6,7
+19 May 2022,,San Diego Padres,Philadelphia Phillies,-111,-111,2,0
+19 May 2022,,New York Yankees,Baltimore Orioles,-200,+170,6,9
+18 May 2022,,Chicago White Sox,Kansas City Royals,-141,+120,2,6
+18 May 2022,,Los Angeles Angels,Texas Rangers,-200,+170,5,6
+18 May 2022,,Pittsburgh Pirates,Chicago Cubs,+140,-161,3,2
+18 May 2022,,St.Louis Cardinals,New York Mets,+125,-147,4,11
+18 May 2022,,Seattle Mariners,Toronto Blue Jays,+210,-250,5,1
+18 May 2022,,New York Yankees,Baltimore Orioles,-213,+175,3,2
+18 May 2022,,San Diego Padres,Philadelphia Phillies,+104,-125,0,3
+18 May 2022,,Washington Nationals,Miami Marlins,+160,-182,5,4
+18 May 2022,,Houston Astros,Boston Red Sox,-132,+110,1,5
+18 May 2022,,Arizona Diamondbacks,Los Angeles Dodgers,+245,-312,3,5
+18 May 2022,,Minnesota Twins,Athletics,-167,+145,14,4
+18 May 2022,,San Francisco Giants,Colorado Rockies,-172,+150,3,5
+18 May 2022,,Atlanta Braves,Milwaukee Brewers,+120,-141,6,7
+18 May 2022,,Detroit Tigers,Tampa Bay Rays,+140,-161,1,6
+17 May 2022,,Minnesota Twins,Athletics,-156,+135,2,5
+17 May 2022,,San Francisco Giants,Colorado Rockies,-156,+135,10,7
+17 May 2022,,Los Angeles Angels,Texas Rangers,-161,+140,5,10
+17 May 2022,,Atlanta Braves,Milwaukee Brewers,+125,-147,3,0
+17 May 2022,,Pittsburgh Pirates,Chicago Cubs,+140,-161,0,7
+17 May 2022,,Houston Astros,Boston Red Sox,-135,+114,13,4
+17 May 2022,,Seattle Mariners,Toronto Blue Jays,+179,-222,0,3
+17 May 2022,,New York Yankees,Baltimore Orioles,-238,+195,5,4
+17 May 2022,,San Diego Padres,Philadelphia Phillies,+125,-147,3,0
+17 May 2022,,Detroit Tigers,Tampa Bay Rays,+167,-192,1,8
+17 May 2022,,Washington Nationals,Miami Marlins,+165,-185,1,5
+17 May 2022,,Cincinnati Reds,Cleveland Guardians,+114,-135,5,4
+17 May 2022,,St.Louis Cardinals,New York Mets,+110,-132,4,3
+17 May 2022,,St.Louis Cardinals,New York Mets,-111,-111,1,3
+16 May 2022,,Arizona Diamondbacks,Los Angeles Dodgers,+190,-233,4,5
+16 May 2022,,Minnesota Twins,Athletics,-125,+104,3,1
+16 May 2022,,San Francisco Giants,Colorado Rockies,-161,+140,7,6
+16 May 2022,,Chicago White Sox,Kansas City Royals,-116,-105,5,3
+16 May 2022,,Los Angeles Angels,Texas Rangers,-132,+110,4,7
+16 May 2022,,Atlanta Braves,Milwaukee Brewers,+145,-167,0,1
+16 May 2022,,Pittsburgh Pirates,Chicago Cubs,+140,-161,0,9
+16 May 2022,,Houston Astros,Boston Red Sox,-111,-111,3,6
+16 May 2022,,Seattle Mariners,Toronto Blue Jays,+125,-147,2,6
+16 May 2022,,New York Yankees,Baltimore Orioles,-213,+175,6,2
+16 May 2022,,Detroit Tigers,Tampa Bay Rays,+195,-238,3,2
+16 May 2022,,Washington Nationals,Miami Marlins,+165,-185,2,8
+15 May 2022,,San Francisco Giants,St.Louis Cardinals,-141,+120,6,15
+15 May 2022,,Chicago Cubs,Arizona Diamondbacks,+104,-125,3,2
+15 May 2022,,Philadelphia Phillies,Los Angeles Dodgers,+114,-135,4,5
+15 May 2022,,Los Angeles Angels,Athletics,-132,+110,4,1
+15 May 2022,,Kansas City Royals,Colorado Rockies,+125,-147,8,7
+15 May 2022,,Boston Red Sox,Texas Rangers,-111,-111,1,7
+15 May 2022,,New York Yankees,Chicago White Sox,-125,+104,5,1
+15 May 2022,,Cleveland Guardians,Minnesota Twins,+125,-147,1,3
+15 May 2022,,Baltimore Orioles,Detroit Tigers,+120,-141,1,5
+15 May 2022,,Milwaukee Brewers,Miami Marlins,-175,+154,7,3
+15 May 2022,,Seattle Mariners,New York Mets,+125,-147,8,7
+15 May 2022,,Toronto Blue Jays,Tampa Bay Rays,-120,+100,0,3
+15 May 2022,,Cincinnati Reds,Pittsburgh Pirates,+129,-152,0,1
+15 May 2022,,Houston Astros,Washington Nationals,-200,+170,8,0
+15 May 2022,,San Diego Padres,Atlanta Braves,+104,-125,7,3
+14 May 2022,,Philadelphia Phillies,Los Angeles Dodgers,+165,-185,8,3
+14 May 2022,,Los Angeles Angels,Athletics,-172,+150,9,1
+14 May 2022,,Chicago Cubs,Arizona Diamondbacks,+135,-156,4,2
+14 May 2022,,Kansas City Royals,Colorado Rockies,+114,-135,4,10
+14 May 2022,,New York Yankees,Chicago White Sox,-125,+104,2,3
+14 May 2022,,Cleveland Guardians,Minnesota Twins,+129,-152,3,2
+14 May 2022,,Seattle Mariners,New York Mets,+114,-135,4,5
+14 May 2022,,Boston Red Sox,Texas Rangers,-105,-116,11,3
+14 May 2022,,Houston Astros,Washington Nationals,-213,+175,6,13
+14 May 2022,,Cincinnati Reds,Pittsburgh Pirates,+104,-125,1,3
+14 May 2022,,Milwaukee Brewers,Miami Marlins,-156,+135,3,9
+14 May 2022,,Toronto Blue Jays,Tampa Bay Rays,-125,+104,5,1
+14 May 2022,,Baltimore Orioles,Detroit Tigers,-105,-116,0,3
+14 May 2022,,Los Angeles Angels,Athletics,+114,-135,3,4
+14 May 2022,,San Diego Padres,Atlanta Braves,+120,-141,5,6
+14 May 2022,,San Francisco Giants,St.Louis Cardinals,-125,+104,0,4
+13 May 2022,,Philadelphia Phillies,Los Angeles Dodgers,+190,-233,12,10
+13 May 2022,,Chicago Cubs,Arizona Diamondbacks,+125,-147,3,4
+13 May 2022,,Los Angeles Angels,Athletics,-156,+135,2,0
+13 May 2022,,Kansas City Royals,Colorado Rockies,+145,-167,14,10
+13 May 2022,,San Francisco Giants,St.Louis Cardinals,-111,-111,8,2
+13 May 2022,,New York Yankees,Chicago White Sox,-147,+125,10,4
+13 May 2022,,Cleveland Guardians,Minnesota Twins,+145,-167,8,12
+13 May 2022,,Boston Red Sox,Texas Rangers,+104,-125,7,1
+13 May 2022,,San Diego Padres,Atlanta Braves,+110,-132,11,6
+13 May 2022,,Baltimore Orioles,Detroit Tigers,+100,-120,2,4
+13 May 2022,,Seattle Mariners,New York Mets,+150,-172,2,1
+13 May 2022,,Toronto Blue Jays,Tampa Bay Rays,-135,+114,2,5
+13 May 2022,,Houston Astros,Washington Nationals,-161,+140,6,1
+13 May 2022,,Milwaukee Brewers,Miami Marlins,-141,+120,2,1
+13 May 2022,,Cincinnati Reds,Pittsburgh Pirates,-120,+100,8,2
+12 May 2022,,Philadelphia Phillies,Los Angeles Dodgers,+190,-233,9,7
+12 May 2022,,New York Yankees,Chicago White Sox,-172,-147,15,7
+12 May 2022,,Kansas City Royals,Texas Rangers,+125,-147,1,3
+12 May 2022,,Cincinnati Reds,Pittsburgh Pirates,-111,-111,4,0
+12 May 2022,,Baltimore Orioles,St.Louis Cardinals,+175,-213,3,2
+12 May 2022,,Athletics,Detroit Tigers,+100,-120,5,3
+12 May 2022,,Houston Astros,Minnesota Twins,-135,+114,11,3
+12 May 2022,,New York Mets,Washington Nationals,-152,+129,4,1
+11 May 2022,,Kansas City Royals,Texas Rangers,+114,-135,8,2
+11 May 2022,,Baltimore Orioles,St.Louis Cardinals,+195,-238,1,10
+11 May 2022,,Boston Red Sox,Atlanta Braves,+100,-120,3,5
+11 May 2022,,Athletics,Detroit Tigers,+110,-132,9,0
+11 May 2022,,Tampa Bay Rays,Los Angeles Angels,-105,-116,4,2
+11 May 2022,,New York Mets,Washington Nationals,-161,+140,3,8
+11 May 2022,,Chicago Cubs,San Diego Padres,+145,-167,7,5
+11 May 2022,,Colorado Rockies,San Francisco Giants,+185,-227,1,7
+11 May 2022,,Miami Marlins,Arizona Diamondbacks,-116,-105,11,3
+11 May 2022,,Philadelphia Phillies,Seattle Mariners,+125,-147,4,2
+11 May 2022,,Milwaukee Brewers,Cincinnati Reds,-200,+170,11,14
+11 May 2022,,Los Angeles Dodgers,Pittsburgh Pirates,-200,+170,3,5
+11 May 2022,,Toronto Blue Jays,New York Yankees,+114,-135,3,5
+10 May 2022,,Colorado Rockies,San Francisco Giants,+170,-200,2,9
+10 May 2022,,Miami Marlins,Arizona Diamondbacks,-105,-116,3,9
+10 May 2022,,Chicago Cubs,San Diego Padres,+154,-175,4,5
+10 May 2022,,Philadelphia Phillies,Seattle Mariners,-132,+110,4,5
+10 May 2022,,Tampa Bay Rays,Los Angeles Angels,+100,-120,0,12
+10 May 2022,,Cleveland Guardians,Chicago White Sox,+125,-147,1,4
+10 May 2022,,Kansas City Royals,Texas Rangers,+114,-135,4,6
+10 May 2022,,Baltimore Orioles,St.Louis Cardinals,+179,-222,5,3
+10 May 2022,,Houston Astros,Minnesota Twins,-120,+100,5,0
+10 May 2022,,Boston Red Sox,Atlanta Braves,+110,-132,9,4
+10 May 2022,,New York Mets,Washington Nationals,-175,+154,4,2
+10 May 2022,,Toronto Blue Jays,New York Yankees,+114,-135,5,6
+10 May 2022,,Milwaukee Brewers,Cincinnati Reds,-182,+160,5,4
+10 May 2022,,Los Angeles Dodgers,Pittsburgh Pirates,-244,+200,11,1
+09 May 2022,,Colorado Rockies,San Francisco Giants,+167,-192,5,8
+09 May 2022,,Miami Marlins,Arizona Diamondbacks,-141,+120,3,4
+09 May 2022,,Chicago Cubs,San Diego Padres,+145,-167,6,0
+09 May 2022,,Philadelphia Phillies,Seattle Mariners,-120,+100,9,0
+09 May 2022,,Tampa Bay Rays,Los Angeles Angels,-111,-111,3,11
+09 May 2022,,Cleveland Guardians,Chicago White Sox,+165,-185,12,9
+09 May 2022,,Athletics,Detroit Tigers,+104,-125,2,0
+09 May 2022,,Milwaukee Brewers,Cincinnati Reds,-182,+160,5,10
+09 May 2022,,Los Angeles Dodgers,Pittsburgh Pirates,-233,+190,1,5
+09 May 2022,,Texas Rangers,New York Yankees,+185,-227,0,1
+09 May 2022,,Kansas City Royals,Baltimore Orioles,+129,-152,1,6
+08 May 2022,,Los Angeles Dodgers,Chicago Cubs,-233,+190,7,1
+08 May 2022,,Kansas City Royals,Baltimore Orioles,,,2,4
+08 May 2022,,Texas Rangers,New York Yankees,+170,-200,4,2
+08 May 2022,,Colorado Rockies,Arizona Diamondbacks,+135,-156,0,4
+08 May 2022,,Miami Marlins,San Diego Padres,+135,-156,2,3
+08 May 2022,,Tampa Bay Rays,Seattle Mariners,-105,-116,1,2
+08 May 2022,,Washington Nationals,Los Angeles Angels,+175,-213,4,5
+08 May 2022,,St.Louis Cardinals,San Francisco Giants,+114,-135,3,4
+08 May 2022,,Athletics,Minnesota Twins,+140,-161,3,4
+08 May 2022,,Detroit Tigers,Houston Astros,+160,-182,0,5
+08 May 2022,,Pittsburgh Pirates,Cincinnati Reds,+120,-141,3,7
+08 May 2022,,Toronto Blue Jays,Cleveland Guardians,-200,+170,3,4
+08 May 2022,,Milwaukee Brewers,Atlanta Braves,+120,-141,2,9
+08 May 2022,,Texas Rangers,New York Yankees,+195,-238,1,2
+08 May 2022,,New York Mets,Philadelphia Phillies,,,2,3
+08 May 2022,,Chicago White Sox,Boston Red Sox,+154,-175,3,2
+07 May 2022,,Tampa Bay Rays,Seattle Mariners,-135,+114,8,2
+07 May 2022,,Washington Nationals,Los Angeles Angels,+167,-192,7,3
+07 May 2022,,Miami Marlins,San Diego Padres,+145,-167,8,0
+07 May 2022,,Colorado Rockies,Arizona Diamondbacks,+120,-141,4,1
+07 May 2022,,Milwaukee Brewers,Atlanta Braves,+100,-120,2,3
+07 May 2022,,St.Louis Cardinals,San Francisco Giants,+114,-135,7,13
+07 May 2022,,Toronto Blue Jays,Cleveland Guardians,,,2,8
+07 May 2022,,Chicago White Sox,Boston Red Sox,-135,+114,3,1
+07 May 2022,,Detroit Tigers,Houston Astros,+170,-200,2,3
+07 May 2022,,Athletics,Minnesota Twins,+185,-227,0,1
+07 May 2022,,Toronto Blue Jays,Cleveland Guardians,-152,+129,8,3
+06 May 2022,,St.Louis Cardinals,San Francisco Giants,+129,-152,3,2
+06 May 2022,,Colorado Rockies,Arizona Diamondbacks,-111,-111,1,4
+06 May 2022,,Miami Marlins,San Diego Padres,+110,-132,2,3
+06 May 2022,,Tampa Bay Rays,Seattle Mariners,-125,+104,8,7
+06 May 2022,,Washington Nationals,Los Angeles Angels,+165,-185,0,3
+06 May 2022,,Athletics,Minnesota Twins,+165,-185,1,2
+06 May 2022,,Detroit Tigers,Houston Astros,+165,-185,2,3
+06 May 2022,,Milwaukee Brewers,Atlanta Braves,-116,-105,6,3
+06 May 2022,,Chicago White Sox,Boston Red Sox,+145,-167,4,2
+05 May 2022,,St.Louis Cardinals,San Francisco Giants,-105,-116,7,1
+05 May 2022,,Miami Marlins,San Diego Padres,+104,-125,1,2
+05 May 2022,,Tampa Bay Rays,Seattle Mariners,-141,+120,4,3
+05 May 2022,,Detroit Tigers,Houston Astros,+154,-175,2,3
+05 May 2022,,Minnesota Twins,Baltimore Orioles,-156,+135,3,5
+05 May 2022,,New York Mets,Philadelphia Phillies,-135,+114,8,7
+05 May 2022,,Toronto Blue Jays,Cleveland Guardians,-132,+110,5,6
+05 May 2022,,Washington Nationals,Colorado Rockies,+120,-141,7,9
+05 May 2022,,Cincinnati Reds,Milwaukee Brewers,+204,-250,5,10
+05 May 2022,,Los Angeles Angels,Boston Red Sox,-132,+110,8,0
+04 May 2022,,San Francisco Giants,Los Angeles Dodgers,+150,-172,1,9
+04 May 2022,,Washington Nationals,Colorado Rockies,+114,-135,2,5
+04 May 2022,,Chicago White Sox,Chicago Cubs,-141,+120,4,3
+04 May 2022,,Cincinnati Reds,Milwaukee Brewers,+175,-213,4,18
+04 May 2022,,Los Angeles Angels,Boston Red Sox,-147,+125,10,5
+04 May 2022,,New York Yankees,Toronto Blue Jays,-156,+135,1,2
+04 May 2022,,Minnesota Twins,Baltimore Orioles,-141,+120,4,9
+04 May 2022,,Texas Rangers,Philadelphia Phillies,+170,-200,2,1
+04 May 2022,,Pittsburgh Pirates,Detroit Tigers,,,7,2
+04 May 2022,,San Diego Padres,Cleveland Guardians,,,5,6
+04 May 2022,,Tampa Bay Rays,Athletics,-132,+110,3,0
+04 May 2022,,Seattle Mariners,Houston Astros,+190,-233,2,7
+04 May 2022,,Atlanta Braves,New York Mets,+120,-141,9,2
+04 May 2022,,San Diego Padres,Cleveland Guardians,-147,+125,5,4
+04 May 2022,,St.Louis Cardinals,Kansas City Royals,-147,+125,10,0
+04 May 2022,,Arizona Diamondbacks,Miami Marlins,+150,-172,8,7
+03 May 2022,,San Francisco Giants,Los Angeles Dodgers,+120,-141,1,3
+03 May 2022,,Tampa Bay Rays,Athletics,-120,+100,10,7
+03 May 2022,,Washington Nationals,Colorado Rockies,+125,-147,10,2
+03 May 2022,,Seattle Mariners,Houston Astros,+165,-185,0,4
+03 May 2022,,St.Louis Cardinals,Kansas City Royals,-141,+120,1,7
+03 May 2022,,Chicago White Sox,Chicago Cubs,-141,+120,3,1
+03 May 2022,,Cincinnati Reds,Milwaukee Brewers,+204,-250,3,6
+03 May 2022,,Los Angeles Angels,Boston Red Sox,-132,+110,0,4
+03 May 2022,,New York Yankees,Toronto Blue Jays,-120,+100,9,1
+03 May 2022,,Minnesota Twins,Baltimore Orioles,-135,+114,7,2
+03 May 2022,,Texas Rangers,Philadelphia Phillies,+167,-192,6,4
+03 May 2022,,Arizona Diamondbacks,Miami Marlins,+114,-135,5,4
+02 May 2022,,Tampa Bay Rays,Athletics,-167,+145,6,1
+02 May 2022,,Seattle Mariners,Houston Astros,+125,-147,0,3
+02 May 2022,,Atlanta Braves,New York Mets,-111,-111,5,2
+02 May 2022,,New York Yankees,Toronto Blue Jays,+114,-135,3,2
+02 May 2022,,Minnesota Twins,Baltimore Orioles,-175,+154,2,1
+02 May 2022,,Arizona Diamondbacks,Miami Marlins,+150,-172,5,4
+02 May 2022,,Los Angeles Angels,Chicago White Sox,+135,-156,0,3
+02 May 2022,,Kansas City Royals,St.Louis Cardinals,+145,-167,0,1
+01 May 2022,,Philadelphia Phillies,New York Mets,+165,-185,6,10
+01 May 2022,,Detroit Tigers,Los Angeles Dodgers,+215,-263,3,6
+01 May 2022,,Cleveland Guardians,Athletics,-120,+100,7,3
+01 May 2022,,Washington Nationals,San Francisco Giants,+154,-175,11,5
+01 May 2022,,Cincinnati Reds,Colorado Rockies,+135,-156,1,10
+01 May 2022,,Atlanta Braves,Texas Rangers,-147,+125,3,7
+01 May 2022,,Arizona Diamondbacks,St.Louis Cardinals,+160,-182,5,7
+01 May 2022,,Chicago Cubs,Milwaukee Brewers,+179,-222,2,0
+01 May 2022,,Los Angeles Angels,Chicago White Sox,-125,+104,6,5
+01 May 2022,,New York Yankees,Kansas City Royals,-185,+165,6,4
+01 May 2022,,Seattle Mariners,Miami Marlins,+104,-125,7,3
+01 May 2022,,Houston Astros,Toronto Blue Jays,+140,-161,2,3
+01 May 2022,,San Diego Padres,Pittsburgh Pirates,-172,+150,5,2
+01 May 2022,,Minnesota Twins,Tampa Bay Rays,+110,-132,9,3
+01 May 2022,,Boston Red Sox,Baltimore Orioles,-141,+120,5,9
+30 Apr 2022,,Detroit Tigers,Los Angeles Dodgers,+215,-263,5,1
+30 Apr 2022,,Cincinnati Reds,Colorado Rockies,+129,-152,3,4
+30 Apr 2022,,Chicago Cubs,Milwaukee Brewers,+170,-200,1,9
+30 Apr 2022,,New York Yankees,Kansas City Royals,-185,+165,3,0
+30 Apr 2022,,Philadelphia Phillies,New York Mets,+154,-175,4,1
+30 Apr 2022,,Atlanta Braves,Texas Rangers,-116,-105,1,3
+30 Apr 2022,,Boston Red Sox,Baltimore Orioles,-156,+135,1,2
+30 Apr 2022,,San Diego Padres,Pittsburgh Pirates,-200,+170,6,7
+30 Apr 2022,,Seattle Mariners,Miami Marlins,+100,-120,1,3
+30 Apr 2022,,Minnesota Twins,Tampa Bay Rays,+170,-200,9,1
+30 Apr 2022,,Cleveland Guardians,Athletics,-152,+129,3,1
+30 Apr 2022,,Los Angeles Angels,Chicago White Sox,-105,-116,0,4
+30 Apr 2022,,Washington Nationals,San Francisco Giants,+190,-233,3,9
+30 Apr 2022,,Houston Astros,Toronto Blue Jays,+140,-161,1,2
+30 Apr 2022,,Arizona Diamondbacks,St.Louis Cardinals,+140,-161,2,0
+29 Apr 2022,,Washington Nationals,San Francisco Giants,+204,-250,14,4
+29 Apr 2022,,Detroit Tigers,Los Angeles Dodgers,+250,-312,1,5
+29 Apr 2022,,Cleveland Guardians,Athletics,-161,+140,9,8
+29 Apr 2022,,Cincinnati Reds,Colorado Rockies,-105,-116,4,10
+29 Apr 2022,,Arizona Diamondbacks,St.Louis Cardinals,+154,-175,6,2
+29 Apr 2022,,Chicago Cubs,Milwaukee Brewers,+135,-156,1,11
+29 Apr 2022,,New York Yankees,Kansas City Royals,-200,+170,12,2
+29 Apr 2022,,Atlanta Braves,Texas Rangers,-116,-105,6,3
+29 Apr 2022,,Minnesota Twins,Tampa Bay Rays,+110,-132,1,6
+29 Apr 2022,,Philadelphia Phillies,New York Mets,+104,-125,0,3
+29 Apr 2022,,Los Angeles Angels,Chicago White Sox,+100,-120,5,1
+29 Apr 2022,,Houston Astros,Toronto Blue Jays,+114,-135,11,7
+29 Apr 2022,,Boston Red Sox,Baltimore Orioles,-125,+104,3,1
+29 Apr 2022,,Seattle Mariners,Miami Marlins,-120,+100,6,8
+29 Apr 2022,,San Diego Padres,Pittsburgh Pirates,-182,+160,7,3
+28 Apr 2022,,Arizona Diamondbacks,St.Louis Cardinals,+140,-161,3,8
+28 Apr 2022,,Chicago Cubs,Atlanta Braves,+179,-222,1,5
+28 Apr 2022,,Cleveland Guardians,Los Angeles Angels,+125,-147,1,4
+28 Apr 2022,,Boston Red Sox,Toronto Blue Jays,+120,-141,0,1
+28 Apr 2022,,Kansas City Royals,Chicago White Sox,+145,-167,5,2
+28 Apr 2022,,Houston Astros,Texas Rangers,-156,+135,3,2
+28 Apr 2022,,Detroit Tigers,Minnesota Twins,+120,-141,1,7
+28 Apr 2022,,Seattle Mariners,Tampa Bay Rays,+135,-156,1,2
+28 Apr 2022,,Baltimore Orioles,New York Yankees,+195,-238,5,10
+28 Apr 2022,,Colorado Rockies,Philadelphia Phillies,+175,-213,1,7
+28 Apr 2022,,Miami Marlins,Washington Nationals,-147,+125,3,2
+28 Apr 2022,,San Diego Padres,Cincinnati Reds,-105,-116,7,5
+28 Apr 2022,,Milwaukee Brewers,Pittsburgh Pirates,-147,+125,3,2
+27 Apr 2022,,Athletics,San Francisco Giants,+140,-161,1,0
+27 Apr 2022,,Cleveland Guardians,Los Angeles Angels,+145,-167,5,9
+27 Apr 2022,,Houston Astros,Texas Rangers,-167,+145,4,3
+27 Apr 2022,,Detroit Tigers,Minnesota Twins,+125,-147,0,5
+27 Apr 2022,,Chicago Cubs,Atlanta Braves,+160,-182,6,3
+27 Apr 2022,,Boston Red Sox,Toronto Blue Jays,+140,-161,7,1
+27 Apr 2022,,Baltimore Orioles,New York Yankees,+190,-233,2,5
+27 Apr 2022,,Miami Marlins,Washington Nationals,-147,+125,2,1
+27 Apr 2022,,Colorado Rockies,Philadelphia Phillies,+179,-222,3,7
+27 Apr 2022,,San Diego Padres,Cincinnati Reds,-116,-105,8,5
+27 Apr 2022,,Seattle Mariners,Tampa Bay Rays,+129,-152,2,3
+27 Apr 2022,,Milwaukee Brewers,Pittsburgh Pirates,-172,+150,3,1
+27 Apr 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-185,+165,1,3
+27 Apr 2022,,Kansas City Royals,Chicago White Sox,+170,-200,3,7
+27 Apr 2022,,New York Mets,St.Louis Cardinals,-111,-111,5,10
+26 Apr 2022,,Athletics,San Francisco Giants,+215,-263,2,8
+26 Apr 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-200,+170,3,5
+26 Apr 2022,,Cleveland Guardians,Los Angeles Angels,+167,-192,1,4
+26 Apr 2022,,Houston Astros,Texas Rangers,-132,+110,5,1
+26 Apr 2022,,New York Mets,St.Louis Cardinals,-111,-111,3,0
+26 Apr 2022,,Detroit Tigers,Minnesota Twins,+154,-175,4,5
+26 Apr 2022,,Chicago Cubs,Atlanta Braves,+175,-213,1,3
+26 Apr 2022,,Kansas City Royals,Chicago White Sox,+140,-161,6,0
+26 Apr 2022,,Boston Red Sox,Toronto Blue Jays,+114,-135,5,6
+26 Apr 2022,,Baltimore Orioles,New York Yankees,+215,-263,8,12
+26 Apr 2022,,Miami Marlins,Washington Nationals,-135,+114,5,2
+26 Apr 2022,,Colorado Rockies,Philadelphia Phillies,+179,-222,3,10
+26 Apr 2022,,San Diego Padres,Cincinnati Reds,-172,+150,9,6
+26 Apr 2022,,Seattle Mariners,Tampa Bay Rays,+104,-125,8,4
+26 Apr 2022,,Milwaukee Brewers,Pittsburgh Pirates,-172,+150,12,8
+25 Apr 2022,,Los Angeles Dodgers,Arizona Diamondbacks,-182,+160,4,0
+25 Apr 2022,,Cleveland Guardians,Los Angeles Angels,+129,-152,0,3
+25 Apr 2022,,Houston Astros,Texas Rangers,-120,+100,2,6
+25 Apr 2022,,New York Mets,St.Louis Cardinals,-116,-105,5,2
+25 Apr 2022,,Boston Red Sox,Toronto Blue Jays,+154,-175,2,6
+25 Apr 2022,,Colorado Rockies,Philadelphia Phillies,+129,-152,2,8
+25 Apr 2022,,San Francisco Giants,Milwaukee Brewers,+170,-200,4,2
+24 Apr 2022,,Milwaukee Brewers,Philadelphia Phillies,+120,-141,1,0
+24 Apr 2022,,New York Mets,Arizona Diamondbacks,-182,+160,6,2
+24 Apr 2022,,Kansas City Royals,Seattle Mariners,+170,-200,4,5
+24 Apr 2022,,Los Angeles Dodgers,San Diego Padres,-172,+150,10,2
+24 Apr 2022,,Texas Rangers,Athletics,-116,-105,0,2
+24 Apr 2022,,Baltimore Orioles,Los Angeles Angels,+170,-200,6,7
+24 Apr 2022,,Pittsburgh Pirates,Chicago Cubs,+135,-156,4,3
+24 Apr 2022,,Chicago White Sox,Minnesota Twins,-111,-111,4,6
+24 Apr 2022,,Toronto Blue Jays,Houston Astros,+104,-125,7,8
+24 Apr 2022,,St.Louis Cardinals,Cincinnati Reds,-152,+129,1,4
+24 Apr 2022,,Miami Marlins,Atlanta Braves,+110,-132,5,4
+24 Apr 2022,,Cleveland Guardians,New York Yankees,+175,-213,2,10
+24 Apr 2022,,San Francisco Giants,Washington Nationals,-185,+165,12,3
+24 Apr 2022,,Boston Red Sox,Tampa Bay Rays,+160,-182,2,5
+24 Apr 2022,,Colorado Rockies,Detroit Tigers,+110,-132,6,2
+23 Apr 2022,,Kansas City Royals,Seattle Mariners,+154,-175,7,13
+23 Apr 2022,,Baltimore Orioles,Los Angeles Angels,+165,-185,5,4
+23 Apr 2022,,Los Angeles Dodgers,San Diego Padres,-147,+125,2,3
+23 Apr 2022,,New York Mets,Arizona Diamondbacks,-156,+135,2,5
+23 Apr 2022,,Miami Marlins,Atlanta Braves,+125,-147,9,7
+23 Apr 2022,,Colorado Rockies,Detroit Tigers,,,3,2
+23 Apr 2022,,Boston Red Sox,Tampa Bay Rays,+140,-161,2,3
+23 Apr 2022,,St.Louis Cardinals,Cincinnati Reds,-105,-116,5,0
+23 Apr 2022,,Toronto Blue Jays,Houston Astros,-132,+110,3,2
+23 Apr 2022,,Texas Rangers,Athletics,+129,-152,2,0
+23 Apr 2022,,Chicago White Sox,Minnesota Twins,+129,-152,2,9
+23 Apr 2022,,Milwaukee Brewers,Philadelphia Phillies,+125,-147,5,3
+23 Apr 2022,,Pittsburgh Pirates,Chicago Cubs,+145,-167,0,21
+23 Apr 2022,,Colorado Rockies,Detroit Tigers,,,0,13
+23 Apr 2022,,Cleveland Guardians,New York Yankees,+170,-200,4,5
+23 Apr 2022,,San Francisco Giants,Washington Nationals,-175,+154,5,2
+22 Apr 2022,,New York Mets,Arizona Diamondbacks,-125,+104,6,5
+22 Apr 2022,,Texas Rangers,Athletics,+104,-125,8,1
+22 Apr 2022,,Kansas City Royals,Seattle Mariners,+125,-147,1,4
+22 Apr 2022,,Los Angeles Dodgers,San Diego Padres,-116,-105,6,1
+22 Apr 2022,,Baltimore Orioles,Los Angeles Angels,+195,-238,5,3
+22 Apr 2022,,Chicago White Sox,Minnesota Twins,+110,-132,1,2
+22 Apr 2022,,Toronto Blue Jays,Houston Astros,-125,+104,4,3
+22 Apr 2022,,Pittsburgh Pirates,Chicago Cubs,+154,-175,4,2
+22 Apr 2022,,Miami Marlins,Atlanta Braves,+160,-182,0,3
+22 Apr 2022,,Boston Red Sox,Tampa Bay Rays,+135,-156,4,3
+22 Apr 2022,,Cleveland Guardians,New York Yankees,+165,-185,1,4
+22 Apr 2022,,Milwaukee Brewers,Philadelphia Phillies,+135,-156,2,4
+22 Apr 2022,,San Francisco Giants,Washington Nationals,-156,+135,7,1
+22 Apr 2022,,St.Louis Cardinals,Cincinnati Reds,-120,+100,4,2
+21 Apr 2022,,Texas Rangers,Seattle Mariners,+110,-132,8,6
+21 Apr 2022,,Pittsburgh Pirates,Chicago Cubs,+135,-156,4,3
+21 Apr 2022,,St.Louis Cardinals,Miami Marlins,+114,-135,0,5
+21 Apr 2022,,Arizona Diamondbacks,Washington Nationals,+110,-132,4,3
+21 Apr 2022,,Baltimore Orioles,Athletics,+110,-132,4,6
+21 Apr 2022,,Minnesota Twins,Kansas City Royals,-147,+125,1,0
+21 Apr 2022,,Toronto Blue Jays,Boston Red Sox,-116,-105,3,2
+21 Apr 2022,,Chicago White Sox,Cleveland Guardians,-152,+129,3,6
+21 Apr 2022,,New York Yankees,Detroit Tigers,-167,+145,0,3
+21 Apr 2022,,San Francisco Giants,New York Mets,+114,-135,2,6
+20 Apr 2022,,Texas Rangers,Seattle Mariners,+120,-141,2,4
+20 Apr 2022,,Minnesota Twins,Kansas City Royals,-120,+100,0,2
+20 Apr 2022,,Toronto Blue Jays,Boston Red Sox,-120,+100,6,1
+20 Apr 2022,,San Francisco Giants,New York Mets,+100,-120,5,2
+20 Apr 2022,,Arizona Diamondbacks,Washington Nationals,+104,-125,11,2
+20 Apr 2022,,New York Yankees,Detroit Tigers,-172,+150,5,3
+20 Apr 2022,,Los Angeles Angels,Houston Astros,-116,-105,6,0
+20 Apr 2022,,St.Louis Cardinals,Miami Marlins,+110,-132,2,0
+20 Apr 2022,,Tampa Bay Rays,Chicago Cubs,-111,-111,8,2
+20 Apr 2022,,Baltimore Orioles,Athletics,-105,-116,1,0
+20 Apr 2022,,Chicago White Sox,Cleveland Guardians,+110,-132,1,2
+20 Apr 2022,,Cincinnati Reds,San Diego Padres,+170,-200,0,6
+20 Apr 2022,,Philadelphia Phillies,Colorado Rockies,-116,-105,9,6
+20 Apr 2022,,Chicago White Sox,Cleveland Guardians,,,1,11
+20 Apr 2022,,Pittsburgh Pirates,Milwaukee Brewers,+200,-244,2,4
+19 Apr 2022,,Atlanta Braves,Los Angeles Dodgers,+114,-135,3,1
+19 Apr 2022,,Baltimore Orioles,Athletics,+110,-132,1,2
+19 Apr 2022,,Cincinnati Reds,San Diego Padres,+154,-175,2,6
+19 Apr 2022,,Texas Rangers,Seattle Mariners,+125,-147,2,6
+19 Apr 2022,,Philadelphia Phillies,Colorado Rockies,-125,+104,5,6
+19 Apr 2022,,Los Angeles Angels,Houston Astros,-152,+129,7,2
+19 Apr 2022,,Minnesota Twins,Kansas City Royals,-147,+125,3,4
+19 Apr 2022,,Tampa Bay Rays,Chicago Cubs,-120,+100,6,5
+19 Apr 2022,,Pittsburgh Pirates,Milwaukee Brewers,+190,-233,2,5
+19 Apr 2022,,Toronto Blue Jays,Boston Red Sox,-147,+125,1,2
+19 Apr 2022,,New York Yankees,Detroit Tigers,-172,+150,4,2
+19 Apr 2022,,St.Louis Cardinals,Miami Marlins,-116,-105,5,1
+19 Apr 2022,,San Francisco Giants,New York Mets,,,4,5
+19 Apr 2022,,Arizona Diamondbacks,Washington Nationals,,,1,6
+18 Apr 2022,,Atlanta Braves,Los Angeles Dodgers,+129,-152,4,7
+18 Apr 2022,,Baltimore Orioles,Athletics,+165,-185,1,5
+18 Apr 2022,,Cincinnati Reds,San Diego Padres,+165,-185,1,4
+18 Apr 2022,,Philadelphia Phillies,Colorado Rockies,-132,+110,1,4
+18 Apr 2022,,Los Angeles Angels,Houston Astros,+125,-147,3,8
+18 Apr 2022,,Tampa Bay Rays,Chicago Cubs,-116,-105,2,4
+18 Apr 2022,,Pittsburgh Pirates,Milwaukee Brewers,+195,-238,1,6
+18 Apr 2022,,Minnesota Twins,Boston Red Sox,+120,-141,8,3
+17 Apr 2022,,Atlanta Braves,San Diego Padres,+110,-132,1,2
+17 Apr 2022,,Cincinnati Reds,Los Angeles Dodgers,+179,-222,1,9
+17 Apr 2022,,Houston Astros,Seattle Mariners,-105,-116,2,7
+17 Apr 2022,,Chicago Cubs,Colorado Rockies,+110,-132,6,4
+17 Apr 2022,,Los Angeles Angels,Texas Rangers,-111,-111,8,3
+17 Apr 2022,,Tampa Bay Rays,Chicago White Sox,-111,-111,9,3
+17 Apr 2022,,St.Louis Cardinals,Milwaukee Brewers,+120,-141,5,6
+17 Apr 2022,,Arizona Diamondbacks,New York Mets,+175,-213,0,5
+17 Apr 2022,,San Francisco Giants,Cleveland Guardians,-132,+110,8,1
+17 Apr 2022,,Philadelphia Phillies,Miami Marlins,-152,+129,3,11
+17 Apr 2022,,Athletics,Toronto Blue Jays,+225,-278,3,4
+17 Apr 2022,,Minnesota Twins,Boston Red Sox,+104,-125,1,8
+17 Apr 2022,,Washington Nationals,Pittsburgh Pirates,-132,+110,3,5
+17 Apr 2022,,New York Yankees,Baltimore Orioles,-200,+170,0,5
+16 Apr 2022,,Cincinnati Reds,Los Angeles Dodgers,+165,-185,2,5
+16 Apr 2022,,Houston Astros,Seattle Mariners,-120,+100,4,0
+16 Apr 2022,,Chicago Cubs,Colorado Rockies,+110,-132,6,9
+16 Apr 2022,,St.Louis Cardinals,Milwaukee Brewers,-105,-116,2,1
+16 Apr 2022,,New York Yankees,Baltimore Orioles,-213,+175,5,2
+16 Apr 2022,,Los Angeles Angels,Texas Rangers,-116,-105,7,2
+16 Apr 2022,,Washington Nationals,Pittsburgh Pirates,-135,+114,4,6
+16 Apr 2022,,San Francisco Giants,Cleveland Guardians,-132,+110,4,2
+16 Apr 2022,,Philadelphia Phillies,Miami Marlins,-161,-147,10,3
+16 Apr 2022,,Minnesota Twins,Boston Red Sox,+125,-147,0,4
+16 Apr 2022,,Detroit Tigers,Kansas City Royals,+135,-156,1,3
+16 Apr 2022,,Atlanta Braves,San Diego Padres,-111,-111,5,2
+16 Apr 2022,,Athletics,Toronto Blue Jays,+179,-222,7,5
+16 Apr 2022,,Tampa Bay Rays,Chicago White Sox,+114,-135,2,3
+16 Apr 2022,,Arizona Diamondbacks,New York Mets,+145,-167,3,2
+15 Apr 2022,,Cincinnati Reds,Los Angeles Dodgers,+195,-238,1,3
+15 Apr 2022,,Houston Astros,Seattle Mariners,-156,+135,1,11
+15 Apr 2022,,Atlanta Braves,San Diego Padres,-116,-105,5,2
+15 Apr 2022,,Chicago Cubs,Colorado Rockies,+100,-120,5,6
+15 Apr 2022,,Detroit Tigers,Kansas City Royals,+100,-120,2,1
+15 Apr 2022,,St.Louis Cardinals,Milwaukee Brewers,+100,-120,10,1
+15 Apr 2022,,Los Angeles Angels,Texas Rangers,-132,+110,9,6
+15 Apr 2022,,Tampa Bay Rays,Chicago White Sox,+120,-141,2,3
+15 Apr 2022,,San Francisco Giants,Cleveland Guardians,-120,+100,4,1
+15 Apr 2022,,Athletics,Toronto Blue Jays,+179,-222,1,4
+15 Apr 2022,,New York Yankees,Baltimore Orioles,-200,+170,1,2
+15 Apr 2022,,Philadelphia Phillies,Miami Marlins,-111,-111,1,7
+15 Apr 2022,,Washington Nationals,Pittsburgh Pirates,-111,-111,7,2
+15 Apr 2022,,Minnesota Twins,Boston Red Sox,+104,-125,8,4
+15 Apr 2022,,Arizona Diamondbacks,New York Mets,+204,-250,3,10
+14 Apr 2022,,Cincinnati Reds,Los Angeles Dodgers,+195,-238,3,9
+14 Apr 2022,,Chicago Cubs,Colorado Rockies,+114,-135,5,2
+14 Apr 2022,,Atlanta Braves,San Diego Padres,-111,-111,1,12
+14 Apr 2022,,Detroit Tigers,Kansas City Royals,+114,-135,4,2
+14 Apr 2022,,Los Angeles Angels,Texas Rangers,-147,+125,5,10
+14 Apr 2022,,Toronto Blue Jays,New York Yankees,+114,-135,0,3
+14 Apr 2022,,Philadelphia Phillies,Miami Marlins,-111,-111,3,4
+14 Apr 2022,,Washington Nationals,Pittsburgh Pirates,-111,-111,4,9
+14 Apr 2022,,St.Louis Cardinals,Milwaukee Brewers,+129,-152,1,5
+14 Apr 2022,,Seattle Mariners,Chicago White Sox,-125,+104,5,1
+14 Apr 2022,,Athletics,Tampa Bay Rays,+185,-227,6,3
+13 Apr 2022,,Seattle Mariners,Chicago White Sox,-111,-111,4,6
+13 Apr 2022,,Milwaukee Brewers,Baltimore Orioles,-175,+154,4,2
+13 Apr 2022,,Toronto Blue Jays,New York Yankees,+110,-132,6,4
+13 Apr 2022,,Athletics,Tampa Bay Rays,+170,-200,4,2
+13 Apr 2022,,San Diego Padres,San Francisco Giants,-105,-116,1,2
+13 Apr 2022,,Houston Astros,Arizona Diamondbacks,-161,+140,2,3
+13 Apr 2022,,Boston Red Sox,Detroit Tigers,-135,+114,9,7
+13 Apr 2022,,Los Angeles Dodgers,Minnesota Twins,-200,+170,7,0
+13 Apr 2022,,New York Mets,Philadelphia Phillies,-116,-105,9,6
+13 Apr 2022,,Chicago Cubs,Pittsburgh Pirates,-125,+104,2,6
+13 Apr 2022,,Cleveland Guardians,Cincinnati Reds,+110,-132,7,3
+13 Apr 2022,,Washington Nationals,Atlanta Braves,+179,-222,3,1
+12 Apr 2022,,San Diego Padres,San Francisco Giants,+110,-132,2,13
+12 Apr 2022,,Colorado Rockies,Texas Rangers,+135,-156,4,1
+12 Apr 2022,,Kansas City Royals,St.Louis Cardinals,+129,-152,5,6
+12 Apr 2022,,Los Angeles Dodgers,Minnesota Twins,-161,+140,7,2
+12 Apr 2022,,Washington Nationals,Atlanta Braves,+175,-213,4,16
+12 Apr 2022,,Miami Marlins,Los Angeles Angels,+135,-156,3,4
+12 Apr 2022,,Milwaukee Brewers,Baltimore Orioles,-175,+154,5,4
+12 Apr 2022,,Toronto Blue Jays,New York Yankees,+110,-132,0,4
+12 Apr 2022,,New York Mets,Philadelphia Phillies,+100,-120,2,0
+12 Apr 2022,,Athletics,Tampa Bay Rays,+154,-175,8,9
+12 Apr 2022,,Chicago Cubs,Pittsburgh Pirates,-116,-105,2,1
+12 Apr 2022,,Seattle Mariners,Chicago White Sox,-105,-116,2,3
+12 Apr 2022,,Cleveland Guardians,Cincinnati Reds,-111,-111,10,5
+12 Apr 2022,,Boston Red Sox,Detroit Tigers,-125,+104,5,3
+11 Apr 2022,,San Diego Padres,San Francisco Giants,-111,-111,4,2
+11 Apr 2022,,Miami Marlins,Los Angeles Angels,+145,-167,2,6
+11 Apr 2022,,Seattle Mariners,Minnesota Twins,+114,-135,0,4
+11 Apr 2022,,Washington Nationals,Atlanta Braves,+129,-152,11,2
+11 Apr 2022,,Toronto Blue Jays,New York Yankees,+100,-120,3,0
+11 Apr 2022,,New York Mets,Philadelphia Phillies,+140,-161,4,5
+11 Apr 2022,,Athletics,Tampa Bay Rays,+170,-200,13,2
+11 Apr 2022,,Boston Red Sox,Detroit Tigers,-141,+120,1,3
+11 Apr 2022,,Colorado Rockies,Texas Rangers,+114,-135,6,4
+11 Apr 2022,,Milwaukee Brewers,Baltimore Orioles,-156,+135,0,2
+11 Apr 2022,,Cleveland Guardians,Kansas City Royals,-116,-105,10,7
+10 Apr 2022,,Boston Red Sox,New York Yankees,+125,-147,4,3
+10 Apr 2022,,San Diego Padres,Arizona Diamondbacks,-156,+135,10,5
+10 Apr 2022,,Houston Astros,Los Angeles Angels,-116,-105,4,1
+10 Apr 2022,,Miami Marlins,San Francisco Giants,-105,-116,2,3
+10 Apr 2022,,Los Angeles Dodgers,Colorado Rockies,-213,+175,4,9
+10 Apr 2022,,Milwaukee Brewers,Chicago Cubs,-132,+110,5,4
+10 Apr 2022,,Pittsburgh Pirates,St.Louis Cardinals,+185,-227,9,4
+10 Apr 2022,,Cleveland Guardians,Kansas City Royals,-105,-116,17,3
+10 Apr 2022,,Seattle Mariners,Minnesota Twins,+120,-141,4,10
+10 Apr 2022,,Texas Rangers,Toronto Blue Jays,+179,-222,12,6
+10 Apr 2022,,New York Mets,Washington Nationals,-141,+120,2,4
+10 Apr 2022,,Cincinnati Reds,Atlanta Braves,+150,-172,6,3
+10 Apr 2022,,Baltimore Orioles,Tampa Bay Rays,+160,-182,0,8
+10 Apr 2022,,Chicago White Sox,Detroit Tigers,-135,+114,10,1
+10 Apr 2022,,Athletics,Philadelphia Phillies,+190,-233,4,1
+09 Apr 2022,,Houston Astros,Los Angeles Angels,-111,-111,0,2
+09 Apr 2022,,San Diego Padres,Arizona Diamondbacks,-175,+154,5,2
+09 Apr 2022,,Los Angeles Dodgers,Colorado Rockies,-172,+150,2,3
+09 Apr 2022,,Cincinnati Reds,Atlanta Braves,+170,-200,1,2
+09 Apr 2022,,New York Mets,Washington Nationals,-132,+110,5,0
+09 Apr 2022,,Cleveland Guardians,Kansas City Royals,-105,-116,0,1
+09 Apr 2022,,Athletics,Philadelphia Phillies,+170,-200,2,4
+09 Apr 2022,,Boston Red Sox,New York Yankees,+135,-156,2,4
+09 Apr 2022,,Miami Marlins,San Francisco Giants,+125,-147,2,1
+09 Apr 2022,,Texas Rangers,Toronto Blue Jays,+170,-200,3,4
+09 Apr 2022,,Milwaukee Brewers,Chicago Cubs,-161,+140,0,9
+09 Apr 2022,,Pittsburgh Pirates,St.Louis Cardinals,+145,-167,2,6
+09 Apr 2022,,Seattle Mariners,Minnesota Twins,+114,-135,4,3
+09 Apr 2022,,Baltimore Orioles,Tampa Bay Rays,+175,-213,3,5
+09 Apr 2022,,Chicago White Sox,Detroit Tigers,-135,+114,5,2
+08 Apr 2022,,San Diego Padres,Arizona Diamondbacks,-161,+140,3,0
+08 Apr 2022,,Houston Astros,Los Angeles Angels,-120,+100,13,6
+08 Apr 2022,,Cincinnati Reds,Atlanta Braves,+135,-156,6,7
+08 Apr 2022,,Texas Rangers,Toronto Blue Jays,+165,-185,8,10
+08 Apr 2022,,New York Mets,Washington Nationals,-167,+145,7,3
+08 Apr 2022,,Miami Marlins,San Francisco Giants,+125,-147,5,6
+08 Apr 2022,,Los Angeles Dodgers,Colorado Rockies,-222,+179,5,3
+08 Apr 2022,,Seattle Mariners,Minnesota Twins,+110,-132,2,1
+08 Apr 2022,,Baltimore Orioles,Tampa Bay Rays,+165,-185,1,2
+08 Apr 2022,,Athletics,Philadelphia Phillies,+175,-213,5,9
+08 Apr 2022,,Chicago White Sox,Detroit Tigers,-141,+120,4,5
+08 Apr 2022,,Boston Red Sox,New York Yankees,+154,-175,5,6
+07 Apr 2022,,San Diego Padres,Arizona Diamondbacks,-152,+129,2,4
+07 Apr 2022,,Houston Astros,Los Angeles Angels,+100,-120,3,1
+07 Apr 2022,,Cincinnati Reds,Atlanta Braves,+165,-185,6,3
+07 Apr 2022,,New York Mets,Washington Nationals,-172,+150,5,1
+07 Apr 2022,,Pittsburgh Pirates,St.Louis Cardinals,+135,-156,0,9
+07 Apr 2022,,Cleveland Guardians,Kansas City Royals,-125,+104,1,3
+07 Apr 2022,,Milwaukee Brewers,Chicago Cubs,-182,+160,4,5

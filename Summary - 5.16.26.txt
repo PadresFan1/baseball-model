@@ -1,0 +1,7 @@
+We built a sophisticated baseball betting model from scratch. The core model pulls data from MLB Stats API, Baseball Savant, and The Odds API, calculates expected runs using a multi-metric lambda (wOBA, xwOBA, FIP, xFIP, K%, BB%, rolling runs, park factors), runs 5,000 Monte Carlo simulations per game, and identifies edges on both moneylines and over/unders against DraftKings and FanDuel lines.
+
+The model runs automatically three times daily via Windows Task Scheduler, logs all predictions to Google Sheets with run-by-run tracking, and produces clean terminal output showing edges, projected runs, and game statuses.
+
+We built a backtesting framework using 11,040 historical games from 2021-2025 with FanDuel and DraftKings closing lines. Early results show the model finds profitable edges when filtering to favorites with 3-8% projected edge (+3.2% ROI historically). We identified a data leak where season-level stats included future game data — we re-pulled detailed per-game logs to fix this, and the random parameter search is ready to run once the fix is implemented.
+
+Where to pick up next: Update get_rolling_averages_for_date to calculate cumulative wOBA/FIP from the new detailed game logs, then run the random search.

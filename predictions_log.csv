@@ -1,12 +1,61 @@
 date,home_team,away_team,bet_type,run1_bet_team,run1_model_pct,run1_book_line,run1_edge,run2_bet_team,run2_model_pct,run2_book_line,run2_edge,run3_bet_team,run3_model_pct,run3_book_line,run3_edge,home_score,away_score,winner,result,flag
-2026-05-15,DET,TOR,Moneyline,,,,,TOR,64.5%,-124,+9.2%,,,,,,,,,TEAM CHANGED
-2026-05-15,CLE,CIN,Over,,,,,Over,9.7,8.0,+1.7 runs,,,,,,,,,TEAM CHANGED
-2026-05-15,CLE,CIN,Moneyline,,,,,CLE,69.6%,-136,+12.0%,,,,,,,,,TEAM CHANGED
-2026-05-15,TBR,MIA,Moneyline,,,,,TBR,62.3%,-120,+7.8%,,,,,,,,,TEAM CHANGED
-2026-05-15,ATL,BOS,Under,,,,,Under,6.0,8.0,-2.0 runs,,,,,,,,,TEAM CHANGED
-2026-05-15,STL,KCR,Moneyline,,,,,KCR,54.8%,-106,+3.4%,,,,,,,,,TEAM CHANGED
-2026-05-15,ATH,SFG,Moneyline,,,,,ATH,75.8%,-130,+19.3%,,,,,,,,,TEAM CHANGED
-2026-05-15,SEA,SDP,Moneyline,,,,,SEA,61.4%,-131,+4.7%,,,,,,,,,TEAM CHANGED
-2026-05-15,NYM,NYY,Moneyline,,,,,NYM,47.0%,130,+3.5%,,,,,,,,,CONSISTENT
-2026-05-15,MIN,MIL,Moneyline,,,,,MIL,79.8%,-106,+28.4%,,,,,,,,,CONSISTENT
-2026-05-15,HOU,TEX,Moneyline,,,,,HOU,54.4%,-104,+3.5%,,,,,,,,,CONSISTENT
+2026-05-15,PIT,PHI,Moneyline,,,,,No Bet,58.6%,-134,No Edge,No Bet,57.6%,-134,No Edge,,,,,TEAM CHANGED
+2026-05-15,PIT,PHI,Over/Under,,,,,No Bet,8.4,8.0,No Edge,No Bet,8.4,8.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,WSN,BAL,Moneyline,,,,,No Bet,56.5%,-138,No Edge,No Bet,56.5%,-138,No Edge,,,,,TEAM CHANGED
+2026-05-15,WSN,BAL,Over/Under,,,,,No Bet,10.8,9.5,No Edge,No Bet,10.8,9.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,DET,TOR,Moneyline,,,,,TOR,64.8%,-124,+9.4%,TOR,64.4%,-124,+9.1%,,,,,TEAM CHANGED
+2026-05-15,DET,TOR,Over/Under,,,,,No Bet,9.1,8.0,No Edge,No Bet,9.0,8.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,CLE,CIN,Moneyline,,,,,CLE,69.6%,-136,+11.9%,CLE,69.2%,-136,+11.5%,,,,,TEAM CHANGED
+2026-05-15,CLE,CIN,Over/Under,,,,,Over,9.8,8.0,+1.8 runs,Over,9.7,8.0,+1.7 runs,,,,,TEAM CHANGED
+2026-05-15,TBR,MIA,Moneyline,,,,,No Bet,51.6%,-120,No Edge,No Bet,52.3%,-120,No Edge,,,,,TEAM CHANGED
+2026-05-15,TBR,MIA,Over/Under,,,,,No Bet,8.6,8.0,No Edge,No Bet,8.5,8.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,MIN,MIL,Moneyline,,,,,MIL,79.5%,-106,+28.0%,MIL,80.9%,-106,+29.5%,,,,,TEAM CHANGED
+2026-05-15,MIN,MIL,Over/Under,,,,,No Bet,8.4,8.5,No Edge,No Bet,8.4,8.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,ATL,BOS,Moneyline,,,,,No Bet,62.4%,-154,No Edge,No Bet,63.0%,-154,No Edge,,,,,TEAM CHANGED
+2026-05-15,ATL,BOS,Over/Under,,,,,No Bet,6.0,7.5,No Edge,No Bet,6.0,7.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,NYM,NYY,Moneyline,,,,,No Bet,53.1%,-144,No Edge,No Bet,53.8%,-144,No Edge,,,,,TEAM CHANGED
+2026-05-15,NYM,NYY,Over/Under,,,,,No Bet,6.4,7.0,No Edge,No Bet,6.4,7.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,CHW,CHC,Moneyline,,,,,No Bet,57.9%,-136,No Edge,No Bet,57.9%,-136,No Edge,,,,,TEAM CHANGED
+2026-05-15,CHW,CHC,Over/Under,,,,,No Bet,8.7,8.5,No Edge,No Bet,8.8,8.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,HOU,TEX,Moneyline,,,,,No Bet,53.4%,-104,No Edge,No Bet,53.8%,-104,No Edge,,,,,TEAM CHANGED
+2026-05-15,HOU,TEX,Over/Under,,,,,No Bet,8.2,8.5,No Edge,No Bet,8.0,8.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,STL,KCR,Moneyline,,,,,KCR,54.6%,-106,+3.2%,KCR,55.7%,-106,+4.2%,,,,,TEAM CHANGED
+2026-05-15,STL,KCR,Over/Under,,,,,No Bet,8.2,8.5,No Edge,No Bet,8.2,8.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,COL,ARI,Moneyline,,,,,No Bet,53.4%,-120,No Edge,No Bet,55.1%,-120,No Edge,,,,,TEAM CHANGED
+2026-05-15,COL,ARI,Over/Under,,,,,No Bet,11.3,11.5,No Edge,No Bet,11.4,11.5,No Edge,,,,,TEAM CHANGED
+2026-05-15,LAA,LAD,Moneyline,,,,,No Bet,63.8%,-225,No Edge,No Bet,65.0%,-225,No Edge,,,,,TEAM CHANGED
+2026-05-15,LAA,LAD,Over/Under,,,,,No Bet,8.7,9.0,No Edge,No Bet,8.7,9.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,ATH,SFG,Moneyline,,,,,ATH,75.5%,-130,+19.0%,ATH,75.2%,-130,+18.6%,,,,,TEAM CHANGED
+2026-05-15,ATH,SFG,Over/Under,,,,,No Bet,8.8,10.0,No Edge,No Bet,8.9,10.0,No Edge,,,,,TEAM CHANGED
+2026-05-15,SEA,SDP,Moneyline,,,,,SEA,60.4%,-131,+3.7%,SEA,61.0%,-131,+4.3%,,,,,TEAM CHANGED
+2026-05-15,SEA,SDP,Over/Under,,,,,No Bet,6.5,7.0,No Edge,No Bet,6.5,7.0,No Edge,,,,,TEAM CHANGED
+2026-05-16,DET,TOR,Moneyline,No Bet,51.4%,-116,No Edge,,,,,,,,,3,2,DET,LOSS,CONSISTENT
+2026-05-16,DET,TOR,Over/Under,No Bet,8.9,8.5,No Edge,,,,,,,,,3,2,DET,PENDING,CONSISTENT
+2026-05-16,STL,KCR,Moneyline,STL,60.9%,-112,+8.1%,,,,,,,,,5,4,STL,WIN,CONSISTENT
+2026-05-16,STL,KCR,Over/Under,No Bet,9.0,9.0,No Edge,,,,,,,,,5,4,STL,PENDING,CONSISTENT
+2026-05-16,COL,ARI,Moneyline,ARI,79.1%,-142,+20.4%,,,,,,,,,1,9,ARI,WIN,CONSISTENT
+2026-05-16,COL,ARI,Over/Under,Under,9.0,11.5,-2.5 runs,,,,,,,,,1,9,ARI,PENDING,CONSISTENT
+2026-05-16,WSN,BAL,Moneyline,No Bet,53.6%,-108,No Edge,,,,,,,,,3,2,WSN,LOSS,CONSISTENT
+2026-05-16,WSN,BAL,Over/Under,No Bet,10.2,10.0,No Edge,,,,,,,,,3,2,WSN,PENDING,CONSISTENT
+2026-05-16,PIT,PHI,Moneyline,No Bet,61.3%,-171,No Edge,,,,,,,,,9,11,PHI,LOSS,CONSISTENT
+2026-05-16,PIT,PHI,Over/Under,No Bet,8.8,8.5,No Edge,,,,,,,,,9,11,PHI,PENDING,CONSISTENT
+2026-05-16,TBR,MIA,Moneyline,TBR,76.9%,-138,+18.9%,,,,,,,,,7,2,TBR,WIN,CONSISTENT
+2026-05-16,TBR,MIA,Over/Under,No Bet,7.7,7.5,No Edge,,,,,,,,,7,2,TBR,PENDING,CONSISTENT
+2026-05-16,CLE,CIN,Moneyline,CLE,73.6%,-156,+12.7%,,,,,,,,,6,7,CIN,LOSS,CONSISTENT
+2026-05-16,CLE,CIN,Over/Under,Over,10.5,8.5,+2.0 runs,,,,,,,,,6,7,CIN,PENDING,CONSISTENT
+2026-05-16,CHW,CHC,Moneyline,No Bet,54.3%,-110,No Edge,,,,,,,,,5,10,CHC,LOSS,CONSISTENT
+2026-05-16,CHW,CHC,Over/Under,No Bet,8.1,8.5,No Edge,,,,,,,,,5,10,CHC,PENDING,CONSISTENT
+2026-05-16,HOU,TEX,Moneyline,No Bet,61.8%,-148,No Edge,,,,,,,,,2,0,HOU,LOSS,CONSISTENT
+2026-05-16,HOU,TEX,Over/Under,No Bet,7.1,8.0,No Edge,,,,,,,,,2,0,HOU,PENDING,CONSISTENT
+2026-05-16,MIN,MIL,Moneyline,MIL,77.9%,-124,+22.6%,,,,,,,,,2,3,MIL,WIN,CONSISTENT
+2026-05-16,MIN,MIL,Over/Under,No Bet,8.2,8.5,No Edge,,,,,,,,,2,3,MIL,PENDING,CONSISTENT
+2026-05-16,ATL,BOS,Moneyline,ATL,68.7%,-125,+13.2%,,,,,,,,,3,2,ATL,WIN,CONSISTENT
+2026-05-16,ATL,BOS,Over/Under,No Bet,6.1,7.5,No Edge,,,,,,,,,3,2,ATL,PENDING,CONSISTENT
+2026-05-16,NYM,NYY,Moneyline,NYM,55.1%,104,+6.1%,,,,,,,,,2,5,NYY,LOSS,CONSISTENT
+2026-05-16,NYM,NYY,Over/Under,No Bet,7.1,8.5,No Edge,,,,,,,,,2,5,NYY,PENDING,CONSISTENT
+2026-05-16,SEA,SDP,Moneyline,SEA,65.8%,-166,+3.4%,,,,,,,,,0,2,SDP,LOSS,CONSISTENT
+2026-05-16,SEA,SDP,Over/Under,No Bet,6.7,7.5,No Edge,,,,,,,,,0,2,SDP,PENDING,CONSISTENT
+2026-05-16,LAA,LAD,Moneyline,LAD,63.4%,-136,+5.8%,,,,,,,,,0,6,LAD,WIN,CONSISTENT
+2026-05-16,LAA,LAD,Over/Under,No Bet,7.2,8.5,No Edge,,,,,,,,,0,6,LAD,PENDING,CONSISTENT
+2026-05-16,ATH,SFG,Moneyline,ATH,68.8%,-134,+11.5%,,,,,,,,,5,2,ATH,WIN,CONSISTENT
+2026-05-16,ATH,SFG,Over/Under,No Bet,9.2,9.5,No Edge,,,,,,,,,5,2,ATH,PENDING,CONSISTENT
