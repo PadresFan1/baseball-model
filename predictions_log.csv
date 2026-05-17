@@ -55,7 +55,7 @@ date,home_team,away_team,bet_type,run1_bet_team,run1_model_pct,run1_book_line,ru
 2026-05-16,NYM,NYY,Over/Under,No Bet,7.1,8.5,No Edge,,,,,,,,,2,5,NYY,PENDING,CONSISTENT
 2026-05-16,SEA,SDP,Moneyline,SEA,65.8%,-166,+3.4%,,,,,,,,,0,2,SDP,LOSS,CONSISTENT
 2026-05-16,SEA,SDP,Over/Under,No Bet,6.7,7.5,No Edge,,,,,,,,,0,2,SDP,PENDING,CONSISTENT
-2026-05-16,LAA,LAD,Moneyline,LAD,63.4%,-136,+5.8%,,,,,,,,,0,6,LAD,WIN,CONSISTENT
-2026-05-16,LAA,LAD,Over/Under,No Bet,7.2,8.5,No Edge,,,,,,,,,0,6,LAD,PENDING,CONSISTENT
-2026-05-16,ATH,SFG,Moneyline,ATH,68.8%,-134,+11.5%,,,,,,,,,5,2,ATH,WIN,CONSISTENT
-2026-05-16,ATH,SFG,Over/Under,No Bet,9.2,9.5,No Edge,,,,,,,,,5,2,ATH,PENDING,CONSISTENT
+2026-05-16,LAA,LAD,Moneyline,LAD,63.4%,-136,+5.8%,,,,,LAD,63.5%,-136,+5.8%,0,6,LAD,WIN,TEAM CHANGED
+2026-05-16,LAA,LAD,Over/Under,No Bet,7.2,8.5,No Edge,,,,,No Bet,7.2,8.5,No Edge,0,6,LAD,PENDING,TEAM CHANGED
+2026-05-16,ATH,SFG,Moneyline,ATH,68.8%,-134,+11.5%,,,,,ATH,68.6%,-134,+11.4%,5,2,ATH,WIN,TEAM CHANGED
+2026-05-16,ATH,SFG,Over/Under,No Bet,9.2,9.5,No Edge,,,,,No Bet,9.3,9.5,No Edge,5,2,ATH,PENDING,TEAM CHANGED

@@ -30,7 +30,21 @@ ODDS_TO_FG = {
 import random
 from itertools import product
 
-def random_search(n_trials=100, seed=None):
+def load_woba_fip_constants(constants_path, season):
+    df = pd.read_csv(constants_path)
+    row = df[df['Season'] == season].iloc[0]
+    woba_weights = {
+        'wBB':  row['wBB'],
+        'wHBP': row['wHBP'],
+        'w1B':  row['w1B'],
+        'w2B':  row['w2B'],
+        'w3B':  row['w3B'],
+        'wHR':  row['wHR'],
+    }
+    fip_constant = row['cFIP']
+    return woba_weights, fip_constant
+
+def random_search(n_trials=100, seed=42):
     if seed:
         random.seed(seed)
     
@@ -45,7 +59,7 @@ def random_search(n_trials=100, seed=None):
         'rating_cap_high': [1.30, 1.40, 1.50, 1.60],
         'w_rolling_off': [0.1, 0.2, 0.3],
         'w_woba': [0.1, 0.2, 0.3],
-        'w_xwoba': [0.1, 0.2, 0.3],
+        'w_xwoba': [0.0], # no statcast data
         'w_k_off': [0.1, 0.2, 0.3],
         'w_bb_off': [0.1, 0.2, 0.3],
         'w_rolling_pit': [0.1, 0.2, 0.3],
@@ -78,12 +92,13 @@ def random_search(n_trials=100, seed=None):
             'w_bb_pit': random.choice(param_space['w_bb_pit']),
         }
         params['rolling_weight_15'] = 1 - params['rolling_weight_7']
+        if params['ml_edge_min'] >= params['ml_edge_max']:
+            continue
         
         # Normalize offense weights
-        off_total = params['w_rolling_off'] + params['w_woba'] + params['w_xwoba'] + params['w_k_off'] + params['w_bb_off']
+        off_total = params['w_rolling_off'] + params['w_woba'] + params['w_k_off'] + params['w_bb_off']
         params['w_rolling_off'] /= off_total
         params['w_woba'] /= off_total
-        params['w_xwoba'] /= off_total
         params['w_k_off'] /= off_total
         params['w_bb_off'] /= off_total
         
@@ -116,6 +131,13 @@ def random_search(n_trials=100, seed=None):
     return results_df
 
 def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
+    log_path = 'historical_data/historical_game_logs.json'
+    if os.path.exists(log_path):
+        print("Loading historical game logs from file...")
+        with open(log_path) as f:
+            return json.load(f)
+    
+    # Only hits the API if the file doesn't exist
     all_logs = {}
     for season in seasons:
         print(f"Pulling {season} game logs...")
@@ -168,11 +190,11 @@ def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
             except Exception as e:
                 print(f"Error pulling {fg_abbrev} {season}: {e}")
                 continue
-        
+
         all_logs[season] = season_logs
         print(f"Pulled {len(season_logs)} teams for {season}")
-    
-    with open('historical_data/historical_game_logs.json', 'w') as f:
+
+    with open(log_path, 'w') as f:
         json.dump(all_logs, f)
     print("Saved historical game logs")
     return all_logs
@@ -183,6 +205,12 @@ historical_logs = pull_historical_game_logs(TEAM_MAP)
 # Load historical game logs
 with open('historical_data/historical_game_logs.json', 'r') as f:
     game_logs = json.load(f)
+
+def ip_to_float(ip):
+    ip = float(ip)
+    whole = int(ip)
+    outs = round((ip - whole) * 10)
+    return whole + outs / 3
 
 def normalize_team(team):
     return ODDS_TO_FG.get(team, team)
@@ -313,7 +341,7 @@ def get_rolling_averages_for_date(team, game_logs, target_date, season, woba_wei
             3  * (g['baseOnBalls'] + g['hitBatsmen']) -
             2  * g['strikeOuts']
         )
-        fip_ip  += g['inningsPitched']
+        fip_ip  += ip_to_float(g['inningsPitched'])
         k_total  += g['strikeOuts']
         bb_total += g['baseOnBalls']
         bf_total += g['battersFaced']
@@ -340,12 +368,12 @@ def get_rolling_averages_for_date(team, game_logs, target_date, season, woba_wei
         'fip':     fip,
         'k_pct':   k_pct,
         'bb_pct':  bb_pct,
-        # raw counts for xFIP calculation upstream
-        '_fip_num': fip_num,
-        '_fip_ip':  fip_ip,
-        '_total_fb': total_fb,
+        '_fip_num':     fip_num,
+        '_fip_ip':      fip_ip,
+        '_total_fb':    total_fb,
+        '_k_total':     k_total,
+        '_bb_hbp_total': bb_total + sum(g.get('hitBatsmen', 0) for g in pit_before),
     }
-
 
 # ============================================================
 # BACKTEST PARAMETERS - adjust these to test combinations
@@ -410,12 +438,29 @@ print("Backtest functions loaded successfully")
 # MAIN BACKTEST LOOP
 # ============================================================
 
+def get_league_hr_fb_rate(game_logs, target_date, season):
+    season_str = str(season)
+    if season_str not in game_logs:
+        return 0.115
+    total_hr = 0
+    total_fb = 0
+    for team_logs in game_logs[season_str].values():
+        for g in team_logs['pitching']:
+            if g['date'] < target_date:
+                total_hr += g['homeRuns']
+                total_fb += g['airOuts'] + g['homeRuns']
+    return total_hr / total_fb if total_fb > 0 else 0.115
+
 def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
     all_results = []
     
     for season in seasons:
         season_odds = odds_df[odds_df['date'].str.startswith(str(season))]
         
+        woba_weights, fip_constant = load_woba_fip_constants(
+            'constants/woba_fip_constants.csv', season
+        )
+
         all_runs = []
         for team in TEAM_MAP.keys():
             season_str = str(season)
@@ -423,17 +468,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
                 for g in game_logs[season_str][team]['hitting']:
                     all_runs.append(g['runs'])
         lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
-        
-        season_ratings = get_season_ratings(season)
-        lg_woba = sum(v['woba'] for v in season_ratings.values()) / len(season_ratings)
-        lg_xwoba = sum(v['xwoba'] for v in season_ratings.values()) / len(season_ratings)
-        lg_fip = sum(v['fip'] for v in season_ratings.values()) / len(season_ratings)
-        lg_xfip = sum(v['xfip'] for v in season_ratings.values()) / len(season_ratings)
-        lg_k9 = sum(v['k_9_pit'] for v in season_ratings.values()) / len(season_ratings)
-        lg_bb9 = sum(v['bb_9_pit'] for v in season_ratings.values()) / len(season_ratings)
-        lg_k_off = sum(v['k_pct_off'] for v in season_ratings.values()) / len(season_ratings)
-        lg_bb_off = sum(v['bb_pct_off'] for v in season_ratings.values()) / len(season_ratings)
-        
+                
         for _, game in season_odds.iterrows():
             date = game['date']
             home_team = normalize_team(game['home_team'])
@@ -442,42 +477,64 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
             if home_team not in TEAM_MAP or away_team not in TEAM_MAP:
                 continue
             
-            home_rolling = get_rolling_averages_for_date(home_team, game_logs, date, season)
-            away_rolling = get_rolling_averages_for_date(away_team, game_logs, date, season)
-            
+            home_rolling = get_rolling_averages_for_date(home_team, game_logs, date, season, woba_weights, fip_constant)
+            away_rolling = get_rolling_averages_for_date(away_team, game_logs, date, season, woba_weights, fip_constant)
+
             if home_rolling is None or away_rolling is None:
                 continue
-            
-            # Calculate rolling ratings
-            home_off_roll = ((home_rolling['hit_7'] * params['rolling_weight_7'] + 
+
+            lg_hr_fb = get_league_hr_fb_rate(game_logs, date, season)
+
+            def calc_xfip(rolling, lg_hr_fb, fip_constant):
+                expected_hr = lg_hr_fb * rolling['_total_fb']
+                num = 13 * expected_hr + 3 * rolling['_bb_hbp_total'] - 2 * rolling['_k_total']
+                return (num / rolling['_fip_ip'] + fip_constant) if rolling['_fip_ip'] > 0 else 4.50
+
+            home_xfip = calc_xfip(home_rolling, lg_hr_fb, fip_constant)
+            away_xfip = calc_xfip(away_rolling, lg_hr_fb, fip_constant)
+
+            all_team_rollings = {}
+            for team in TEAM_MAP.keys():
+                r = get_rolling_averages_for_date(team, game_logs, date, season, woba_weights, fip_constant)
+                if r is not None:
+                    all_team_rollings[team] = r
+
+            if len(all_team_rollings) < 10:
+                continue
+
+            lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
+            lg_woba   = sum(r['woba']   for r in all_team_rollings.values()) / len(all_team_rollings)
+            lg_fip    = sum(r['fip']    for r in all_team_rollings.values()) / len(all_team_rollings)
+            lg_xfip   = sum(calc_xfip(r, lg_hr_fb, fip_constant) for r in all_team_rollings.values()) / len(all_team_rollings)
+            lg_k_pit  = sum(r['k_pct']  for r in all_team_rollings.values()) / len(all_team_rollings)
+            lg_bb_pit = sum(r['bb_pct'] for r in all_team_rollings.values()) / len(all_team_rollings)
+
+            home_off_roll = ((home_rolling['hit_7'] * params['rolling_weight_7'] +
                              home_rolling['hit_15'] * params['rolling_weight_15']) / lg_avg_runs)
-            away_off_roll = ((away_rolling['hit_7'] * params['rolling_weight_7'] + 
+            away_off_roll = ((away_rolling['hit_7'] * params['rolling_weight_7'] +
                              away_rolling['hit_15'] * params['rolling_weight_15']) / lg_avg_runs)
-            home_pit_roll = (lg_avg_runs / (home_rolling['pitch_7'] * params['rolling_weight_7'] + 
+            home_pit_roll = (lg_avg_runs / (home_rolling['pitch_7'] * params['rolling_weight_7'] +
                              home_rolling['pitch_15'] * params['rolling_weight_15']))
-            away_pit_roll = (lg_avg_runs / (away_rolling['pitch_7'] * params['rolling_weight_7'] + 
+            away_pit_roll = (lg_avg_runs / (away_rolling['pitch_7'] * params['rolling_weight_7'] +
                              away_rolling['pitch_15'] * params['rolling_weight_15']))
-            
-            home_sr = season_ratings.get(home_team, {})
-            away_sr = season_ratings.get(away_team, {})
-            
-            home_woba_r = home_sr.get('woba', lg_woba) / lg_woba
-            away_woba_r = away_sr.get('woba', lg_woba) / lg_woba
-            home_xwoba_r = home_sr.get('xwoba', lg_xwoba) / lg_xwoba
-            away_xwoba_r = away_sr.get('xwoba', lg_xwoba) / lg_xwoba
-            home_k_off_r = lg_k_off / home_sr.get('k_pct_off', lg_k_off) if home_sr.get('k_pct_off', 0) > 0 else 1.0
-            away_k_off_r = lg_k_off / away_sr.get('k_pct_off', lg_k_off) if away_sr.get('k_pct_off', 0) > 0 else 1.0
-            home_bb_off_r = home_sr.get('bb_pct_off', lg_bb_off) / lg_bb_off
-            away_bb_off_r = away_sr.get('bb_pct_off', lg_bb_off) / lg_bb_off
-            home_fip_r = lg_fip / home_sr.get('fip', lg_fip) if home_sr.get('fip', 0) > 0 else 1.0
-            away_fip_r = lg_fip / away_sr.get('fip', lg_fip) if away_sr.get('fip', 0) > 0 else 1.0
-            home_xfip_r = lg_xfip / home_sr.get('xfip', lg_xfip) if home_sr.get('xfip', 0) > 0 else 1.0
-            away_xfip_r = lg_xfip / away_sr.get('xfip', lg_xfip) if away_sr.get('xfip', 0) > 0 else 1.0
-            home_k_pit_r = home_sr.get('k_9_pit', lg_k9) / lg_k9
-            away_k_pit_r = away_sr.get('k_9_pit', lg_k9) / lg_k9
-            home_bb_pit_r = lg_bb9 / home_sr.get('bb_9_pit', lg_bb9) if home_sr.get('bb_9_pit', 0) > 0 else 1.0
-            away_bb_pit_r = lg_bb9 / away_sr.get('bb_9_pit', lg_bb9) if away_sr.get('bb_9_pit', 0) > 0 else 1.0
-            
+
+            home_woba_r   = home_rolling['woba'] / lg_woba   if lg_woba   > 0 else 1.0
+            away_woba_r   = away_rolling['woba'] / lg_woba   if lg_woba   > 0 else 1.0
+            home_xwoba_r  = 1.0
+            away_xwoba_r  = 1.0
+            home_k_off_r  = 1.0
+            away_k_off_r  = 1.0
+            home_bb_off_r = 1.0
+            away_bb_off_r = 1.0
+            home_fip_r    = lg_fip  / home_rolling['fip']  if home_rolling['fip']  > 0 else 1.0
+            away_fip_r    = lg_fip  / away_rolling['fip']  if away_rolling['fip']  > 0 else 1.0
+            home_xfip_r   = lg_xfip / home_xfip            if home_xfip            > 0 else 1.0
+            away_xfip_r   = lg_xfip / away_xfip            if away_xfip            > 0 else 1.0
+            home_k_pit_r  = home_rolling['k_pct'] / lg_k_pit  if lg_k_pit  > 0 else 1.0
+            away_k_pit_r  = away_rolling['k_pct'] / lg_k_pit  if lg_k_pit  > 0 else 1.0
+            home_bb_pit_r = lg_bb_pit / home_rolling['bb_pct'] if home_rolling['bb_pct'] > 0 else 1.0
+            away_bb_pit_r = lg_bb_pit / away_rolling['bb_pct'] if away_rolling['bb_pct'] > 0 else 1.0
+
             home_off = (home_off_roll * params['w_rolling_off'] + home_woba_r * params['w_woba'] +
                        home_xwoba_r * params['w_xwoba'] + home_k_off_r * params['w_k_off'] +
                        home_bb_off_r * params['w_bb_off'])
@@ -614,5 +671,5 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
     roi = profit / total_bet * 100
     return roi, profit
 
-# - delete everything before print when ready to run - print("\nStarting random search - 100 trials...")
-# - delete everything before search when ready to runsearch_results = random_search(n_trials=100)
+print("\nStarting random search - 100 trials...")
+random_search(n_trials=100)

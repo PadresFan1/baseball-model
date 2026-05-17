@@ -1,3 +1,6 @@
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
+
 import pandas as pd
 import math
 import requests
@@ -373,14 +376,6 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
     away_win_pct = (away_wins_sim + remaining / 2) / NUM_SIMULATIONS
 
     avg_total = np.mean(total_runs)
-    total_data = get_total_line(game)
-
-    if home_win_pct > 0.5:
-        home_line = f"-{abs(round((home_win_pct / (1 - home_win_pct)) * 100))}"
-        away_line = f"+{abs(round(((1 - home_win_pct) / home_win_pct) * 100))}"
-    else:
-        home_line = f"+{abs(round(((1 - home_win_pct) / home_win_pct) * 100))}"
-        away_line = f"-{abs(round((away_win_pct / (1 - away_win_pct)) * 100))}"
 
     return home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda
 
@@ -485,9 +480,6 @@ def get_pitching_game_logs(team_id,season=2026):
         print(f"Error fetching pitching log: {e}")
         return []
 
-yankees_pitching = get_pitching_game_logs(147)
-avg_pitch_7 = get_rolling_average(yankees_pitching,days=7,column='runs_allowed')
-avg_pitch_15 = get_rolling_average(yankees_pitching,days=15,column='runs_allowed')
 
 def get_all_team_ids():
     teams = statsapi.get('teams',{'sportId':1,'season':2026})
@@ -718,8 +710,8 @@ def log_predictions(predictions, results):
             game_key = f"{away_fg}_{home_fg}"
             if game_key in results:
                 r = results[game_key]
-                new_row['home_score'] = r['home_score']
-                new_row['away_score'] = r['away_score']
+                new_row['home_score'] = str(r['home_score'])
+                new_row['away_score'] = str(r['away_score'])
                 new_row['winner'] = r['winner']
                 new_row['result'] = evaluate_result(pred, r)
             
@@ -737,8 +729,8 @@ def log_predictions(predictions, results):
             game_key = f"{away_fg}_{home_fg}"
             if game_key in results:
                 r = results[game_key]
-                df.at[idx, 'home_score'] = r['home_score']
-                df.at[idx, 'away_score'] = r['away_score']
+                df.at[idx, 'home_score'] = str(r['home_score'])
+                df.at[idx, 'away_score'] = str(r['away_score'])
                 df.at[idx, 'winner'] = r['winner']
                 df.at[idx, 'result'] = evaluate_result(pred, r)
             
@@ -1085,6 +1077,111 @@ def update_google_sheets(df):
     except Exception as e:
         print(f"Google Sheets update failed: {e}")
 
+def _roi_for_bets(bets_df):
+    profit = 0
+    wagered = 0
+    for _, row in bets_df.iterrows():
+        if row['result'] not in ('WIN', 'LOSS'):
+            continue
+        try:
+            line = float(row['book_line'])
+        except (ValueError, TypeError):
+            continue
+        wagered += 100
+        if row['result'] == 'WIN':
+            profit += line if line > 0 else 100 * (100 / abs(line))
+        else:
+            profit -= 100
+    return (profit / wagered * 100) if wagered > 0 else 0
+
+def print_accuracy_report():
+    log_file = 'predictions_log.csv'
+    if not os.path.exists(log_file):
+        return
+
+    df = pd.read_csv(log_file, dtype=str)
+
+    # Build one row per prediction using the latest available run
+    rows = []
+    for _, row in df.iterrows():
+        bet_team = edge = book_line = None
+        for run in [3, 2, 1]:
+            t = row.get(f'run{run}_bet_team')
+            if pd.notna(t) and t not in ('No Bet', 'nan', 'None'):
+                bet_team = t
+                edge = row.get(f'run{run}_edge')
+                book_line = row.get(f'run{run}_book_line')
+                break
+        rows.append({
+            'date': row['date'],
+            'bet_type': row['bet_type'],
+            'bet_team': bet_team,
+            'edge': edge,
+            'book_line': book_line,
+            'result': row.get('result'),
+        })
+
+    analysis = pd.DataFrame(rows)
+    bets = analysis[analysis['bet_team'].notna()]
+    settled = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
+    pending = bets[bets['result'] == 'PENDING']
+
+    print("\n=== ACCURACY REPORT ===\n")
+
+    if settled.empty:
+        print(f"No settled bets yet. ({len(pending)} pending)")
+        return
+
+    w = (settled['result'] == 'WIN').sum()
+    l = (settled['result'] == 'LOSS').sum()
+    p = (settled['result'] == 'PUSH').sum()
+    wr = w / (w + l) if (w + l) > 0 else 0
+    print(f"Overall:    {w}W - {l}L - {p}P  |  Win Rate: {wr:.1%}  |  Pending: {len(pending)}")
+    print()
+
+    for bet_type, label in [('Moneyline', 'Moneyline '), ('Over/Under', 'Over/Under')]:
+        sub = settled[settled['bet_type'] == bet_type]
+        sw = (sub['result'] == 'WIN').sum()
+        sl = (sub['result'] == 'LOSS').sum()
+        sp = (sub['result'] == 'PUSH').sum()
+        swr = sw / (sw + sl) if (sw + sl) > 0 else 0
+        if bet_type == 'Moneyline':
+            roi = _roi_for_bets(sub)
+            print(f"{label}:  {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}  |  ROI: {roi:+.1f}%")
+        else:
+            print(f"{label}: {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}")
+
+    # Edge tier breakdown (moneyline only, settled)
+    ml = settled[settled['bet_type'] == 'Moneyline'].copy()
+    if not ml.empty:
+        def edge_tier(e):
+            if pd.isna(e):
+                return None
+            try:
+                pct = float(str(e).replace('%', '').replace('+', ''))
+                if pct >= 10:
+                    return '10%+'
+                elif pct >= 5:
+                    return '5-10%'
+                else:
+                    return '3-5%'
+            except ValueError:
+                return None
+
+        ml['tier'] = ml['edge'].apply(edge_tier)
+        tier_group = ml[ml['tier'].notna()].groupby('tier')
+        print()
+        print("Edge tiers (Moneyline):")
+        for tier in ['3-5%', '5-10%', '10%+']:
+            if tier in tier_group.groups:
+                g = tier_group.get_group(tier)
+                tw = (g['result'] == 'WIN').sum()
+                tl = (g['result'] == 'LOSS').sum()
+                twr = tw / (tw + tl) if (tw + tl) > 0 else 0
+                print(f"  {tier:6s}: {tw}W - {tl}L  |  {twr:.1%}")
+
+    print()
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
@@ -1249,7 +1346,7 @@ for game in upcoming:
     else:
         ou_text = f"   ➖ Over/Under: No line available"
 
-proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
+    proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
 
     # Log moneyline for all games
     if moneyline_edge:
@@ -1352,5 +1449,4 @@ if completed_games:
 todays_starters = get_todays_starters()
 
 log_predictions(todays_predictions, yesterdays_results)
-if os.path.exists('predictions_log.csv'):
-    log = pd.read_csv('predictions_log.csv')
+print_accuracy_report()
