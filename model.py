@@ -1066,12 +1066,10 @@ def update_google_sheets(df):
         sheet = client.open('Baseball Model Predictions').sheet1
         
         sheet.clear()
-        
+
         headers = df.columns.tolist()
-        sheet.append_row(headers)
-        
-        for _, row in df.iterrows():
-            sheet.append_row([str(x) if x is not None else '' for x in row.tolist()])
+        rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
+        sheet.update([headers] + rows)
         
         print("Google Sheets updated successfully")
     except Exception as e:

@@ -29,6 +29,23 @@ git push
 replace the text after -m in line two with whatever the update was
 -m is a message that will note what is new with the new update
 
+BACKTESTING RUN INFO
+-------------------
+There's no magic number, but a practical answer for your param space:
+
+- 3-5 runs (300-500 trials) — enough to start seeing which params consistently appear 
+in top results vs. which are just noise. evaluate_runs() will start showing clear 
+patterns in the parameter breakdown.
+- 10 runs (1000 trials) — the correlation output becomes reliable and you can 
+confidently narrow the param space.
+-Diminishing returns after ~15 runs for a space this size.
+-The signal to stop is when evaluate_runs() shows the same values winning 
+across runs — e.g. ml_edge_min = 0.05 keeps showing the highest avg ROI run 
+after run. At that point you've found something real rather than lucky. If the 
+top params keep changing run to run, keep going.
+- A good workflow: run 5 times, look at the evaluation output, narrow the param space
+in the code based on what's winning, then run 5 more times with the tighter range. 
+
 FUTURE ENHANCEMENTS
 -------------------
 - Add GB%/FB% pitcher tendency profile

@@ -44,10 +44,24 @@ def load_woba_fip_constants(constants_path, season):
     fip_constant = row['cFIP']
     return woba_weights, fip_constant
 
-def random_search(n_trials=100, seed=42):
-    if seed:
-        random.seed(seed)
-    
+def random_search(n_trials=100, seed=None):
+    import time
+    import ctypes
+
+    # Prevent Windows from sleeping while the backtest runs
+    ES_CONTINUOUS      = 0x80000000
+    ES_SYSTEM_REQUIRED = 0x00000001
+    ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
+
+    start_time = time.time()
+    checkpoint_file = 'historical_data/random_search_checkpoint.json'
+
+    # Auto-generate seed if not provided so each run explores different params
+    if seed is None:
+        seed = random.randint(1, 99999)
+    print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
+    random.seed(seed)
+
     # Parameter ranges to search
     param_space = {
         'ml_edge_min': [0.03, 0.04, 0.05, 0.06, 0.07],
@@ -68,10 +82,28 @@ def random_search(n_trials=100, seed=42):
         'w_k_pit': [0.1, 0.2, 0.3],
         'w_bb_pit': [0.1, 0.2, 0.3],
     }
-    
+
+    # Resume from checkpoint if one exists
     results = []
-    
-    for trial in range(n_trials):
+    start_trial = 0
+    if os.path.exists(checkpoint_file):
+        with open(checkpoint_file) as f:
+            checkpoint = json.load(f)
+        if checkpoint.get('seed') == seed and checkpoint.get('n_trials') == n_trials:
+            results = checkpoint['results']
+            start_trial = checkpoint['completed_trials']
+            # Fast-forward the RNG to the correct position
+            temp_seed = seed
+            random.seed(temp_seed)
+            for _ in range(start_trial):
+                for key in ['ml_edge_min', 'ml_edge_max', 'favorites_only', 'rolling_weight_7',
+                            'rating_cap_low', 'rating_cap_high', 'w_rolling_off', 'w_woba',
+                            'w_xwoba', 'w_k_off', 'w_bb_off', 'w_rolling_pit', 'w_fip',
+                            'w_xfip', 'w_k_pit', 'w_bb_pit']:
+                    random.choice(param_space[key] or [0.0])
+            print(f"Resuming from trial {start_trial}/{n_trials} ({len(results)} results so far)")
+
+    for trial in range(start_trial, n_trials):
         # Sample random parameters
         params = {
             'ml_edge_min': random.choice(param_space['ml_edge_min']),
@@ -94,14 +126,14 @@ def random_search(n_trials=100, seed=42):
         params['rolling_weight_15'] = 1 - params['rolling_weight_7']
         if params['ml_edge_min'] >= params['ml_edge_max']:
             continue
-        
+
         # Normalize offense weights
         off_total = params['w_rolling_off'] + params['w_woba'] + params['w_k_off'] + params['w_bb_off']
         params['w_rolling_off'] /= off_total
         params['w_woba'] /= off_total
         params['w_k_off'] /= off_total
         params['w_bb_off'] /= off_total
-        
+
         # Normalize pitching weights
         pit_total = params['w_rolling_pit'] + params['w_fip'] + params['w_xfip'] + params['w_k_pit'] + params['w_bb_pit']
         params['w_rolling_pit'] /= pit_total
@@ -109,26 +141,118 @@ def random_search(n_trials=100, seed=42):
         params['w_xfip'] /= pit_total
         params['w_k_pit'] /= pit_total
         params['w_bb_pit'] /= pit_total
-        
+
         # Run backtest with these params
         trial_results = run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024])
-        
+
         if trial_results is not None:
             results.append({**params, **trial_results})
-        
+
         if (trial + 1) % 10 == 0:
-            print(f"Completed {trial + 1}/{n_trials} trials")
-    
+            elapsed = time.time() - start_time
+            done_this_run = trial + 1 - start_trial
+            per_trial = elapsed / done_this_run
+            remaining = per_trial * (n_trials - trial - 1)
+            print(f"Completed {trial + 1}/{n_trials} trials | Elapsed: {elapsed:.0f}s | ETA: {remaining:.0f}s")
+
+            # Save checkpoint every 10 trials
+            with open(checkpoint_file, 'w') as f:
+                json.dump({'seed': seed, 'n_trials': n_trials, 'completed_trials': trial + 1, 'results': results}, f)
+
     results_df = pd.DataFrame(results)
     results_df = results_df.sort_values('roi', ascending=False)
-    results_df.to_csv('historical_data/random_search_results.csv', index=False)
-    
+
+    # Save with metadata in filename so multiple runs are preserved
+    from datetime import datetime as _dt
+    run_date = _dt.now().strftime('%Y-%m-%d')
+    total_time = time.time() - start_time
+    mins, secs = divmod(int(total_time), 60)
+    results_df['run_date'] = run_date
+    results_df['seed'] = seed
+    results_df['n_trials'] = n_trials
+    results_df['run_time_mins'] = round(total_time / 60, 1)
+
+    run_file = f'historical_data/search_{run_date}_seed{seed}_{n_trials}trials.csv'
+    results_df.to_csv(run_file, index=False)
+    print(f"\nResults saved to {run_file}")
+
+    # Clean up checkpoint on successful completion
+    if os.path.exists(checkpoint_file):
+        os.remove(checkpoint_file)
+
+    # Re-enable sleep
+    ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+
+    print(f"\nFinished {n_trials} trials in {mins}m {secs}s")
     print(f"\nTop 10 parameter combinations:")
-    print(results_df[['roi', 'win_rate', 'n_bets', 'ml_edge_min', 'ml_edge_max', 
-                       'favorites_only', 'rolling_weight_7', 'rating_cap_low', 
+    print(results_df[['roi', 'win_rate', 'n_bets', 'ml_edge_min', 'ml_edge_max',
+                       'favorites_only', 'rolling_weight_7', 'rating_cap_low',
                        'rating_cap_high']].head(10).to_string())
-    
+
     return results_df
+
+
+def evaluate_runs():
+    import glob
+    run_files = sorted(glob.glob('historical_data/search_*.csv'))
+
+    if not run_files:
+        print("No completed runs found in historical_data/.")
+        return
+
+    all_dfs = []
+    for f in run_files:
+        df = pd.read_csv(f)
+        all_dfs.append(df)
+
+    combined = pd.concat(all_dfs, ignore_index=True)
+
+    print(f"\n{'='*60}")
+    print(f"EVALUATION: {len(run_files)} run(s), {len(combined)} total trials")
+    print(f"{'='*60}\n")
+
+    # Per-run summary
+    print("Run summary:")
+    for f in run_files:
+        df = pd.read_csv(f)
+        meta = os.path.basename(f)
+        top_roi = df['roi'].max()
+        med_roi = df['roi'].median()
+        print(f"  {meta}  |  top ROI: {top_roi:+.1f}%  |  median ROI: {med_roi:+.1f}%  |  {len(df)} trials")
+
+    # Top 10 across all runs
+    top_cols = ['roi', 'win_rate', 'n_bets', 'ml_edge_min', 'ml_edge_max',
+                'favorites_only', 'rolling_weight_7', 'rating_cap_low', 'rating_cap_high', 'run_date']
+    available = [c for c in top_cols if c in combined.columns]
+    print(f"\nTop 10 results across all runs:")
+    print(combined.nlargest(10, 'roi')[available].to_string(index=False))
+
+    # Parameter analysis — compare top 25% vs bottom 75%
+    threshold = combined['roi'].quantile(0.75)
+    top_q = combined[combined['roi'] >= threshold]
+
+    discrete_params = ['ml_edge_min', 'ml_edge_max', 'favorites_only',
+                       'rating_cap_low', 'rating_cap_high']
+
+    print(f"\nParameter breakdown (top 25% of trials, ROI >= {threshold:+.1f}%):")
+    for param in discrete_params:
+        if param not in combined.columns:
+            continue
+        grouped = top_q.groupby(param)['roi'].agg(count='count', avg_roi='mean').sort_values('avg_roi', ascending=False)
+        print(f"\n  {param}:")
+        for val, row in grouped.iterrows():
+            print(f"    {val!s:<10}  count: {int(row['count']):>4}  avg ROI: {row['avg_roi']:+.1f}%")
+
+    # Continuous weight params — show correlation with ROI
+    weight_params = ['rolling_weight_7', 'w_rolling_off', 'w_woba', 'w_k_off',
+                     'w_bb_off', 'w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit']
+    available_weights = [p for p in weight_params if p in combined.columns]
+    if available_weights:
+        corrs = combined[available_weights + ['roi']].corr()['roi'].drop('roi').sort_values(ascending=False)
+        print(f"\nWeight correlations with ROI (all trials):")
+        for param, corr in corrs.items():
+            bar = '+' * int(abs(corr) * 20) if corr > 0 else '-' * int(abs(corr) * 20)
+            print(f"  {param:<20} {corr:+.3f}  {bar}")
 
 def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
     log_path = 'historical_data/historical_game_logs.json'
@@ -671,5 +795,12 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
     roi = profit / total_bet * 100
     return roi, profit
 
-print("\nStarting random search - 100 trials...")
-random_search(n_trials=100)
+N_RUNS = 3
+
+for run in range(N_RUNS):
+    print(f"\n{'='*55}")
+    print(f"  Run {run + 1} of {N_RUNS}")
+    print(f"{'='*55}")
+    random_search(n_trials=100)
+
+evaluate_runs()

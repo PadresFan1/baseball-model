@@ -2,3 +2,26 @@ Loading historical game logs from file...
 Backtest functions loaded successfully
 
 Starting random search - 100 trials...
+Completed 10/100 trials
+Completed 20/100 trials
+Completed 30/100 trials
+Completed 40/100 trials
+Completed 50/100 trials
+Completed 60/100 trials
+Completed 70/100 trials
+Completed 80/100 trials
+Completed 90/100 trials
+Completed 100/100 trials
+
+Top 10 parameter combinations:
+       roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
+91  6.0235    0.5127     394         0.07         0.08           False               0.5            0.60              1.5
+82  5.9045    0.6316     190         0.07         0.08            True               0.7            0.60              1.4
+87  5.1599    0.6044     316         0.06         0.08            True               0.6            0.65              1.6
+85  3.8431    0.5858     239         0.07         0.10            True               0.7            0.65              1.3
+30  1.9281    0.4889    1356         0.05         0.08           False               0.5            0.70              1.4
+36  1.6506    0.4416    1925         0.07         0.15           False               0.8            0.70              1.6
+18  0.9745    0.5795     566         0.06         0.10            True               0.7            0.60              1.3
+11  0.8372    0.5783     702         0.04         0.08            True               0.5            0.60              1.6
+14  0.5175    0.5746     992         0.05         0.20            True               0.6            0.70              1.6
+90  0.1862    0.4791    2609         0.04         0.10           False               0.6            0.60              1.5

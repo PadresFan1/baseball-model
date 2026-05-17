@@ -10,3 +10,4 @@ else:
 print(f"Total games: {len(df)}")
 print(f"Date range: {df['date'].min()} to {df['date'].max()}")
 print(df['date'].value_counts().sort_index().head(20))
+
