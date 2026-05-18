@@ -32,3 +32,8 @@ __pycache__/
 
 # Claude settings
 .claude/settings.local.json
+
+#Evaluations
+evaluation_2026-05-17_19-10_3runs.csv
+evaluation_2026-05-17_19-13_4runs.csv
+evaluation_2026-05-17_20-56_5runs.csv
