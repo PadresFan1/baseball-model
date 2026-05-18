@@ -1,6 +1,34 @@
+# Secrets & credentials
 .env
+google_credentials.json
+
+# API/stats caches
 odds_cache.json
+stats_cache.json
+
+# Proprietary odds data
+mlb_odds_dataset.json
+
+# Large historical data
+historical_data/historical_game_logs.json
+
+# Personal predictions log
+predictions_log.csv
+predictions_log.xlsx
+
+# Backtest results & checkpoints
+historical_data/random_search_results.csv
+historical_data/search_*.csv
+historical_data/random_search_checkpoint.json
+historical_data/evaluation_*.csv
+
+# Temp output files
+bt_out.txt
+bt_err.txt
+
+# Python
 __pycache__/
 *.pyc
-stats_cache.json
-google_credentials.json
+
+# Claude settings
+.claude/settings.local.json

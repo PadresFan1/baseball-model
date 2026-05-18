@@ -62,25 +62,25 @@ def random_search(n_trials=100, seed=None):
     print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
     random.seed(seed)
 
-    # Parameter ranges to search
+    # Parameter ranges to search (narrowed based on round 2 evaluation, 500 trials)
     param_space = {
-        'ml_edge_min': [0.03, 0.04, 0.05, 0.06, 0.07],
-        'ml_edge_max': [0.08, 0.10, 0.15, 0.20, 1.0],
+        'ml_edge_min': [0.06, 0.07],                  # 0.03/0.04/0.05 dropped — underperformed
+        'ml_edge_max': [0.08, 0.10],                  # tight window only — 0.15+ loses money
         'favorites_only': [True, False],
         'rolling_weight_7': [0.50, 0.60, 0.70, 0.80],
-        'rolling_weight_15': None,  # calculated as 1 - rolling_weight_7
-        'rating_cap_low': [0.60, 0.65, 0.70],
-        'rating_cap_high': [1.30, 1.40, 1.50, 1.60],
-        'w_rolling_off': [0.1, 0.2, 0.3],
-        'w_woba': [0.1, 0.2, 0.3],
-        'w_xwoba': [0.0], # no statcast data
+        'rolling_weight_15': None,                     # calculated as 1 - rolling_weight_7
+        'rating_cap_low': [0.65, 0.70],               # 0.60 dropped — underperformed
+        'rating_cap_high': [1.30, 1.50],              # 1.40 dropped — worst performer
+        'w_rolling_off': [0.05, 0.08, 0.10],          # kept low — strongest negative correlation
+        'w_woba': [0.25, 0.35, 0.40],                 # kept high — positive correlation
+        'w_xwoba': [0.0],                             # no statcast data
         'w_k_off': [0.1, 0.2, 0.3],
         'w_bb_off': [0.1, 0.2, 0.3],
-        'w_rolling_pit': [0.1, 0.2, 0.3],
+        'w_rolling_pit': [0.05, 0.08, 0.10],          # kept low — strong negative correlation
         'w_fip': [0.1, 0.2, 0.3],
         'w_xfip': [0.1, 0.2, 0.3],
         'w_k_pit': [0.1, 0.2, 0.3],
-        'w_bb_pit': [0.1, 0.2, 0.3],
+        'w_bb_pit': [0.25, 0.35, 0.40],              # kept high — strongest positive correlation
     }
 
     # Resume from checkpoint if one exists
@@ -196,6 +196,11 @@ def evaluate_runs():
     import glob
     run_files = sorted(glob.glob('historical_data/search_*.csv'))
 
+    # Also pick up the legacy fixed-name file from before per-run naming was added
+    legacy = 'historical_data/random_search_results.csv'
+    if os.path.exists(legacy) and legacy not in run_files:
+        run_files = [legacy] + run_files
+
     if not run_files:
         print("No completed runs found in historical_data/.")
         return
@@ -253,6 +258,15 @@ def evaluate_runs():
         for param, corr in corrs.items():
             bar = '+' * int(abs(corr) * 20) if corr > 0 else '-' * int(abs(corr) * 20)
             print(f"  {param:<20} {corr:+.3f}  {bar}")
+
+    # Save combined results sorted by ROI
+    from datetime import datetime as _dt
+    timestamp = _dt.now().strftime('%Y-%m-%d_%H-%M')
+
+    combined_sorted = combined.sort_values('roi', ascending=False)
+    combined_file = f'historical_data/evaluation_{timestamp}_{len(run_files)}runs.csv'
+    combined_sorted.to_csv(combined_file, index=False)
+    print(f"\nAll results saved to: {combined_file}")
 
 def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
     log_path = 'historical_data/historical_game_logs.json'
@@ -795,7 +809,7 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
     roi = profit / total_bet * 100
     return roi, profit
 
-N_RUNS = 3
+N_RUNS = 5
 
 for run in range(N_RUNS):
     print(f"\n{'='*55}")
