@@ -799,6 +799,166 @@ def american_to_prob(line):
 print("Backtest functions loaded successfully")
 
 # ============================================================
+# PRECOMPUTE ROLLING — called once at startup, reused every trial
+# ============================================================
+
+def precompute_all_rolling(seasons, game_logs, odds_df):
+    """
+    For every (season, team, date) compute rolling stats using a single sweep
+    per team — O(games + dates) instead of O(games × dates) per game.
+    Returns two dicts used as O(1) lookups inside run_backtest_with_params:
+      rolling_team_cache[(season_str, team, date)] -> stats dict
+      rolling_lg_cache[(season_str, date)]          -> league averages dict
+    """
+    print("Precomputing rolling averages (one-time)...")
+    team_cache = {}
+    lg_cache   = {}
+
+    for season in seasons:
+        season_str   = str(season)
+        woba_weights, fip_constant = load_woba_fip_constants('constants/woba_fip_constants.csv', season)
+        season_odds  = odds_df[odds_df['date'].str.startswith(season_str)]
+        target_dates = sorted(set(season_odds['date'].tolist()))
+        if not target_dates:
+            continue
+
+        wBB = woba_weights['wBB']; wHBP = woba_weights['wHBP']
+        w1B = woba_weights['w1B']; w2B  = woba_weights['w2B']
+        w3B = woba_weights['w3B']; wHR  = woba_weights['wHR']
+
+        # ── Per-team sweep ──────────────────────────────────────────────────
+        team_lookup = {}
+        for team, team_logs in game_logs.get(season_str, {}).items():
+            hitting  = sorted(team_logs['hitting'],  key=lambda g: g['date'])
+            pitching = sorted(team_logs['pitching'], key=lambda g: g['date'])
+            if not hitting or not pitching:
+                continue
+
+            # Prefix sums → O(1) sliding-window averages
+            cum_hit = [0]
+            for g in hitting:
+                cum_hit.append(cum_hit[-1] + g['runs'])
+            cum_pit = [0]
+            for g in pitching:
+                cum_pit.append(cum_pit[-1] + g['runs_allowed'])
+
+            # Cumulative season stats (wOBA, FIP, K%, BB%)
+            woba_num = woba_den = fip_num = fip_ip = 0.0
+            k_total = bb_total = hbp_total = bf_total = total_fb = 0
+            hit_idx = pit_idx = 0
+
+            for target_date in target_dates:
+                # Advance hitting
+                while hit_idx < len(hitting) and hitting[hit_idx]['date'] < target_date:
+                    g = hitting[hit_idx]
+                    singles   = g['hits'] - g['doubles'] - g['triples'] - g['homeRuns']
+                    woba_num += (wBB*g['baseOnBalls'] + wHBP*g['hitByPitch'] +
+                                 w1B*singles + w2B*g['doubles'] +
+                                 w3B*g['triples'] + wHR*g['homeRuns'])
+                    woba_den += g['plateAppearances'] - g['intentionalWalks']
+                    hit_idx  += 1
+
+                # Advance pitching
+                while pit_idx < len(pitching) and pitching[pit_idx]['date'] < target_date:
+                    g = pitching[pit_idx]
+                    fip_num  += 13*g['homeRuns'] + 3*(g['baseOnBalls']+g['hitBatsmen']) - 2*g['strikeOuts']
+                    fip_ip   += ip_to_float(g['inningsPitched'])
+                    k_total  += g['strikeOuts']
+                    bb_total += g['baseOnBalls']
+                    hbp_total+= g.get('hitBatsmen', 0)
+                    bf_total += g['battersFaced']
+                    total_fb += g['airOuts']
+                    pit_idx  += 1
+
+                if hit_idx < 7 or pit_idx < 7:
+                    continue
+
+                # Rolling windows — O(1) via prefix sums
+                h7s  = max(0, hit_idx - 7);  h15s = max(0, hit_idx - 15)
+                p7s  = max(0, pit_idx - 7);  p15s = max(0, pit_idx - 15)
+                hit_7  = (cum_hit[hit_idx] - cum_hit[h7s])  / (hit_idx - h7s)
+                hit_15 = (cum_hit[hit_idx] - cum_hit[h15s]) / (hit_idx - h15s)
+                pit_7  = (cum_pit[pit_idx] - cum_pit[p7s])  / (pit_idx - p7s)
+                pit_15 = (cum_pit[pit_idx] - cum_pit[p15s]) / (pit_idx - p15s)
+
+                woba  = woba_num / woba_den if woba_den > 0 else 0.0
+                fip   = (fip_num / fip_ip + fip_constant) if fip_ip > 0 else 4.50
+                k_pct = k_total  / bf_total if bf_total > 0 else 0.20
+                bb_pct= bb_total / bf_total if bf_total > 0 else 0.08
+
+                team_lookup[(team, target_date)] = {
+                    'hit_7': hit_7, 'hit_15': hit_15,
+                    'pitch_7': pit_7, 'pitch_15': pit_15,
+                    'woba': woba, 'fip': fip,
+                    'k_pct': k_pct, 'bb_pct': bb_pct,
+                    '_fip_ip':       fip_ip,
+                    '_total_fb':     total_fb,
+                    '_k_total':      k_total,
+                    '_bb_hbp_total': bb_total + hbp_total,
+                }
+
+        # ── League HR/FB rate per date (needed for xFIP) ───────────────────
+        all_pit_events = []
+        for tl in game_logs.get(season_str, {}).values():
+            for g in tl['pitching']:
+                all_pit_events.append((g['date'], g['homeRuns'], g['airOuts'] + g['homeRuns']))
+        all_pit_events.sort(key=lambda x: x[0])
+
+        cum_hr = cum_fb = pit_ev_idx = 0
+        lg_hr_fb_by_date = {}
+        for target_date in target_dates:
+            while pit_ev_idx < len(all_pit_events) and all_pit_events[pit_ev_idx][0] < target_date:
+                cum_hr += all_pit_events[pit_ev_idx][1]
+                cum_fb += all_pit_events[pit_ev_idx][2]
+                pit_ev_idx += 1
+            lg_hr_fb_by_date[target_date] = cum_hr / cum_fb if cum_fb > 0 else 0.115
+
+        # ── Add xFIP to each team entry ────────────────────────────────────
+        for target_date in target_dates:
+            lg_hr_fb = lg_hr_fb_by_date[target_date]
+            for team in TEAM_MAP:
+                r = team_lookup.get((team, target_date))
+                if r:
+                    expected_hr = lg_hr_fb * r['_total_fb']
+                    num = 13*expected_hr + 3*r['_bb_hbp_total'] - 2*r['_k_total']
+                    r['xfip'] = (num / r['_fip_ip'] + fip_constant) if r['_fip_ip'] > 0 else 4.50
+
+        # ── League averages per date ───────────────────────────────────────
+        all_runs = [g['runs'] for tl in game_logs.get(season_str, {}).values()
+                    for g in tl['hitting']]
+        lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
+
+        for target_date in target_dates:
+            woba_v = []; fip_v = []; xfip_v = []; k_v = []; bb_v = []
+            for team in TEAM_MAP:
+                r = team_lookup.get((team, target_date))
+                if r:
+                    woba_v.append(r['woba']); fip_v.append(r['fip'])
+                    xfip_v.append(r['xfip']); k_v.append(r['k_pct'])
+                    bb_v.append(r['bb_pct'])
+            if len(woba_v) >= 10:
+                lg_cache[(season_str, target_date)] = {
+                    'woba':     sum(woba_v) / len(woba_v),
+                    'fip':      sum(fip_v)  / len(fip_v),
+                    'xfip':     sum(xfip_v) / len(xfip_v),
+                    'k_pct':    sum(k_v)    / len(k_v),
+                    'bb_pct':   sum(bb_v)   / len(bb_v),
+                    'avg_runs': lg_avg_runs,
+                }
+
+        for (team, date), stats in team_lookup.items():
+            team_cache[(season_str, team, date)] = stats
+
+        print(f"  {season}: {len(team_lookup)} team-date entries precomputed")
+
+    print("Rolling precompute complete.")
+    return team_cache, lg_cache
+
+rolling_team_cache, rolling_lg_cache = precompute_all_rolling(
+    [2021, 2022, 2023, 2024], game_logs, odds_df
+)
+
+# ============================================================
 # MAIN BACKTEST LOOP
 # ============================================================
 
@@ -825,58 +985,38 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
             'constants/woba_fip_constants.csv', season
         )
 
-        all_runs = []
         season_str = str(season)
-        for team in TEAM_MAP.keys():
-            if season_str in game_logs and team in game_logs[season_str]:
-                for g in game_logs[season_str][team]['hitting']:
-                    all_runs.append(g['runs'])
-        lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
 
         # Precompute statcast + bullpen stats for all teams/dates this season
         season_dates = set(season_odds['date'].tolist())
         sc_lookup, sc_lg = precompute_statcast(season, statcast_data, season_dates)
         bp_lookup, bp_lg = precompute_bullpen(season, bullpen_data, season_dates)
-                
+
         for _, game in season_odds.iterrows():
             date = game['date']
             home_team = normalize_team(game['home_team'])
             away_team = normalize_team(game['away_team'])
-            
+
             if home_team not in TEAM_MAP or away_team not in TEAM_MAP:
                 continue
-            
-            home_rolling = get_rolling_averages_for_date(home_team, game_logs, date, season, woba_weights, fip_constant)
-            away_rolling = get_rolling_averages_for_date(away_team, game_logs, date, season, woba_weights, fip_constant)
 
-            if home_rolling is None or away_rolling is None:
+            # O(1) lookups — no more per-game log scanning
+            home_rolling = rolling_team_cache.get((season_str, home_team, date))
+            away_rolling = rolling_team_cache.get((season_str, away_team, date))
+            lg_roll      = rolling_lg_cache.get((season_str, date))
+
+            if home_rolling is None or away_rolling is None or lg_roll is None:
                 continue
 
-            lg_hr_fb = get_league_hr_fb_rate(game_logs, date, season)
+            lg_avg_runs = lg_roll['avg_runs']
+            lg_woba     = lg_roll['woba']
+            lg_fip      = lg_roll['fip']
+            lg_xfip     = lg_roll['xfip']
+            lg_k_pit    = lg_roll['k_pct']
+            lg_bb_pit   = lg_roll['bb_pct']
 
-            def calc_xfip(rolling, lg_hr_fb, fip_constant):
-                expected_hr = lg_hr_fb * rolling['_total_fb']
-                num = 13 * expected_hr + 3 * rolling['_bb_hbp_total'] - 2 * rolling['_k_total']
-                return (num / rolling['_fip_ip'] + fip_constant) if rolling['_fip_ip'] > 0 else 4.50
-
-            home_xfip = calc_xfip(home_rolling, lg_hr_fb, fip_constant)
-            away_xfip = calc_xfip(away_rolling, lg_hr_fb, fip_constant)
-
-            all_team_rollings = {}
-            for team in TEAM_MAP.keys():
-                r = get_rolling_averages_for_date(team, game_logs, date, season, woba_weights, fip_constant)
-                if r is not None:
-                    all_team_rollings[team] = r
-
-            if len(all_team_rollings) < 10:
-                continue
-
-            lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
-            lg_woba   = sum(r['woba']   for r in all_team_rollings.values()) / len(all_team_rollings)
-            lg_fip    = sum(r['fip']    for r in all_team_rollings.values()) / len(all_team_rollings)
-            lg_xfip   = sum(calc_xfip(r, lg_hr_fb, fip_constant) for r in all_team_rollings.values()) / len(all_team_rollings)
-            lg_k_pit  = sum(r['k_pct']  for r in all_team_rollings.values()) / len(all_team_rollings)
-            lg_bb_pit = sum(r['bb_pct'] for r in all_team_rollings.values()) / len(all_team_rollings)
+            home_xfip = home_rolling['xfip']
+            away_xfip = away_rolling['xfip']
 
             home_off_roll = ((home_rolling['hit_7'] * params['rolling_weight_7'] +
                              home_rolling['hit_15'] * params['rolling_weight_15']) / lg_avg_runs)
