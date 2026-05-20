@@ -1,27 +1,256 @@
 Loading historical game logs from file...
+Loading statcast data from cache...
 Backtest functions loaded successfully
 
-Starting random search - 100 trials...
-Completed 10/100 trials
-Completed 20/100 trials
-Completed 30/100 trials
-Completed 40/100 trials
-Completed 50/100 trials
-Completed 60/100 trials
-Completed 70/100 trials
-Completed 80/100 trials
-Completed 90/100 trials
-Completed 100/100 trials
+=======================================================
+  Run 1 of 5
+=======================================================
+Seed: 17250  (pass seed=17250 to reproduce this run)
+Completed 10/100 trials | Elapsed: 606s | ETA: 5456s
+Completed 20/100 trials | Elapsed: 1213s | ETA: 4852s
+Completed 30/100 trials | Elapsed: 1817s | ETA: 4239s
+Completed 40/100 trials | Elapsed: 2422s | ETA: 3633s
+Completed 50/100 trials | Elapsed: 3032s | ETA: 3032s
+Completed 60/100 trials | Elapsed: 3639s | ETA: 2426s
+Completed 70/100 trials | Elapsed: 4246s | ETA: 1820s
+Completed 80/100 trials | Elapsed: 4850s | ETA: 1212s
+Completed 90/100 trials | Elapsed: 5459s | ETA: 607s
+Completed 100/100 trials | Elapsed: 6065s | ETA: 0s
+
+Results saved to historical_data/search_2026-05-19_seed17250_100trials.csv
+
+Finished 100 trials in 101m 5s
+
+Top 10 parameter combinations:
+        roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
+78  10.0154    0.6161     112         0.07         0.08            True               0.5            0.70              1.3
+83   9.2492    0.6202     129         0.07         0.08            True               0.8            0.70              1.3
+39   6.7735    0.4720    1019         0.07         0.10           False               0.8            0.65              1.3
+54   5.7762    0.4527    1005         0.07         0.10           False               0.5            0.65              1.3
+42   5.4263    0.6028     141         0.07         0.08            True               0.6            0.65              1.5
+3    5.2864    0.4552     413         0.07         0.08           False               0.6            0.70              1.3
+65   4.6214    0.5988     167         0.07         0.08            True               0.5            0.70              1.5
+77   4.3434    0.4590     865         0.06         0.08           False               0.5            0.65              1.5
+47   4.0930    0.4789     403         0.07         0.08           False               0.8            0.70              1.5
+59   4.0823    0.5816     239         0.06         0.08            True               0.8            0.65              1.5
+
+=======================================================
+  Run 2 of 5
+=======================================================
+Seed: 98556  (pass seed=98556 to reproduce this run)
+Completed 10/100 trials | Elapsed: 715s | ETA: 6431s
+Completed 20/100 trials | Elapsed: 1444s | ETA: 5776s
+Completed 30/100 trials | Elapsed: 2149s | ETA: 5014s
+Completed 40/100 trials | Elapsed: 2846s | ETA: 4270s
+Completed 50/100 trials | Elapsed: 3541s | ETA: 3541s
+Completed 60/100 trials | Elapsed: 4254s | ETA: 2836s
+Completed 70/100 trials | Elapsed: 4957s | ETA: 2124s
+Completed 80/100 trials | Elapsed: 5658s | ETA: 1414s
+Completed 90/100 trials | Elapsed: 6361s | ETA: 707s
+Completed 100/100 trials | Elapsed: 7066s | ETA: 0s
+
+Results saved to historical_data/search_2026-05-19_seed98556_100trials.csv
+
+Finished 100 trials in 117m 46s
+
+Top 10 parameter combinations:
+        roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
+6   11.8809    0.6333      90         0.07         0.08            True               0.5            0.65              1.3
+69   8.9508    0.6138     145         0.07         0.08            True               0.8            0.70              1.3
+4    6.8154    0.4645     999         0.07         0.10           False               0.5            0.65              1.3
+1    5.7476    0.5895      95         0.07         0.08            True               0.5            0.70              1.3
+81   4.6289    0.4672    1038         0.07         0.10           False               0.8            0.65              1.5
+46   4.5728    0.4585     903         0.06         0.08           False               0.6            0.65              1.5
+66   4.0432    0.5898     451         0.06         0.10            True               0.6            0.70              1.5
+54   3.7425    0.4603     428         0.07         0.08           False               0.6            0.65              1.5
+87   3.2022    0.5800     100         0.07         0.08            True               0.8            0.70              1.5
+95   3.1857    0.4521     365         0.07         0.08           False               0.6            0.70              1.3
+
+=======================================================
+  Run 3 of 5
+=======================================================
+Seed: 64371  (pass seed=64371 to reproduce this run)
+Completed 10/100 trials | Elapsed: 610s | ETA: 5491s
+Completed 20/100 trials | Elapsed: 1219s | ETA: 4875s
+Completed 30/100 trials | Elapsed: 1828s | ETA: 4266s
+Completed 40/100 trials | Elapsed: 2435s | ETA: 3652s
+Completed 50/100 trials | Elapsed: 3041s | ETA: 3041s
+Completed 60/100 trials | Elapsed: 3648s | ETA: 2432s
+Completed 70/100 trials | Elapsed: 4255s | ETA: 1823s
+Completed 80/100 trials | Elapsed: 4861s | ETA: 1215s
+Completed 90/100 trials | Elapsed: 5470s | ETA: 608s
+Completed 100/100 trials | Elapsed: 6077s | ETA: 0s
+
+Results saved to historical_data/search_2026-05-19_seed64371_100trials.csv
+
+Finished 100 trials in 101m 17s
 
 Top 10 parameter combinations:
        roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
-91  6.0235    0.5127     394         0.07         0.08           False               0.5            0.60              1.5
-82  5.9045    0.6316     190         0.07         0.08            True               0.7            0.60              1.4
-87  5.1599    0.6044     316         0.06         0.08            True               0.6            0.65              1.6
-85  3.8431    0.5858     239         0.07         0.10            True               0.7            0.65              1.3
-30  1.9281    0.4889    1356         0.05         0.08           False               0.5            0.70              1.4
-36  1.6506    0.4416    1925         0.07         0.15           False               0.8            0.70              1.6
-18  0.9745    0.5795     566         0.06         0.10            True               0.7            0.60              1.3
-11  0.8372    0.5783     702         0.04         0.08            True               0.5            0.60              1.6
-14  0.5175    0.5746     992         0.05         0.20            True               0.6            0.70              1.6
-90  0.1862    0.4791    2609         0.04         0.10           False               0.6            0.60              1.5
+62  8.8178    0.6194     155         0.07         0.08            True               0.7            0.65              1.3
+38  7.0596    0.6118     340         0.06         0.08            True               0.8            0.65              1.3
+50  6.6760    0.4896     384         0.07         0.08           False               0.7            0.65              1.5
+69  6.4068    0.4772     417         0.07         0.08           False               0.6            0.70              1.5
+74  6.1751    0.5982     112         0.07         0.08            True               0.7            0.65              1.5
+36  4.7144    0.4774     398         0.07         0.08           False               0.7            0.65              1.3
+86  4.4732    0.5958     287         0.06         0.08            True               0.8            0.70              1.3
+67  4.3661    0.4747    1026         0.07         0.10           False               0.5            0.65              1.5
+98  3.9002    0.4495     416         0.07         0.08           False               0.8            0.65              1.3
+79  3.6055    0.4519    1029         0.07         0.10           False               0.8            0.70              1.3
+
+=======================================================
+  Run 4 of 5
+=======================================================
+Seed: 54057  (pass seed=54057 to reproduce this run)
+Completed 10/100 trials | Elapsed: 610s | ETA: 5491s
+Completed 20/100 trials | Elapsed: 1218s | ETA: 4872s
+Completed 30/100 trials | Elapsed: 1826s | ETA: 4261s
+Completed 40/100 trials | Elapsed: 2433s | ETA: 3650s
+Completed 50/100 trials | Elapsed: 3041s | ETA: 3041s
+Completed 60/100 trials | Elapsed: 3649s | ETA: 2433s
+Completed 70/100 trials | Elapsed: 4257s | ETA: 1825s
+Completed 80/100 trials | Elapsed: 4866s | ETA: 1216s
+Completed 90/100 trials | Elapsed: 5474s | ETA: 608s
+Completed 100/100 trials | Elapsed: 6082s | ETA: 0s
+
+Results saved to historical_data/search_2026-05-19_seed54057_100trials.csv
+
+Finished 100 trials in 101m 21s
+
+Top 10 parameter combinations:
+       roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
+39  8.9946    0.6230     122         0.07         0.08            True               0.6            0.70              1.5
+24  6.4985    0.6121     116         0.07         0.08            True               0.5            0.70              1.3
+72  6.2332    0.6027     146         0.07         0.08            True               0.8            0.65              1.5
+94  6.0348    0.4953     430         0.07         0.08           False               0.5            0.65              1.5
+37  5.9631    0.6090     133         0.07         0.08            True               0.7            0.65              1.3
+16  5.3735    0.5882     255         0.07         0.10            True               0.5            0.65              1.3
+54  4.5961    0.4716     388         0.07         0.08           False               0.6            0.65              1.3
+33  4.5022    0.5851      94         0.07         0.08            True               0.7            0.65              1.3
+98  4.3954    0.5870     276         0.06         0.08            True               0.5            0.70              1.5
+43  3.7941    0.4583     984         0.07         0.10           False               0.5            0.70              1.3
+
+=======================================================
+  Run 5 of 5
+=======================================================
+Seed: 57049  (pass seed=57049 to reproduce this run)
+Completed 10/100 trials | Elapsed: 665s | ETA: 5981s
+Completed 20/100 trials | Elapsed: 1290s | ETA: 5159s
+Completed 30/100 trials | Elapsed: 1905s | ETA: 4446s
+Completed 40/100 trials | Elapsed: 2520s | ETA: 3780s
+Completed 50/100 trials | Elapsed: 3127s | ETA: 3127s
+Completed 60/100 trials | Elapsed: 3735s | ETA: 2490s
+Completed 70/100 trials | Elapsed: 4328s | ETA: 1855s
+Completed 80/100 trials | Elapsed: 4919s | ETA: 1230s
+Completed 90/100 trials | Elapsed: 5511s | ETA: 612s
+Completed 100/100 trials | Elapsed: 6102s | ETA: 0s
+
+Results saved to historical_data/search_2026-05-19_seed57049_100trials.csv
+
+Finished 100 trials in 101m 41s
+
+Top 10 parameter combinations:
+       roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high
+64  6.2065    0.6015     133         0.07         0.08            True               0.7            0.70              1.5
+30  5.9245    0.4731    1023         0.07         0.10           False               0.8            0.65              1.3
+29  4.0975    0.5787     216         0.07         0.10            True               0.6            0.65              1.5
+76  4.0628    0.5861     244         0.06         0.08            True               0.7            0.70              1.5
+19  3.3942    0.5960     151         0.07         0.08            True               0.7            0.70              1.5
+9   3.1436    0.4602     402         0.07         0.08           False               0.5            0.65              1.5
+51  3.0922    0.4580     393         0.07         0.08           False               0.8            0.70              1.5
+7   2.9183    0.4511    1013         0.07         0.10           False               0.6            0.70              1.3
+45  2.6316    0.4596    1449         0.06         0.10           False               0.5            0.65              1.5
+73  2.4200    0.5876     354         0.07         0.10            True               0.6            0.65              1.3
+
+============================================================
+EVALUATION: 28 run(s), 2800 total trials
+============================================================
+
+Run summary:
+  random_search_results.csv  |  top ROI: +3.8%  |  median ROI: -2.7%  |  100 trials
+  search_2026-05-17_seed28919_100trials.csv  |  top ROI: +5.7%  |  median ROI: -2.8%  |  100 trials
+  search_2026-05-17_seed58703_100trials.csv  |  top ROI: +5.2%  |  median ROI: -2.6%  |  100 trials
+  search_2026-05-17_seed62339_100trials.csv  |  top ROI: +13.1%  |  median ROI: +2.0%  |  100 trials
+  search_2026-05-17_seed63209_100trials.csv  |  top ROI: +2.2%  |  median ROI: -2.9%  |  100 trials
+  search_2026-05-17_seed93154_100trials.csv  |  top ROI: +6.0%  |  median ROI: -2.6%  |  100 trials
+  search_2026-05-18_seed30160_100trials.csv  |  top ROI: +17.8%  |  median ROI: +1.9%  |  100 trials
+  search_2026-05-18_seed3482_100trials.csv  |  top ROI: +14.3%  |  median ROI: +2.0%  |  100 trials
+  search_2026-05-18_seed75634_100trials.csv  |  top ROI: +12.7%  |  median ROI: +0.9%  |  100 trials
+  search_2026-05-18_seed83723_100trials.csv  |  top ROI: +16.5%  |  median ROI: +1.4%  |  100 trials
+  search_2026-05-19_seed17250_100trials.csv  |  top ROI: +10.0%  |  median ROI: -1.5%  |  100 trials
+  search_2026-05-19_seed18580_100trials.csv  |  top ROI: +7.9%  |  median ROI: -1.5%  |  100 trials
+  search_2026-05-19_seed27921_100trials.csv  |  top ROI: +12.0%  |  median ROI: -0.6%  |  100 trials
+  search_2026-05-19_seed31099_100trials.csv  |  top ROI: +10.9%  |  median ROI: -1.3%  |  100 trials
+  search_2026-05-19_seed37017_100trials.csv  |  top ROI: +8.9%  |  median ROI: -0.4%  |  100 trials
+  search_2026-05-19_seed43420_100trials.csv  |  top ROI: +10.5%  |  median ROI: -0.9%  |  100 trials
+  search_2026-05-19_seed45728_100trials.csv  |  top ROI: +12.8%  |  median ROI: -1.3%  |  100 trials
+  search_2026-05-19_seed53407_100trials.csv  |  top ROI: +14.7%  |  median ROI: -0.7%  |  100 trials
+  search_2026-05-19_seed53498_100trials.csv  |  top ROI: +21.8%  |  median ROI: -0.2%  |  100 trials
+  search_2026-05-19_seed54057_100trials.csv  |  top ROI: +9.0%  |  median ROI: -0.7%  |  100 trials
+  search_2026-05-19_seed54742_100trials.csv  |  top ROI: +18.6%  |  median ROI: -0.8%  |  100 trials
+  search_2026-05-19_seed55738_100trials.csv  |  top ROI: +17.7%  |  median ROI: -1.1%  |  100 trials
+  search_2026-05-19_seed57049_100trials.csv  |  top ROI: +6.2%  |  median ROI: -0.9%  |  100 trials
+  search_2026-05-19_seed64371_100trials.csv  |  top ROI: +8.8%  |  median ROI: -0.6%  |  100 trials
+  search_2026-05-19_seed77605_100trials.csv  |  top ROI: +11.2%  |  median ROI: -0.7%  |  100 trials
+  search_2026-05-19_seed78483_100trials.csv  |  top ROI: +11.5%  |  median ROI: -0.9%  |  100 trials
+  search_2026-05-19_seed89790_100trials.csv  |  top ROI: +8.8%  |  median ROI: -0.9%  |  100 trials
+  search_2026-05-19_seed98556_100trials.csv  |  top ROI: +11.9%  |  median ROI: -1.0%  |  100 trials
+
+Top 10 results across all runs:
+    roi  win_rate  n_bets  ml_edge_min  ml_edge_max  favorites_only  rolling_weight_7  rating_cap_low  rating_cap_high   run_date
+21.8088    0.6700     100         0.07         0.08            True               0.7            0.65              1.3 2026-05-19
+18.6210    0.6774      93         0.07         0.08            True               0.8            0.70              1.3 2026-05-19
+17.7896    0.6606     109         0.07         0.08            True               0.5            0.70              1.3 2026-05-18
+17.7342    0.6667     123         0.07         0.08            True               0.5            0.70              1.3 2026-05-19
+17.1964    0.6531      98         0.07         0.08            True               0.8            0.70              1.5 2026-05-18
+17.0527    0.6556      90         0.07         0.08            True               0.5            0.70              1.5 2026-05-18
+16.4531    0.6542     107         0.07         0.08            True               0.6            0.65              1.5 2026-05-18
+14.6710    0.5040     375         0.07         0.08           False               0.6            0.65              1.5 2026-05-19
+14.3154    0.6444      90         0.07         0.08            True               0.8            0.65              1.3 2026-05-18
+14.1563    0.4915     352         0.07         0.08           False               0.8            0.70              1.3 2026-05-18
+
+Parameter breakdown (top 25% of trials, ROI >= +1.4%):
+
+  ml_edge_min:
+    0.07        count:  416  avg ROI: +4.9%
+    0.05        count:    4  avg ROI: +3.9%
+    0.06        count:  276  avg ROI: +3.5%
+    0.04        count:    2  avg ROI: +2.3%
+    0.03        count:    2  avg ROI: +1.9%
+
+  ml_edge_max:
+    0.08        count:  393  avg ROI: +5.3%
+    0.1         count:  307  avg ROI: +3.2%
+
+  favorites_only:
+    True        count:  334  avg ROI: +4.9%
+    False       count:  366  avg ROI: +3.8%
+
+  rating_cap_low:
+    0.7         count:  344  avg ROI: +4.5%
+    0.65        count:  352  avg ROI: +4.2%
+    0.6         count:    4  avg ROI: +2.8%
+
+  rating_cap_high:
+    1.6         count:    2  avg ROI: +4.7%
+    1.5         count:  364  avg ROI: +4.4%
+    1.3         count:  331  avg ROI: +4.3%
+    1.4         count:    3  avg ROI: +3.0%
+
+Weight correlations with ROI (all trials):
+  w_bb_pit             +0.274  +++++
+  w_woba               +0.250  +++++
+  w_xwoba_bat          +0.074  +
+  w_fip                +0.052  +
+  w_xfip               +0.033  
+  rolling_weight_7     +0.030  
+  w_barrel_pit         +0.021  
+  w_babip_bat          +0.014  
+  w_xwoba_pit          -0.002  
+  w_k_pit              -0.046  
+  w_babip_pit          -0.076  -
+  w_rolling_pit        -0.170  ---
+  w_barrel_bat         -0.175  ---
+  w_rolling_off        -0.178  ---
+
+All results saved to: historical_data/evaluation_2026-05-19_07-37_28runs.csv

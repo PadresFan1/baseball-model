@@ -5,12 +5,15 @@ google_credentials.json
 # API/stats caches
 odds_cache.json
 stats_cache.json
+historical_data/statcast_cache.json
+historical_data/bullpen_cache.json
 
 # Proprietary odds data
 mlb_odds_dataset.json
 
 # Large historical data
 historical_data/historical_game_logs.json
+historical_data/player_team_map.json
 
 # Personal predictions log
 predictions_log.csv

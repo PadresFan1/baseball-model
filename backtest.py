@@ -27,6 +27,12 @@ ODDS_TO_FG = {
     'CLE': 'CLE',
     'OAK': 'ATH'
 }
+
+STATCAST_TEAM_MAP = {
+    'AZ': 'ARI', 'CWS': 'CHW', 'KC': 'KCR',
+    'SD': 'SDP', 'SF': 'SFG', 'TB': 'TBR', 'WSH': 'WSN'
+}
+
 import random
 from itertools import product
 
@@ -62,25 +68,32 @@ def random_search(n_trials=100, seed=None):
     print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
     random.seed(seed)
 
-    # Parameter ranges to search (narrowed based on round 2 evaluation, 500 trials)
+    # Parameter ranges to search (round 3 — statcast added)
     param_space = {
-        'ml_edge_min': [0.06, 0.07],                  # 0.03/0.04/0.05 dropped — underperformed
-        'ml_edge_max': [0.08, 0.10],                  # tight window only — 0.15+ loses money
+        'ml_edge_min':    [0.06, 0.07],
+        'ml_edge_max':    [0.08, 0.10],
         'favorites_only': [True, False],
         'rolling_weight_7': [0.50, 0.60, 0.70, 0.80],
-        'rolling_weight_15': None,                     # calculated as 1 - rolling_weight_7
-        'rating_cap_low': [0.65, 0.70],               # 0.60 dropped — underperformed
-        'rating_cap_high': [1.30, 1.50],              # 1.40 dropped — worst performer
-        'w_rolling_off': [0.05, 0.08, 0.10],          # kept low — strongest negative correlation
-        'w_woba': [0.25, 0.35, 0.40],                 # kept high — positive correlation
-        'w_xwoba': [0.0],                             # no statcast data
-        'w_k_off': [0.1, 0.2, 0.3],
-        'w_bb_off': [0.1, 0.2, 0.3],
-        'w_rolling_pit': [0.05, 0.08, 0.10],          # kept low — strong negative correlation
-        'w_fip': [0.1, 0.2, 0.3],
-        'w_xfip': [0.1, 0.2, 0.3],
-        'w_k_pit': [0.1, 0.2, 0.3],
-        'w_bb_pit': [0.25, 0.35, 0.40],              # kept high — strongest positive correlation
+        'rolling_weight_15': None,
+        'rating_cap_low':  [0.65, 0.70],
+        'rating_cap_high': [1.30, 1.50],
+        # Offense weights
+        'w_rolling_off': [0.05, 0.08, 0.10],
+        'w_woba':        [0.20, 0.30, 0.40],
+        'w_xwoba_bat':   [0.10, 0.20, 0.30],
+        'w_babip_bat':   [0.10, 0.20, 0.30],
+        'w_barrel_bat':  [0.10, 0.20, 0.30],
+        # Pitching weights
+        'w_rolling_pit': [0.05, 0.08, 0.10],
+        'w_fip':         [0.10, 0.20, 0.30],
+        'w_xfip':        [0.10, 0.20, 0.30],
+        'w_k_pit':       [0.10, 0.20, 0.30],
+        'w_bb_pit':      [0.20, 0.30, 0.40],
+        'w_xwoba_pit':   [0.10, 0.20, 0.30],
+        'w_babip_pit':   [0.10, 0.20, 0.30],
+        'w_barrel_pit':  [0.10, 0.20, 0.30],
+        'w_bullpen_qual':[0.10, 0.20, 0.30],
+        'w_bullpen_fat': [0.05, 0.10, 0.15],
     }
 
     # Resume from checkpoint if one exists
@@ -98,49 +111,53 @@ def random_search(n_trials=100, seed=None):
             for _ in range(start_trial):
                 for key in ['ml_edge_min', 'ml_edge_max', 'favorites_only', 'rolling_weight_7',
                             'rating_cap_low', 'rating_cap_high', 'w_rolling_off', 'w_woba',
-                            'w_xwoba', 'w_k_off', 'w_bb_off', 'w_rolling_pit', 'w_fip',
-                            'w_xfip', 'w_k_pit', 'w_bb_pit']:
+                            'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat', 'w_rolling_pit',
+                            'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
+                            'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit',
+                            'w_bullpen_qual', 'w_bullpen_fat']:
                     random.choice(param_space[key] or [0.0])
             print(f"Resuming from trial {start_trial}/{n_trials} ({len(results)} results so far)")
 
     for trial in range(start_trial, n_trials):
         # Sample random parameters
         params = {
-            'ml_edge_min': random.choice(param_space['ml_edge_min']),
-            'ml_edge_max': random.choice(param_space['ml_edge_max']),
+            'ml_edge_min':    random.choice(param_space['ml_edge_min']),
+            'ml_edge_max':    random.choice(param_space['ml_edge_max']),
             'favorites_only': random.choice(param_space['favorites_only']),
             'rolling_weight_7': random.choice(param_space['rolling_weight_7']),
-            'rating_cap_low': random.choice(param_space['rating_cap_low']),
+            'rating_cap_low':  random.choice(param_space['rating_cap_low']),
             'rating_cap_high': random.choice(param_space['rating_cap_high']),
             'w_rolling_off': random.choice(param_space['w_rolling_off']),
-            'w_woba': random.choice(param_space['w_woba']),
-            'w_xwoba': random.choice(param_space['w_xwoba']),
-            'w_k_off': random.choice(param_space['w_k_off']),
-            'w_bb_off': random.choice(param_space['w_bb_off']),
+            'w_woba':        random.choice(param_space['w_woba']),
+            'w_xwoba_bat':   random.choice(param_space['w_xwoba_bat']),
+            'w_babip_bat':   random.choice(param_space['w_babip_bat']),
+            'w_barrel_bat':  random.choice(param_space['w_barrel_bat']),
             'w_rolling_pit': random.choice(param_space['w_rolling_pit']),
-            'w_fip': random.choice(param_space['w_fip']),
-            'w_xfip': random.choice(param_space['w_xfip']),
-            'w_k_pit': random.choice(param_space['w_k_pit']),
-            'w_bb_pit': random.choice(param_space['w_bb_pit']),
+            'w_fip':         random.choice(param_space['w_fip']),
+            'w_xfip':        random.choice(param_space['w_xfip']),
+            'w_k_pit':       random.choice(param_space['w_k_pit']),
+            'w_bb_pit':      random.choice(param_space['w_bb_pit']),
+            'w_xwoba_pit':   random.choice(param_space['w_xwoba_pit']),
+            'w_babip_pit':   random.choice(param_space['w_babip_pit']),
+            'w_barrel_pit':  random.choice(param_space['w_barrel_pit']),
+            'w_bullpen_qual':random.choice(param_space['w_bullpen_qual']),
+            'w_bullpen_fat': random.choice(param_space['w_bullpen_fat']),
         }
         params['rolling_weight_15'] = 1 - params['rolling_weight_7']
         if params['ml_edge_min'] >= params['ml_edge_max']:
             continue
 
         # Normalize offense weights
-        off_total = params['w_rolling_off'] + params['w_woba'] + params['w_k_off'] + params['w_bb_off']
-        params['w_rolling_off'] /= off_total
-        params['w_woba'] /= off_total
-        params['w_k_off'] /= off_total
-        params['w_bb_off'] /= off_total
+        off_keys = ['w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat']
+        off_total = sum(params[k] for k in off_keys)
+        for k in off_keys:
+            params[k] /= off_total
 
         # Normalize pitching weights
-        pit_total = params['w_rolling_pit'] + params['w_fip'] + params['w_xfip'] + params['w_k_pit'] + params['w_bb_pit']
-        params['w_rolling_pit'] /= pit_total
-        params['w_fip'] /= pit_total
-        params['w_xfip'] /= pit_total
-        params['w_k_pit'] /= pit_total
-        params['w_bb_pit'] /= pit_total
+        pit_keys = ['w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit', 'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit', 'w_bullpen_qual', 'w_bullpen_fat']
+        pit_total = sum(params[k] for k in pit_keys)
+        for k in pit_keys:
+            params[k] /= pit_total
 
         # Run backtest with these params
         trial_results = run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024])
@@ -249,8 +266,11 @@ def evaluate_runs():
             print(f"    {val!s:<10}  count: {int(row['count']):>4}  avg ROI: {row['avg_roi']:+.1f}%")
 
     # Continuous weight params — show correlation with ROI
-    weight_params = ['rolling_weight_7', 'w_rolling_off', 'w_woba', 'w_k_off',
-                     'w_bb_off', 'w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit']
+    weight_params = ['rolling_weight_7',
+                     'w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat',
+                     'w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
+                     'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit',
+                     'w_bullpen_qual', 'w_bullpen_fat']
     available_weights = [p for p in weight_params if p in combined.columns]
     if available_weights:
         corrs = combined[available_weights + ['roi']].corr()['roi'].drop('roi').sort_values(ascending=False)
@@ -343,6 +363,212 @@ historical_logs = pull_historical_game_logs(TEAM_MAP)
 # Load historical game logs
 with open('historical_data/historical_game_logs.json', 'r') as f:
     game_logs = json.load(f)
+
+def load_statcast_data(seasons=[2021, 2022, 2023, 2024]):
+    cache_file = 'historical_data/statcast_cache.json'
+    if os.path.exists(cache_file):
+        print("Loading statcast data from cache...")
+        with open(cache_file) as f:
+            return json.load(f)
+
+    print("Loading statcast CSV files...")
+    all_data = {}
+    for season in seasons:
+        season_data = {'batting': {}, 'pitching': {}}
+        for side, fname in [('batting', f'Statcast/batters_{season}.csv'),
+                            ('pitching', f'Statcast/pitchers_{season}.csv')]:
+            df = pd.read_csv(fname)
+            df['team'] = df['player_name'].replace(STATCAST_TEAM_MAP)
+            df['game_date'] = pd.to_datetime(df['game_date']).dt.strftime('%Y-%m-%d')
+            df = df.dropna(subset=['xwoba', 'babip', 'barrels_per_pa_percent', 'pa'])
+            df = df[df['pa'] > 0]
+            for team in df['team'].unique():
+                if team not in TEAM_MAP:
+                    continue
+                cols = df[df['team'] == team][['game_date', 'xwoba', 'babip', 'barrels_per_pa_percent', 'pa']]
+                season_data[side][team] = cols.rename(
+                    columns={'barrels_per_pa_percent': 'barrel_pct'}).to_dict('records')
+        all_data[str(season)] = season_data
+        print(f"  Loaded statcast for {season}")
+
+    with open(cache_file, 'w') as f:
+        json.dump(all_data, f)
+    print("Statcast data cached.")
+    return all_data
+
+statcast_data = load_statcast_data([2021, 2022, 2023, 2024])
+
+def precompute_statcast(season, statcast_data, target_dates):
+    season_str = str(season)
+    sorted_dates = sorted(target_dates)
+    team_lookup = {}
+
+    for side in ['batting', 'pitching']:
+        for team, games in statcast_data.get(season_str, {}).get(side, {}).items():
+            games_sorted = sorted(games, key=lambda g: g['game_date'])
+            cum_pa = 0; cum_x = 0.0; cum_b = 0.0; cum_br = 0.0
+            game_count = 0; game_idx = 0
+
+            for target_date in sorted_dates:
+                while game_idx < len(games_sorted) and games_sorted[game_idx]['game_date'] < target_date:
+                    g = games_sorted[game_idx]
+                    pa = g['pa']
+                    cum_x  += g['xwoba']      * pa
+                    cum_b  += g['babip']      * pa
+                    cum_br += g['barrel_pct'] * pa
+                    cum_pa += pa
+                    game_count += 1
+                    game_idx += 1
+                if game_count >= 7 and cum_pa > 0:
+                    team_lookup[(team, side, target_date)] = {
+                        'xwoba':      cum_x  / cum_pa,
+                        'babip':      cum_b  / cum_pa,
+                        'barrel_pct': cum_br / cum_pa,
+                    }
+
+    lg_avgs = {}
+    for target_date in sorted_dates:
+        xb, bb, brb, xp, bp, brp = [], [], [], [], [], []
+        for team in TEAM_MAP:
+            bs = team_lookup.get((team, 'batting',  target_date))
+            ps = team_lookup.get((team, 'pitching', target_date))
+            if bs:
+                xb.append(bs['xwoba']); bb.append(bs['babip']); brb.append(bs['barrel_pct'])
+            if ps:
+                xp.append(ps['xwoba']); bp.append(ps['babip']); brp.append(ps['barrel_pct'])
+        if len(xb) >= 10:
+            lg_avgs[target_date] = {
+                'xwoba_bat':  sum(xb)  / len(xb),
+                'babip_bat':  sum(bb)  / len(bb),
+                'barrel_bat': sum(brb) / len(brb),
+                'xwoba_pit':  sum(xp)  / len(xp),
+                'babip_pit':  sum(bp)  / len(bp),
+                'barrel_pit': sum(brp) / len(brp),
+            }
+    return team_lookup, lg_avgs
+
+def load_bullpen_data():
+    cache = 'historical_data/bullpen_cache.json'
+    if os.path.exists(cache):
+        print("Loading bullpen data from cache...")
+        with open(cache) as f:
+            return json.load(f)
+
+    print("Loading bullpen RP files...")
+    import glob as _glob
+
+    with open('historical_data/player_team_map.json') as f:
+        player_map = json.load(f)
+
+    cols = ['player_id', 'game_date', 'total_pitches', 'babip', 'woba',
+            'xwoba', 'k_percent', 'bb_percent', 'barrels_per_pa_percent', 'pa']
+
+    frames = []
+    for fpath in _glob.glob('rp/*.csv'):
+        df = pd.read_csv(fpath, usecols=cols)
+        frames.append(df)
+    all_df = pd.concat(frames, ignore_index=True)
+    all_df = all_df.dropna(subset=['woba', 'xwoba', 'pa'])
+    all_df = all_df[all_df['pa'] > 0]
+    all_df['player_id'] = all_df['player_id'].astype(str)
+    all_df['game_date'] = pd.to_datetime(all_df['game_date']).dt.strftime('%Y-%m-%d')
+    all_df['season'] = all_df['game_date'].str[:4]
+
+    def get_team(row):
+        return player_map.get(row['season'], {}).get(row['player_id'])
+    all_df['team'] = all_df.apply(get_team, axis=1)
+    all_df = all_df.dropna(subset=['team'])
+
+    # Aggregate per team per game date
+    result = {}
+    grp_cols = ['team', 'season', 'game_date']
+    for (team, season, date), g in all_df.groupby(grp_cols):
+        total_pa = g['pa'].sum()
+        if total_pa == 0:
+            continue
+        def wpct(col): return float((g[col] * g['pa']).sum() / total_pa)
+        entry = {
+            'date':       date,
+            'pitches':    int(g['total_pitches'].sum()),
+            'woba':       wpct('woba'),
+            'xwoba':      wpct('xwoba'),
+            'babip':      wpct('babip'),
+            'k_pct':      wpct('k_percent'),
+            'bb_pct':     wpct('bb_percent'),
+            'barrel_pct': wpct('barrels_per_pa_percent'),
+            'pa':         int(total_pa),
+        }
+        result.setdefault(season, {}).setdefault(team, []).append(entry)
+
+    for season in result:
+        for team in result[season]:
+            result[season][team].sort(key=lambda g: g['date'])
+
+    with open(cache, 'w') as f:
+        json.dump(result, f)
+    print("Bullpen data cached.")
+    return result
+
+bullpen_data = load_bullpen_data()
+
+def precompute_bullpen(season, bullpen_data, target_dates):
+    """
+    For each (team, date) return:
+      - pitches_7d  : total bullpen pitches in last 7 calendar days (fatigue)
+      - season-to-date PA-weighted: xwoba, k_pct, bb_pct (quality)
+    Also returns league averages per date.
+    """
+    season_str = str(season)
+    sorted_dates = sorted(target_dates)
+    team_lookup = {}
+
+    for team, games in bullpen_data.get(season_str, {}).items():
+        cum_pa = 0; cum_x = 0.0; cum_k = 0.0; cum_bb = 0.0
+        game_count = 0; game_idx = 0
+
+        for target_date in sorted_dates:
+            # Advance cumulative season stats
+            while game_idx < len(games) and games[game_idx]['date'] < target_date:
+                g = games[game_idx]
+                pa = g['pa']
+                cum_x  += g['xwoba'] * pa
+                cum_k  += g['k_pct'] * pa
+                cum_bb += g['bb_pct'] * pa
+                cum_pa += pa
+                game_count += 1
+                game_idx += 1
+
+            if game_count < 5 or cum_pa == 0:
+                continue
+
+            # 7-day pitches window
+            cutoff = (pd.Timestamp(target_date) - pd.Timedelta(days=7)).strftime('%Y-%m-%d')
+            pitches_7d = sum(g['pitches'] for g in games[:game_idx] if g['date'] >= cutoff)
+
+            team_lookup[(team, target_date)] = {
+                'pitches_7d': pitches_7d,
+                'xwoba':      cum_x  / cum_pa,
+                'k_pct':      cum_k  / cum_pa,
+                'bb_pct':     cum_bb / cum_pa,
+            }
+
+    # League averages per date
+    lg_avgs = {}
+    for target_date in sorted_dates:
+        p7, xw, kp, bbp = [], [], [], []
+        for team in TEAM_MAP:
+            s = team_lookup.get((team, target_date))
+            if s:
+                p7.append(s['pitches_7d']); xw.append(s['xwoba'])
+                kp.append(s['k_pct']);      bbp.append(s['bb_pct'])
+        if len(xw) >= 10:
+            lg_avgs[target_date] = {
+                'pitches_7d': sum(p7) / len(p7),
+                'xwoba':      sum(xw) / len(xw),
+                'k_pct':      sum(kp) / len(kp),
+                'bb_pct':     sum(bbp) / len(bbp),
+            }
+    return team_lookup, lg_avgs
 
 def ip_to_float(ip):
     ip = float(ip)
@@ -600,12 +826,17 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
         )
 
         all_runs = []
+        season_str = str(season)
         for team in TEAM_MAP.keys():
-            season_str = str(season)
             if season_str in game_logs and team in game_logs[season_str]:
                 for g in game_logs[season_str][team]['hitting']:
                     all_runs.append(g['runs'])
         lg_avg_runs = sum(all_runs) / len(all_runs) if all_runs else 4.5
+
+        # Precompute statcast + bullpen stats for all teams/dates this season
+        season_dates = set(season_odds['date'].tolist())
+        sc_lookup, sc_lg = precompute_statcast(season, statcast_data, season_dates)
+        bp_lookup, bp_lg = precompute_bullpen(season, bullpen_data, season_dates)
                 
         for _, game in season_odds.iterrows():
             date = game['date']
@@ -656,35 +887,89 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
             away_pit_roll = (lg_avg_runs / (away_rolling['pitch_7'] * params['rolling_weight_7'] +
                              away_rolling['pitch_15'] * params['rolling_weight_15']))
 
-            home_woba_r   = home_rolling['woba'] / lg_woba   if lg_woba   > 0 else 1.0
-            away_woba_r   = away_rolling['woba'] / lg_woba   if lg_woba   > 0 else 1.0
-            home_xwoba_r  = 1.0
-            away_xwoba_r  = 1.0
-            home_k_off_r  = 1.0
-            away_k_off_r  = 1.0
-            home_bb_off_r = 1.0
-            away_bb_off_r = 1.0
-            home_fip_r    = lg_fip  / home_rolling['fip']  if home_rolling['fip']  > 0 else 1.0
-            away_fip_r    = lg_fip  / away_rolling['fip']  if away_rolling['fip']  > 0 else 1.0
-            home_xfip_r   = lg_xfip / home_xfip            if home_xfip            > 0 else 1.0
-            away_xfip_r   = lg_xfip / away_xfip            if away_xfip            > 0 else 1.0
+            home_woba_r = home_rolling['woba'] / lg_woba if lg_woba > 0 else 1.0
+            away_woba_r = away_rolling['woba'] / lg_woba if lg_woba > 0 else 1.0
+            home_fip_r  = lg_fip  / home_rolling['fip'] if home_rolling['fip'] > 0 else 1.0
+            away_fip_r  = lg_fip  / away_rolling['fip'] if away_rolling['fip'] > 0 else 1.0
+            home_xfip_r = lg_xfip / home_xfip           if home_xfip           > 0 else 1.0
+            away_xfip_r = lg_xfip / away_xfip           if away_xfip           > 0 else 1.0
             home_k_pit_r  = home_rolling['k_pct'] / lg_k_pit  if lg_k_pit  > 0 else 1.0
             away_k_pit_r  = away_rolling['k_pct'] / lg_k_pit  if lg_k_pit  > 0 else 1.0
             home_bb_pit_r = lg_bb_pit / home_rolling['bb_pct'] if home_rolling['bb_pct'] > 0 else 1.0
             away_bb_pit_r = lg_bb_pit / away_rolling['bb_pct'] if away_rolling['bb_pct'] > 0 else 1.0
 
-            home_off = (home_off_roll * params['w_rolling_off'] + home_woba_r * params['w_woba'] +
-                       home_xwoba_r * params['w_xwoba'] + home_k_off_r * params['w_k_off'] +
-                       home_bb_off_r * params['w_bb_off'])
-            away_off = (away_off_roll * params['w_rolling_off'] + away_woba_r * params['w_woba'] +
-                       away_xwoba_r * params['w_xwoba'] + away_k_off_r * params['w_k_off'] +
-                       away_bb_off_r * params['w_bb_off'])
-            home_pit = (home_pit_roll * params['w_rolling_pit'] + home_fip_r * params['w_fip'] +
-                       home_xfip_r * params['w_xfip'] + home_k_pit_r * params['w_k_pit'] +
-                       home_bb_pit_r * params['w_bb_pit'])
-            away_pit = (away_pit_roll * params['w_rolling_pit'] + away_fip_r * params['w_fip'] +
-                       away_xfip_r * params['w_xfip'] + away_k_pit_r * params['w_k_pit'] +
-                       away_bb_pit_r * params['w_bb_pit'])
+            # Statcast ratings — batting: higher is better; pitching: lower is better (inverted)
+            lg_sc = sc_lg.get(date, {})
+            home_sc_bat = sc_lookup.get((home_team, 'batting',  date), {})
+            away_sc_bat = sc_lookup.get((away_team, 'batting',  date), {})
+            home_sc_pit = sc_lookup.get((home_team, 'pitching', date), {})
+            away_sc_pit = sc_lookup.get((away_team, 'pitching', date), {})
+
+            def sc_bat_r(sc, key, lg_key): return sc[key] / lg_sc[lg_key] if sc and lg_sc and lg_sc.get(lg_key, 0) > 0 else 1.0
+            def sc_pit_r(sc, key, lg_key): return lg_sc[lg_key] / sc[key]  if sc and lg_sc and sc.get(key, 0) > 0 else 1.0
+
+            home_xwoba_bat_r  = sc_bat_r(home_sc_bat, 'xwoba',      'xwoba_bat')
+            away_xwoba_bat_r  = sc_bat_r(away_sc_bat, 'xwoba',      'xwoba_bat')
+            home_babip_bat_r  = sc_bat_r(home_sc_bat, 'babip',      'babip_bat')
+            away_babip_bat_r  = sc_bat_r(away_sc_bat, 'babip',      'babip_bat')
+            home_barrel_bat_r = sc_bat_r(home_sc_bat, 'barrel_pct', 'barrel_bat')
+            away_barrel_bat_r = sc_bat_r(away_sc_bat, 'barrel_pct', 'barrel_bat')
+            home_xwoba_pit_r  = sc_pit_r(home_sc_pit, 'xwoba',      'xwoba_pit')
+            away_xwoba_pit_r  = sc_pit_r(away_sc_pit, 'xwoba',      'xwoba_pit')
+            home_babip_pit_r  = sc_pit_r(home_sc_pit, 'babip',      'babip_pit')
+            away_babip_pit_r  = sc_pit_r(away_sc_pit, 'babip',      'babip_pit')
+            home_barrel_pit_r = sc_pit_r(home_sc_pit, 'barrel_pct', 'barrel_pit')
+            away_barrel_pit_r = sc_pit_r(away_sc_pit, 'barrel_pct', 'barrel_pit')
+
+            # Bullpen ratings — quality (lower xwOBA/BB%, higher K% = better) + fatigue
+            lg_bp = bp_lg.get(date, {})
+            home_bp = bp_lookup.get((home_team, date), {})
+            away_bp = bp_lookup.get((away_team, date), {})
+
+            def bp_r(bp, key, lg_key, invert=True):
+                if not bp or not lg_bp or lg_bp.get(lg_key, 0) == 0 or bp.get(key, 0) == 0:
+                    return 1.0
+                return lg_bp[lg_key] / bp[key] if invert else bp[key] / lg_bp[lg_key]
+
+            home_bp_qual_r = (bp_r(home_bp, 'xwoba',   'xwoba',   invert=True)  +
+                              bp_r(home_bp, 'k_pct',   'k_pct',   invert=False) +
+                              bp_r(home_bp, 'bb_pct',  'bb_pct',  invert=True)) / 3
+            away_bp_qual_r = (bp_r(away_bp, 'xwoba',   'xwoba',   invert=True)  +
+                              bp_r(away_bp, 'k_pct',   'k_pct',   invert=False) +
+                              bp_r(away_bp, 'bb_pct',  'bb_pct',  invert=True)) / 3
+            home_bp_fat_r  = bp_r(home_bp, 'pitches_7d', 'pitches_7d', invert=True)
+            away_bp_fat_r  = bp_r(away_bp, 'pitches_7d', 'pitches_7d', invert=True)
+
+            home_off = (home_off_roll    * params['w_rolling_off'] +
+                        home_woba_r      * params['w_woba'] +
+                        home_xwoba_bat_r * params['w_xwoba_bat'] +
+                        home_babip_bat_r * params['w_babip_bat'] +
+                        home_barrel_bat_r* params['w_barrel_bat'])
+            away_off = (away_off_roll    * params['w_rolling_off'] +
+                        away_woba_r      * params['w_woba'] +
+                        away_xwoba_bat_r * params['w_xwoba_bat'] +
+                        away_babip_bat_r * params['w_babip_bat'] +
+                        away_barrel_bat_r* params['w_barrel_bat'])
+            home_pit = (home_pit_roll    * params['w_rolling_pit'] +
+                        home_fip_r       * params['w_fip'] +
+                        home_xfip_r      * params['w_xfip'] +
+                        home_k_pit_r     * params['w_k_pit'] +
+                        home_bb_pit_r    * params['w_bb_pit'] +
+                        home_xwoba_pit_r * params['w_xwoba_pit'] +
+                        home_babip_pit_r * params['w_babip_pit'] +
+                        home_barrel_pit_r* params['w_barrel_pit'] +
+                        home_bp_qual_r   * params['w_bullpen_qual'] +
+                        home_bp_fat_r    * params['w_bullpen_fat'])
+            away_pit = (away_pit_roll    * params['w_rolling_pit'] +
+                        away_fip_r       * params['w_fip'] +
+                        away_xfip_r      * params['w_xfip'] +
+                        away_k_pit_r     * params['w_k_pit'] +
+                        away_bb_pit_r    * params['w_bb_pit'] +
+                        away_xwoba_pit_r * params['w_xwoba_pit'] +
+                        away_babip_pit_r * params['w_babip_pit'] +
+                        away_barrel_pit_r* params['w_barrel_pit'] +
+                        away_bp_qual_r   * params['w_bullpen_qual'] +
+                        away_bp_fat_r    * params['w_bullpen_fat'])
             
             home_off = max(params['rating_cap_low'], min(params['rating_cap_high'], home_off))
             away_off = max(params['rating_cap_low'], min(params['rating_cap_high'], away_off))

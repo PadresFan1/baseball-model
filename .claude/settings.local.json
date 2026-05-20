@@ -7,7 +7,10 @@
       "Bash(python backtest.py)",
       "Bash(python -c \"import pandas as pd; df = pd.read_csv\\('constants/woba_fip_constants.csv'\\); print\\(df.columns.tolist\\(\\)\\); print\\(df.head\\(3\\)\\)\")",
       "PowerShell(cd \"c:\\\\Users\\\\super\\\\baseball-model\"; $p = Start-Process python -ArgumentList \"backtest.py\" -RedirectStandardOutput \"bt_out.txt\" -RedirectStandardError \"bt_err.txt\" -PassThru -NoNewWindow; Start-Sleep 25; $p.Kill\\(\\); Get-Content \"bt_out.txt\",\"bt_err.txt\" | Select-Object -First 50)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(python build_player_map.py)",
+      "Skill(schedule)",
+      "Skill(schedule:*)"
     ]
   }
 }
