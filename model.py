@@ -1,6 +1,22 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
+class _Tee:
+    """Write to both the real stdout and a capture buffer simultaneously."""
+    def __init__(self):
+        self._real = sys.stdout
+        self._buf  = __import__('io').StringIO()
+    def write(self, msg):
+        self._real.write(msg)
+        self._buf.write(msg)
+    def flush(self):
+        self._real.flush()
+    def getvalue(self):
+        return self._buf.getvalue()
+
+_tee = _Tee()
+sys.stdout = _tee
+
 import pandas as pd
 import math
 import requests
@@ -1071,7 +1087,7 @@ def update_google_sheets(df):
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
         sheet.update([headers] + rows)
         
-        print("Google Sheets updated successfully")
+        sys.stdout._real.write("Google Sheets updated successfully\n")
     except Exception as e:
         print(f"Google Sheets update failed: {e}")
 
@@ -1091,6 +1107,34 @@ def _roi_for_bets(bets_df):
         else:
             profit -= 100
     return (profit / wagered * 100) if wagered > 0 else 0
+
+def send_email_report(body, run_label):
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+
+    sender    = os.getenv('EMAIL_SENDER')
+    password  = os.getenv('EMAIL_APP_PASSWORD')
+    recipient = os.getenv('EMAIL_RECIPIENT')
+
+    if not all([sender, password, recipient]):
+        print("Email not configured — skipping. Add EMAIL_SENDER, EMAIL_APP_PASSWORD, EMAIL_RECIPIENT to .env")
+        return
+
+    try:
+        subject = f"Baseball Model — {run_label} Run — {date.today().strftime('%a %b %d')}"
+        msg = MIMEMultipart()
+        msg['From']    = f'Betting Model <{sender}>'
+        msg['To']      = recipient
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender, password)
+            server.sendmail(sender, recipient, msg.as_string())
+        print(f"Email sent to {recipient}")
+    except Exception as e:
+        print(f"Email failed: {e}")
 
 def print_accuracy_report():
     log_file = 'predictions_log.csv'
@@ -1214,6 +1258,10 @@ for key, status in game_statuses.items():
         in_progress_games.append(f"⚾ {away_name} @ {home_name} | {status['away_score']} - {status['home_score']}")
     elif status['status'] == 'Final':
         completed_games.append(f"✔️  {away_name} @ {home_name} | Final: {status['away_score']} - {status['home_score']}")
+
+# Reset capture buffer here so startup noise (API key, cache messages) is excluded from email
+_tee._buf.truncate(0)
+_tee._buf.seek(0)
 
 print(f"\nUpcoming games today: {len(upcoming)}")
 
@@ -1447,4 +1495,12 @@ if completed_games:
 todays_starters = get_todays_starters()
 
 log_predictions(todays_predictions, yesterdays_results)
+
+# Capture email body before accuracy report runs
+from datetime import datetime as _dt
+_hour = _dt.now().hour
+_run_label = '9am' if _hour < 11 else ('12pm' if _hour < 15 else '4pm')
+_email_body = _tee.getvalue()
+
 print_accuracy_report()
+send_email_report(_email_body, _run_label)

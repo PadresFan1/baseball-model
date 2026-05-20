@@ -68,32 +68,35 @@ def random_search(n_trials=100, seed=None):
     print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
     random.seed(seed)
 
-    # Parameter ranges to search (round 3 — statcast added)
+    PARAM_ROUND = 5  # increment this whenever param_space changes
+    # Round 1: base params, no statcast
+    # Round 2: statcast added (xwoba_bat, babip_bat, barrel_bat/pit)
+    # Round 3: bullpen added (bullpen_qual, bullpen_fat)
+    # Round 4: bullpen removed, favorites_only locked False — 53% profitable
+    # Round 5: locked edge/cap params, dropped barrel_bat, rebalanced bb_pit/fip/barrel_pit
+
     param_space = {
-        'ml_edge_min':    [0.06, 0.07],
-        'ml_edge_max':    [0.08, 0.10],
-        'favorites_only': [True, False],
+        'ml_edge_min':    [0.07],             # locked — clear winner across all rounds
+        'ml_edge_max':    [0.08],             # locked — +4.98% avg in top 25%
+        'favorites_only': [False],            # locked — True was small-sample artifact
         'rolling_weight_7': [0.50, 0.60, 0.70, 0.80],
         'rolling_weight_15': None,
-        'rating_cap_low':  [0.65, 0.70],
-        'rating_cap_high': [1.30, 1.50],
-        # Offense weights
+        'rating_cap_low':  [0.65],            # locked — 0.70 not meaningfully different
+        'rating_cap_high': [1.50],            # locked — appeared in 8/10 top r4 trials
+        # Offense weights (barrel_bat dropped — -0.298 correlation in r4)
         'w_rolling_off': [0.05, 0.08, 0.10],
         'w_woba':        [0.20, 0.30, 0.40],
         'w_xwoba_bat':   [0.10, 0.20, 0.30],
-        'w_babip_bat':   [0.10, 0.20, 0.30],
-        'w_barrel_bat':  [0.10, 0.20, 0.30],
+        'w_babip_bat':   [0.15, 0.25, 0.35], # raised — +0.115 in r4
         # Pitching weights
         'w_rolling_pit': [0.05, 0.08, 0.10],
-        'w_fip':         [0.10, 0.20, 0.30],
+        'w_fip':         [0.10, 0.20, 0.30], # pulled back — flipped negative in r4
         'w_xfip':        [0.10, 0.20, 0.30],
         'w_k_pit':       [0.10, 0.20, 0.30],
-        'w_bb_pit':      [0.20, 0.30, 0.40],
+        'w_bb_pit':      [0.15, 0.25, 0.35], # pulled back — over-corrected in r4
         'w_xwoba_pit':   [0.10, 0.20, 0.30],
-        'w_babip_pit':   [0.10, 0.20, 0.30],
-        'w_barrel_pit':  [0.10, 0.20, 0.30],
-        'w_bullpen_qual':[0.10, 0.20, 0.30],
-        'w_bullpen_fat': [0.05, 0.10, 0.15],
+        'w_babip_pit':   [0.05, 0.08, 0.12], # reduced — consistently negative
+        'w_barrel_pit':  [0.15, 0.25, 0.35], # raised — +0.136 in r4
     }
 
     # Resume from checkpoint if one exists
@@ -111,10 +114,9 @@ def random_search(n_trials=100, seed=None):
             for _ in range(start_trial):
                 for key in ['ml_edge_min', 'ml_edge_max', 'favorites_only', 'rolling_weight_7',
                             'rating_cap_low', 'rating_cap_high', 'w_rolling_off', 'w_woba',
-                            'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat', 'w_rolling_pit',
+                            'w_xwoba_bat', 'w_babip_bat', 'w_rolling_pit',
                             'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
-                            'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit',
-                            'w_bullpen_qual', 'w_bullpen_fat']:
+                            'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit']:
                     random.choice(param_space[key] or [0.0])
             print(f"Resuming from trial {start_trial}/{n_trials} ({len(results)} results so far)")
 
@@ -131,7 +133,6 @@ def random_search(n_trials=100, seed=None):
             'w_woba':        random.choice(param_space['w_woba']),
             'w_xwoba_bat':   random.choice(param_space['w_xwoba_bat']),
             'w_babip_bat':   random.choice(param_space['w_babip_bat']),
-            'w_barrel_bat':  random.choice(param_space['w_barrel_bat']),
             'w_rolling_pit': random.choice(param_space['w_rolling_pit']),
             'w_fip':         random.choice(param_space['w_fip']),
             'w_xfip':        random.choice(param_space['w_xfip']),
@@ -140,21 +141,19 @@ def random_search(n_trials=100, seed=None):
             'w_xwoba_pit':   random.choice(param_space['w_xwoba_pit']),
             'w_babip_pit':   random.choice(param_space['w_babip_pit']),
             'w_barrel_pit':  random.choice(param_space['w_barrel_pit']),
-            'w_bullpen_qual':random.choice(param_space['w_bullpen_qual']),
-            'w_bullpen_fat': random.choice(param_space['w_bullpen_fat']),
         }
         params['rolling_weight_15'] = 1 - params['rolling_weight_7']
         if params['ml_edge_min'] >= params['ml_edge_max']:
             continue
 
         # Normalize offense weights
-        off_keys = ['w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat']
+        off_keys = ['w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat']
         off_total = sum(params[k] for k in off_keys)
         for k in off_keys:
             params[k] /= off_total
 
         # Normalize pitching weights
-        pit_keys = ['w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit', 'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit', 'w_bullpen_qual', 'w_bullpen_fat']
+        pit_keys = ['w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit', 'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit']
         pit_total = sum(params[k] for k in pit_keys)
         for k in pit_keys:
             params[k] /= pit_total
@@ -188,8 +187,9 @@ def random_search(n_trials=100, seed=None):
     results_df['seed'] = seed
     results_df['n_trials'] = n_trials
     results_df['run_time_mins'] = round(total_time / 60, 1)
+    results_df['param_round'] = PARAM_ROUND
 
-    run_file = f'historical_data/search_{run_date}_seed{seed}_{n_trials}trials.csv'
+    run_file = f'historical_data/search_{run_date}_seed{seed}_{n_trials}trials_r{PARAM_ROUND}.csv'
     results_df.to_csv(run_file, index=False)
     print(f"\nResults saved to {run_file}")
 
@@ -233,21 +233,38 @@ def evaluate_runs():
     print(f"EVALUATION: {len(run_files)} run(s), {len(combined)} total trials")
     print(f"{'='*60}\n")
 
+    # Per-round summary
+    if 'param_round' in combined.columns:
+        print("Round summary:")
+        for rnd, grp in combined.groupby('param_round'):
+            pct_pos = (grp['roi'] > 0).mean()
+            print(f"  Round {int(rnd)}: {len(grp):>5} trials | top ROI: {grp['roi'].max():+.1f}% | median: {grp['roi'].median():+.1f}% | % profitable: {pct_pos:.1%}")
+        print()
+
     # Per-run summary
     print("Run summary:")
     for f in run_files:
         df = pd.read_csv(f)
         meta = os.path.basename(f)
+        rnd = f' r{int(df["param_round"].iloc[0])}' if 'param_round' in df.columns else ''
         top_roi = df['roi'].max()
         med_roi = df['roi'].median()
-        print(f"  {meta}  |  top ROI: {top_roi:+.1f}%  |  median ROI: {med_roi:+.1f}%  |  {len(df)} trials")
+        print(f"  {meta}{rnd}  |  top ROI: {top_roi:+.1f}%  |  median ROI: {med_roi:+.1f}%  |  {len(df)} trials")
 
     # Top 10 across all runs
     top_cols = ['roi', 'win_rate', 'n_bets', 'ml_edge_min', 'ml_edge_max',
-                'favorites_only', 'rolling_weight_7', 'rating_cap_low', 'rating_cap_high', 'run_date']
+                'favorites_only', 'rolling_weight_7', 'rating_cap_low', 'rating_cap_high', 'param_round', 'run_date']
     available = [c for c in top_cols if c in combined.columns]
-    print(f"\nTop 10 results across all runs:")
+    print(f"\nTop 10 results (all sample sizes):")
     print(combined.nlargest(10, 'roi')[available].to_string(index=False))
+
+    # Minimum sample size filter — more reliable signal
+    min_bets = 300
+    reliable = combined[combined['n_bets'] >= min_bets]
+    if not reliable.empty:
+        pct = len(reliable) / len(combined)
+        print(f"\nTop 10 results (n_bets >= {min_bets}, {len(reliable)} trials / {pct:.0%} of total):")
+        print(reliable.nlargest(10, 'roi')[available].to_string(index=False))
 
     # Parameter analysis — compare top 25% vs bottom 75%
     threshold = combined['roi'].quantile(0.75)
@@ -267,10 +284,9 @@ def evaluate_runs():
 
     # Continuous weight params — show correlation with ROI
     weight_params = ['rolling_weight_7',
-                     'w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat', 'w_barrel_bat',
+                     'w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat',
                      'w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
-                     'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit',
-                     'w_bullpen_qual', 'w_bullpen_fat']
+                     'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit']
     available_weights = [p for p in weight_params if p in combined.columns]
     if available_weights:
         corrs = combined[available_weights + ['roi']].corr()['roi'].drop('roi').sort_values(ascending=False)
@@ -1097,9 +1113,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
                         home_bb_pit_r    * params['w_bb_pit'] +
                         home_xwoba_pit_r * params['w_xwoba_pit'] +
                         home_babip_pit_r * params['w_babip_pit'] +
-                        home_barrel_pit_r* params['w_barrel_pit'] +
-                        home_bp_qual_r   * params['w_bullpen_qual'] +
-                        home_bp_fat_r    * params['w_bullpen_fat'])
+                        home_barrel_pit_r* params['w_barrel_pit'])
             away_pit = (away_pit_roll    * params['w_rolling_pit'] +
                         away_fip_r       * params['w_fip'] +
                         away_xfip_r      * params['w_xfip'] +
@@ -1107,9 +1121,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
                         away_bb_pit_r    * params['w_bb_pit'] +
                         away_xwoba_pit_r * params['w_xwoba_pit'] +
                         away_babip_pit_r * params['w_babip_pit'] +
-                        away_barrel_pit_r* params['w_barrel_pit'] +
-                        away_bp_qual_r   * params['w_bullpen_qual'] +
-                        away_bp_fat_r    * params['w_bullpen_fat'])
+                        away_barrel_pit_r* params['w_barrel_pit'])
             
             home_off = max(params['rating_cap_low'], min(params['rating_cap_high'], home_off))
             away_off = max(params['rating_cap_low'], min(params['rating_cap_high'], away_off))
@@ -1234,7 +1246,7 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
     roi = profit / total_bet * 100
     return roi, profit
 
-N_RUNS = 5
+N_RUNS = 10  # ~2 hours at 12 min/run
 
 for run in range(N_RUNS):
     print(f"\n{'='*55}")

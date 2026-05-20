@@ -1,0 +1,172 @@
+BASEBALL MODEL — SESSION SUMMARY
+=================================
+Date: May 17–20, 2026
+
+OVERVIEW
+--------
+This session covered bug fixes across model.py and backtest.py, added accuracy
+tracking to the live model, built out a full parameter optimization pipeline via
+random search backtesting, incorporated statcast and bullpen data, dramatically
+improved backtest performance, and set up automated email reports.
+
+
+1. BUG FIXES — model.py
+------------------------
+- Dead code in calculate_matchup(): get_total_line(game) was referencing the
+  outer loop's global "game" variable silently and discarding the result.
+  home_line/away_line were computed but never returned. Both removed.
+- Three module-level debug lines fetching Yankees pitching data on every run
+  were removed (avg_pitch_7, avg_pitch_15 — never used anywhere).
+- UnicodeEncodeError: Windows terminal (cp1252) couldn't print emoji characters.
+  Fixed by adding sys.stdout.reconfigure(encoding='utf-8') at the top.
+- TypeError in log_predictions(): integer scores being written into a str-typed
+  DataFrame column when updating existing rows. Fixed by wrapping in str().
+- Google Sheets 429 rate limit: was calling sheet.append_row() once per row
+  (~62 API calls). Replaced with a single sheet.update([headers] + rows) call.
+
+
+2. BUG FIXES — backtest.py
+---------------------------
+- random_search(n_trials=100) was never actually called — file just printed
+  "Starting random search" and exited immediately.
+- get_league_hr_fb_rate() was called but never defined.
+- calc_xfip() referenced keys _bb_total, _hbp_total, _k_total that didn't exist
+  in the dict returned by get_rolling_averages_for_date(). Fixed keys to
+  _bb_hbp_total and _k_total; added those to the return dict.
+- inningsPitched stored as string like "5.1" (= 5⅓ IP). Added ip_to_float()
+  converter to handle baseball's out-based IP notation.
+- load_woba_fip_constants() looked up column 'season' (lowercase) but CSV has
+  'Season' (capitalized). Fixed.
+
+
+3. ACCURACY TRACKING — model.py
+--------------------------------
+Added print_accuracy_report() which runs at the end of every model run:
+- Overall W-L record, win rate, pending count
+- Moneyline: W-L, win rate, ROI
+- Over/Under: W-L, win rate
+- Edge tier breakdown: 3-5%, 5-10%, 10%+ (shows calibration)
+Results from early days: 7W-3L (70%), +24.1% ROI on moneyline.
+Edge tier signal confirmed: 10%+ going 5-1, 3-5% going 0-1.
+
+
+4. BACKTEST INFRASTRUCTURE
+---------------------------
+Added to backtest.py:
+- Sleep prevention: SetThreadExecutionState keeps computer awake during runs
+- Checkpointing: saves progress every 10 trials to JSON, resumes if interrupted
+- Per-run file naming: search_YYYY-MM-DD_seed{N}_100trials.csv (each run
+  preserved separately, never overwritten)
+- Timer: prints elapsed time and ETA every 10 trials, total time at end
+- Auto seed generation: new random seed each run so param space is explored
+  differently each time. Seed printed so any run can be reproduced.
+- N_RUNS loop: runs consecutive 100-trial searches automatically
+- evaluate_runs(): pools all search CSVs, shows per-run summary, top 10 results
+  across all runs, parameter breakdown (top 25% of trials), weight correlations
+  with ROI. Saves combined CSV.
+
+
+5. PARAMETER OPTIMIZATION — RESULTS SO FAR
+-------------------------------------------
+Round 1 (500 trials, wide param space):
+- ml_edge_min 0.06/0.07 outperformed 0.03/0.04
+- ml_edge_max 0.08 best, wider windows lose money
+- Rolling averages showed negative correlation — season stats outperform recent
+
+Round 2 (2700 trials, narrowed + statcast added):
+- ml_edge_min=0.07, ml_edge_max=0.08, favorites_only=True dominated top 10
+- w_bb_pit (+0.277) and w_woba (+0.252) strongest positive correlators
+- w_rolling_off (-0.183) and w_rolling_pit (-0.175) confirmed as drags
+- Median ROI jumped from -2.7% (no statcast) to -0.7% (with statcast)
+- Top ROI reached 21.8% on individual trials
+
+Round 3 (in progress, bullpen added):
+- 5 runs running, 12 min per run (vs 102 min before performance fix)
+
+
+6. DATA SOURCES ADDED
+----------------------
+Statcast (Statcast/ folder):
+- batters_YYYY.csv and pitchers_YYYY.csv for 2021-2025
+- Per-game per-team: xwOBA, BABIP, barrel%, PA
+- 7 abbreviation mismatches mapped: AZ→ARI, CWS→CHW, KC→KCR, SD→SDP,
+  SF→SFG, TB→TBR, WSH→WSN
+- Precomputed for efficiency: cumulative PA-weighted stats up to each game date
+- League averages computed per date for proper ratio normalization
+
+Relief Pitcher Statcast (rp/ folder):
+- 13 files covering all divisions, 2021-2025, 80,312 rows total
+- Player-level data: xwOBA, BABIP, K%, BB%, barrel%, total pitches, PA
+- No team column — player_id mapped to team via MLB Stats API season rosters
+- build_player_map.py: pulls fullSeason rosters for all 30 teams, 2021-2025
+- 99.8% match rate (only Ross Stripling unmatched due to mid-season trade)
+- Aggregated to team-game level, then precomputed as cumulative season stats
+  + 7-day rolling pitch count (fatigue proxy)
+
+Bullpen quality rating = average of (lg_xwoba/team_xwoba, team_k%/lg_k%,
+lg_bb%/team_bb%) — xwOBA-dominant since K%/BB% have different scales.
+Bullpen fatigue rating = lg_pitches_7d / team_pitches_7d.
+
+
+7. PERFORMANCE OPTIMIZATION
+-----------------------------
+Problem: For every game in the backtest, get_rolling_averages_for_date() was
+called 32 times (home + away + 30 teams for league averages). Each call scanned
+all prior games. With ~9,600 games × 100 trials × 32 calls × avg 80 prior
+games = 2.4 billion operations.
+
+Solution: precompute_all_rolling() — sweeps each team's game log ONCE per
+season using prefix sums for O(1) rolling window computation. All stats for all
+(team, date) combinations stored in a lookup dict before any trials run.
+
+Result: 8.3x speedup. 10 trials went from 617s to 74s. 100 trials now takes
+~12 minutes instead of ~102 minutes. 5 runs = ~1 hour instead of ~8-9 hours.
+
+
+8. EMAIL REPORTS
+-----------------
+Added to model.py:
+- _Tee class: captures all stdout simultaneously to a string buffer
+- send_email_report(): sends the full terminal output as email body after
+  each model run using Gmail SMTP_SSL
+- Subject line: "Baseball Model — {9am/12pm/4pm} Run — {date}"
+- Display name set to "Betting Model" instead of raw email address
+- Credentials stored in .env: EMAIL_SENDER, EMAIL_APP_PASSWORD, EMAIL_RECIPIENT
+
+
+9. GIT / SECURITY
+------------------
+.gitignore additions:
+- .env, google_credentials.json (secrets)
+- odds_cache.json, stats_cache.json, historical_data/statcast_cache.json,
+  historical_data/bullpen_cache.json (generated caches)
+- mlb_odds_dataset.json, historical_data/historical_game_logs.json (large data)
+- historical_data/player_team_map.json (generated)
+- predictions_log.csv, predictions_log.xlsx (personal data)
+- historical_data/search_*.csv, historical_data/evaluation_*.csv (results)
+- historical_data/random_search_checkpoint.json (temp)
+- bt_out.txt, bt_err.txt (temp), .claude/settings.local.json
+
+
+10. FEATURES PLANNED (NOT YET BUILT)
+--------------------------------------
+- Platoon splits: batter vs LHP/RHP, pitcher vs LHB/RHB. Needs separate
+  statcast pulls filtered by handedness. Straightforward in live model once
+  starters/lineups are announced. Backtest version needs historical lineup
+  composition data — more work.
+- Bullpen stats in live model (model.py): waiting for backtest to confirm
+  signal before wiring into live predictions.
+
+
+11. NEXT STEPS
+---------------
+1. Wait for current 5-run backtest to finish
+2. Run evaluate_runs() (set N_RUNS=0) to get combined signal across all runs
+3. Review bullpen weight correlations — if w_bullpen_qual/w_bullpen_fat show
+   positive signal, keep them; if noise, drop and simplify
+4. Narrow param space again based on new evaluation
+5. Run 10-15 more trials to confirm narrowed params
+6. Lock in final parameters and update OFFENSE_WEIGHTS, PITCHING_WEIGHTS,
+   and edge threshold in model.py
+7. Add bullpen form/fatigue to live model
+8. Add platoon splits to live model
