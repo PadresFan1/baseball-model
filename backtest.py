@@ -1099,13 +1099,11 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
             home_off = (home_off_roll    * params['w_rolling_off'] +
                         home_woba_r      * params['w_woba'] +
                         home_xwoba_bat_r * params['w_xwoba_bat'] +
-                        home_babip_bat_r * params['w_babip_bat'] +
-                        home_barrel_bat_r* params['w_barrel_bat'])
+                        home_babip_bat_r * params['w_babip_bat'])
             away_off = (away_off_roll    * params['w_rolling_off'] +
                         away_woba_r      * params['w_woba'] +
                         away_xwoba_bat_r * params['w_xwoba_bat'] +
-                        away_babip_bat_r * params['w_babip_bat'] +
-                        away_barrel_bat_r* params['w_barrel_bat'])
+                        away_babip_bat_r * params['w_babip_bat'])
             home_pit = (home_pit_roll    * params['w_rolling_pit'] +
                         home_fip_r       * params['w_fip'] +
                         home_xfip_r      * params['w_xfip'] +

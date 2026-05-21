@@ -11,7 +11,11 @@
       "Bash(python build_player_map.py)",
       "Skill(schedule)",
       "Skill(schedule:*)",
-      "Bash(python -u backtest.py)"
+      "Bash(python -u backtest.py)",
+      "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(python -c \"import pandas\")",
+      "Bash(where python *)",
+      "Bash(py -0)"
     ]
   }
 }

@@ -111,7 +111,9 @@ PARK_FACTOR_TEAM_MAP = {
 
 from datetime import timezone, timedelta, datetime
 
-API_KEY = os.getenv('API_KEY')
+API_KEY  = os.getenv('API_KEY')
+BANKROLL = float(os.getenv('BANKROLL', '1000'))
+KELLY_FRACTION = 0.5   # half-Kelly reduces variance vs full Kelly
 print(f"API Key loaded: {API_KEY is not None}")
 
 MST = timezone(timedelta(hours=-7))
@@ -124,21 +126,22 @@ BULLPEN_WEIGHT = 1 - STARTER_WEIGHT
 MIN_INNINGS = 15
 MAX_RA9 = 7.00
 
-# Lambda weights - adjust for backtesting
+# Weights derived from round-5 backtest optimization (top-10 trials, n>=300)
+# Offense: k% and bb% removed — backtest showed no positive contribution
 OFFENSE_WEIGHTS = {
-    'rolling': 1/5,
-    'woba': 1/5,
-    'xwoba': 1/5,
-    'k_pct': 1/5,
-    'bb_pct': 1/5
+    'rolling': 0.090,
+    'woba':    0.378,
+    'xwoba':   0.264,
+    'babip':   0.268,
 }
 
+# Pitching: normalized over 5 available stats (xwoba_pit/babip_pit/barrel_pit not yet in live model)
 PITCHING_WEIGHTS = {
-    'rolling': 1/5,
-    'fip': 1/5,
-    'xfip': 1/5,
-    'k_pct': 1/5,
-    'bb_pct': 1/5
+    'rolling': 0.078,
+    'fip':     0.240,
+    'xfip':    0.220,
+    'k_pct':   0.192,
+    'bb_pct':  0.270,
 }
 
 NUM_SIMULATIONS = 5000
@@ -172,6 +175,34 @@ def american_to_prob(line):
         return abs(line) / (abs(line) + 100)
     else:
         return 100 / (line + 100)
+
+def kelly_bet_size(model_prob, american_odds, bankroll=None, fraction=KELLY_FRACTION):
+    """
+    Returns (kelly_pct, bet_amount).
+    Uses fractional Kelly (default half) capped at 5% of bankroll per bet.
+    b = net odds per $1 wagered; f* = (b*p - q) / b
+    """
+    if bankroll is None:
+        bankroll = BANKROLL
+    b = american_odds / 100.0 if american_odds > 0 else 100.0 / abs(american_odds)
+    p = model_prob
+    q = 1.0 - p
+    kelly = (b * p - q) / b
+    if kelly <= 0:
+        return 0.0, 0.0
+    kelly_adj = min(kelly * fraction, 0.15)  # cap at 15% bankroll
+    return round(kelly_adj * 100, 1), round(bankroll * kelly_adj, 2)
+
+def ip_to_float(ip_str):
+    """Convert MLB innings pitched string (e.g. '5.1'=5⅓, '5.2'=5⅔) to decimal."""
+    try:
+        s = str(ip_str)
+        if '.' in s:
+            whole, frac = s.split('.')
+            return int(whole) + int(frac) / 3.0
+        return float(s)
+    except (ValueError, AttributeError):
+        return 0.0
 
 def get_cached_odds():
     cache_file='odds_cache.json'
@@ -314,21 +345,21 @@ model_data = model_data.merge(league_avg, on='year')
 model_data['lambda'] = model_data['off_rating']*model_data['lg_avg_runs']
   
 # Calculate expected runs for both teams - New Beginning
-def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
+def calculate_matchup(home_team, away_team, year, rolling=None, starters=None, injury_adj=None, platoon_data=None):
     if rolling and home_team in rolling and away_team in rolling:
         lg_avg_runs = league_avg[league_avg['year'] == 2026]['lg_avg_runs'].values[0]
-        
+
         home_off_rating, home_pit_rating = calculate_team_ratings(
-            home_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs)
+            home_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs, injury_adj)
         away_off_rating, away_pit_rating = calculate_team_ratings(
-            away_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs)
+            away_team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs, injury_adj)
         
         # Get park factor for home stadium
         park_factor = get_park_factor(home_team)
         
-        # Calculate blended pitching including starter
-        home_pitch_roll = rolling[home_team]['pitch_7'] * 0.60 + rolling[home_team]['pitch_15'] * 0.40
-        away_pitch_roll = rolling[away_team]['pitch_7'] * 0.60 + rolling[away_team]['pitch_15'] * 0.40
+        # 7-day weighted 70%, 15-day 30% (backtest optimized)
+        home_pitch_roll = rolling[home_team]['pitch_7'] * 0.70 + rolling[home_team]['pitch_15'] * 0.30
+        away_pitch_roll = rolling[away_team]['pitch_7'] * 0.70 + rolling[away_team]['pitch_15'] * 0.30
 
         if starters and home_team in starters and starters[home_team]:
             home_innings = starters[home_team]['innings']
@@ -363,6 +394,11 @@ def calculate_matchup(home_team, away_team, year, rolling=None, starters=None):
         # Calculate lambdas with park factor
         home_lambda = (home_off_rating / away_final_pit) * lg_avg_runs * park_factor
         away_lambda = (away_off_rating / home_final_pit) * lg_avg_runs * park_factor
+
+        # Apply platoon factors when confirmed lineup is available
+        if platoon_data:
+            home_lambda *= platoon_data[0]
+            away_lambda *= platoon_data[1]
 
     else:
         home_off = model_data[(model_data['team'] == home_team) & (model_data['year'] == year)]['lambda'].values[0]
@@ -417,27 +453,32 @@ def calculate_team_woba(team_id, season=2026):
         pa = float(s.get('plateAppearances', 0))
         
         singles = hits - doubles - triples - hr
-        
-        numerator = (WOBA_WEIGHTS['wBB'] * bb + 
-                    WOBA_WEIGHTS['wHBP'] * hbp + 
-                    WOBA_WEIGHTS['w1B'] * singles + 
-                    WOBA_WEIGHTS['w2B'] * doubles + 
-                    WOBA_WEIGHTS['w3B'] * triples + 
+        k = float(s.get('strikeOuts', 0))
+
+        numerator = (WOBA_WEIGHTS['wBB'] * bb +
+                    WOBA_WEIGHTS['wHBP'] * hbp +
+                    WOBA_WEIGHTS['w1B'] * singles +
+                    WOBA_WEIGHTS['w2B'] * doubles +
+                    WOBA_WEIGHTS['w3B'] * triples +
                     WOBA_WEIGHTS['wHR'] * hr)
-        
+
         denominator = ab + bb - ibb + sf + hbp
-        
+
         if denominator == 0:
             return None
-            
+
         woba = numerator / denominator
-        k_pct = float(s.get('strikeOuts', 0)) / pa if pa > 0 else 0
+        k_pct = k / pa if pa > 0 else 0
         bb_pct = bb / pa if pa > 0 else 0
-        
+        babip_denom = ab - k - hr + sf
+        babip = (hits - hr) / babip_denom if babip_denom > 0 else None
+
         return {
-            'woba': round(woba, 3),
+            'woba':  round(woba, 3),
             'k_pct': round(k_pct, 3),
-            'bb_pct': round(bb_pct, 3)
+            'bb_pct': round(bb_pct, 3),
+            'babip': round(babip, 3) if babip is not None else None,
+            'pa':    int(pa),
         }
     except Exception as e:
         return None
@@ -588,8 +629,8 @@ def calculate_team_fip(team_id, lg_hr_fb, season=2026):
         air_outs = float(s.get('airOuts', 0))
         bf = float(s.get('battersFaced', 1))
         ip_str = s.get('inningsPitched', '0')
-        ip = float(ip_str)
-        
+        ip = ip_to_float(ip_str)
+
         if ip == 0:
             return None
         
@@ -603,11 +644,12 @@ def calculate_team_fip(team_id, lg_hr_fb, season=2026):
         bb_pct = bb / bf
         
         return {
-            'fip': round(fip, 3),
-            'xfip': round(xfip, 3),
-            'k_pct': round(k_pct, 3),
-            'bb_pct': round(bb_pct, 3),
-            'lg_hr_fb': round(lg_hr_fb, 4)
+            'fip':      round(fip, 3),
+            'xfip':     round(xfip, 3),
+            'k_pct':    round(k_pct, 3),
+            'bb_pct':   round(bb_pct, 3),
+            'lg_hr_fb': round(lg_hr_fb, 4),
+            'ip':       round(ip, 1),
         }
     except Exception as e:
         return None
@@ -620,6 +662,357 @@ def get_all_team_fip(team_ids, season=2026):
         if stats:
             results[fg_abbrev] = stats
     return results
+
+def get_injury_adjustments(team_ids, all_woba, all_fip, lg_avgs, season=2026):
+    """
+    Returns per-team rating adjustments for players placed on IL within the last 14 days.
+    Adjustment tapers linearly from full (day 1) to zero (day 14) as rolling averages catch up.
+    Format: {team_fg: {'off_adj': float, 'pit_adj': float, 'notes': [str]}}
+    """
+    today = date.today()
+    season_start = f'{season}-03-01'
+
+    try:
+        url  = (f"https://statsapi.mlb.com/api/v1/transactions"
+                f"?startDate={season_start}&endDate={today.strftime('%Y-%m-%d')}&sportId=1")
+        resp = requests.get(url, timeout=10).json()
+    except Exception as e:
+        print(f"Injury transactions fetch failed: {e}")
+        return {}
+
+    transactions = resp.get('transactions', [])
+
+    # Build placed/activated sets by scanning in date order
+    il_placed    = {}   # player_id -> {name, team_fg, date}
+    il_activated = set()
+
+    for t in sorted(transactions, key=lambda x: x.get('date', '')):
+        desc   = t.get('description', '')
+        person = t.get('person', {})
+        pid    = person.get('id')
+        if not pid:
+            continue
+
+        # Resolve team abbreviation — try multiple fields
+        mlb_abbrev = (
+            (t.get('toTeam')   or {}).get('abbreviation') or
+            (t.get('fromTeam') or {}).get('abbreviation') or
+            (t.get('team')     or {}).get('abbreviation')
+        )
+        team_fg = TEAM_MAP.get(mlb_abbrev) if mlb_abbrev else None
+
+        if 'Placed' in desc and 'Injured List' in desc:
+            il_placed[pid] = {
+                'name':    person.get('fullName', 'Unknown'),
+                'team_fg': team_fg,
+                'date':    t.get('date', ''),
+            }
+        elif 'Activated' in desc and 'Injured List' in desc:
+            il_activated.add(pid)
+
+    # Currently on IL = placed but not yet activated
+    current_il = {pid: info for pid, info in il_placed.items()
+                  if pid not in il_activated}
+
+    adjustments = {}
+
+    for pid, info in current_il.items():
+        team_fg = info['team_fg']
+        if not team_fg or team_fg not in team_ids:
+            continue
+
+        try:
+            il_date   = datetime.strptime(info['date'][:10], '%Y-%m-%d').date()
+        except (ValueError, AttributeError):
+            continue
+
+        days_on_il = (today - il_date).days
+        if days_on_il >= 14:
+            continue  # rolling averages have fully adjusted
+
+        taper = (14 - days_on_il) / 14.0  # 1.0 on day 1 → 0.0 on day 14
+
+        if team_fg not in adjustments:
+            adjustments[team_fg] = {'off_adj': 0.0, 'pit_adj': 0.0, 'notes': []}
+
+        # --- Hitting impact ---
+        try:
+            hdata = statsapi.player_stat_data(pid, group='hitting', type='season', sportId=1)
+            if hdata and hdata.get('stats'):
+                s  = hdata['stats'][0]['stats']
+                pa = float(s.get('plateAppearances', 0))
+                if pa >= 30:
+                    hits    = float(s.get('hits', 0))
+                    doubles = float(s.get('doubles', 0))
+                    triples = float(s.get('triples', 0))
+                    hr      = float(s.get('homeRuns', 0))
+                    bb      = float(s.get('baseOnBalls', 0))
+                    hbp     = float(s.get('hitByPitch', 0))
+                    ibb     = float(s.get('intentionalWalks', 0))
+                    sf      = float(s.get('sacFlies', 0))
+                    ab      = float(s.get('atBats', 0))
+                    singles = hits - doubles - triples - hr
+                    woba_d  = ab + bb - ibb + sf + hbp
+                    if woba_d > 0:
+                        player_woba = (
+                            WOBA_WEIGHTS['wBB']  * (bb - ibb) +
+                            WOBA_WEIGHTS['wHBP'] * hbp +
+                            WOBA_WEIGHTS['w1B']  * singles +
+                            WOBA_WEIGHTS['w2B']  * doubles +
+                            WOBA_WEIGHTS['w3B']  * triples +
+                            WOBA_WEIGHTS['wHR']  * hr
+                        ) / woba_d
+                        lg_woba  = lg_avgs['lg_woba']
+                        team_pa  = all_woba.get(team_fg, {}).get('pa', 0)
+                        if lg_woba > 0 and team_pa > 0:
+                            pa_share  = pa / team_pa  # no cap — PA share is naturally bounded (~10-15% for elite regulars)
+                            woba_rate = player_woba / lg_woba
+                            off_adj   = (woba_rate - 1.0) * pa_share * taper
+                            adjustments[team_fg]['off_adj'] += off_adj
+                            adjustments[team_fg]['notes'].append(
+                                f"{info['name']} OUT {days_on_il}d — off {off_adj:+.3f}"
+                            )
+        except Exception:
+            pass
+
+        # --- Pitching impact ---
+        try:
+            pdata = statsapi.player_stat_data(pid, group='pitching', type='season', sportId=1)
+            if pdata and pdata.get('stats'):
+                s  = pdata['stats'][0]['stats']
+                ip = ip_to_float(s.get('inningsPitched', '0'))
+                if ip >= 10:
+                    hr  = float(s.get('homeRuns', 0))
+                    bb  = float(s.get('baseOnBalls', 0))
+                    hbp = float(s.get('hitBatsmen', 0))
+                    k   = float(s.get('strikeOuts', 0))
+                    player_fip = ((13 * hr) + (3 * (bb + hbp)) - (2 * k)) / ip + FIP_CONSTANT
+                    lg_fip   = lg_avgs['lg_fip']
+                    team_ip  = all_fip.get(team_fg, {}).get('ip', 0)
+                    if player_fip > 0 and team_ip > 0:
+                        ip_share  = min(ip / team_ip, 0.25)
+                        fip_rate  = lg_fip / player_fip
+                        pit_adj   = (fip_rate - 1.0) * ip_share * taper
+                        adjustments[team_fg]['pit_adj'] += pit_adj
+                        adjustments[team_fg]['notes'].append(
+                            f"{info['name']} OUT {days_on_il}d — pit {pit_adj:+.3f}"
+                        )
+        except Exception:
+            pass
+
+    return adjustments
+
+MLB_PEOPLE_URL = 'https://statsapi.mlb.com/api/v1/people'
+
+def get_confirmed_lineups(game_date):
+    """
+    Returns confirmed lineups and pitcher IDs for today's games via MLB API.
+    Format: {(home_fg, away_fg): {home_lineup, away_lineup, home_pitcher_id, away_pitcher_id}}
+    Returns {} if no lineups confirmed yet.
+    """
+    try:
+        resp = requests.get(
+            'https://statsapi.mlb.com/api/v1/schedule',
+            params={'date': game_date, 'sportId': 1, 'hydrate': 'lineups,probablePitcher'},
+            timeout=10
+        ).json()
+        result = {}
+        for date_entry in resp.get('dates', []):
+            for game in date_entry.get('games', []):
+                teams     = game.get('teams', {})
+                home_name = teams.get('home', {}).get('team', {}).get('name', '')
+                away_name = teams.get('away', {}).get('team', {}).get('name', '')
+                if home_name not in NAME_TO_FG or away_name not in NAME_TO_FG:
+                    continue
+                home_fg = NAME_TO_FG[home_name]
+                away_fg = NAME_TO_FG[away_name]
+                lineups     = game.get('lineups', {})
+                home_lineup = [p['id'] for p in lineups.get('homePlayers', [])]
+                away_lineup = [p['id'] for p in lineups.get('awayPlayers', [])]
+                if not home_lineup and not away_lineup:
+                    continue
+                home_pid = teams.get('home', {}).get('probablePitcher', {}).get('id')
+                away_pid = teams.get('away', {}).get('probablePitcher', {}).get('id')
+                result[(home_fg, away_fg)] = {
+                    'home_lineup':    home_lineup,
+                    'away_lineup':    away_lineup,
+                    'home_pitcher_id': home_pid,
+                    'away_pitcher_id': away_pid,
+                }
+        return result
+    except Exception as e:
+        print(f"Lineup fetch failed: {e}")
+        return {}
+
+def get_players_hand(player_ids):
+    """Batch fetch bat/pitch handedness for a list of player IDs in one API call."""
+    if not player_ids:
+        return {}
+    try:
+        ids_str = ','.join(str(p) for p in player_ids)
+        resp = requests.get(MLB_PEOPLE_URL, params={'personIds': ids_str}, timeout=10).json()
+        result = {}
+        for person in resp.get('people', []):
+            result[person['id']] = {
+                'bat_hand':   person.get('batSide',   {}).get('code', 'R'),
+                'pitch_hand': person.get('pitchHand', {}).get('code', 'R'),
+            }
+        return result
+    except Exception:
+        return {}
+
+def get_player_split_woba(player_id, season, min_pa=30):
+    """Returns {vs_lhp: woba, vs_rhp: woba} for a batter. None if insufficient data."""
+    try:
+        resp = requests.get(
+            f'{MLB_PEOPLE_URL}/{player_id}/stats',
+            params={'stats': 'statSplits', 'group': 'hitting', 'season': season, 'sportId': 1},
+            timeout=8
+        ).json()
+        splits = resp.get('stats', [{}])[0].get('splits', [])
+        result = {}
+        for split in splits:
+            code = split.get('split', {}).get('code', '')
+            if code not in ('vl', 'vr'):
+                continue
+            s  = split.get('stat', {})
+            pa = int(s.get('plateAppearances', 0))
+            if pa < min_pa:
+                continue
+            hits    = float(s.get('hits', 0))
+            doubles = float(s.get('doubles', 0))
+            triples = float(s.get('triples', 0))
+            hr      = float(s.get('homeRuns', 0))
+            bb      = float(s.get('baseOnBalls', 0))
+            hbp     = float(s.get('hitByPitch', 0))
+            ibb     = float(s.get('intentionalWalks', 0))
+            sf      = float(s.get('sacFlies', 0))
+            ab      = float(s.get('atBats', 0))
+            singles = hits - doubles - triples - hr
+            denom   = ab + bb - ibb + sf + hbp
+            if denom > 0:
+                woba = (
+                    WOBA_WEIGHTS['wBB']  * (bb - ibb) +
+                    WOBA_WEIGHTS['wHBP'] * hbp        +
+                    WOBA_WEIGHTS['w1B']  * singles     +
+                    WOBA_WEIGHTS['w2B']  * doubles     +
+                    WOBA_WEIGHTS['w3B']  * triples     +
+                    WOBA_WEIGHTS['wHR']  * hr
+                ) / denom
+                result['vs_lhp' if code == 'vl' else 'vs_rhp'] = round(woba, 3)
+        return result or None
+    except Exception:
+        return None
+
+def get_pitcher_split_fip(pitcher_id, season, min_ip=5):
+    """Returns {vs_lhb: fip, vs_rhb: fip} for a pitcher. None if insufficient data."""
+    try:
+        resp = requests.get(
+            f'{MLB_PEOPLE_URL}/{pitcher_id}/stats',
+            params={'stats': 'statSplits', 'group': 'pitching', 'season': season, 'sportId': 1},
+            timeout=8
+        ).json()
+        splits = resp.get('stats', [{}])[0].get('splits', [])
+        result = {}
+        for split in splits:
+            code = split.get('split', {}).get('code', '')
+            if code not in ('vl', 'vr'):
+                continue
+            s  = split.get('stat', {})
+            ip = ip_to_float(s.get('inningsPitched', '0'))
+            if ip < min_ip:
+                continue
+            hr  = float(s.get('homeRuns', 0))
+            bb  = float(s.get('baseOnBalls', 0))
+            hbp = float(s.get('hitBatsmen', 0))
+            k   = float(s.get('strikeOuts', 0))
+            fip = ((13 * hr) + (3 * (bb + hbp)) - (2 * k)) / ip + FIP_CONSTANT
+            result['vs_lhb' if code == 'vl' else 'vs_rhb'] = round(fip, 3)
+        return result or None
+    except Exception:
+        return None
+
+def get_all_platoon_splits(lineup_data, season=2026):
+    """
+    Fetches and caches platoon splits for all players in confirmed lineups.
+    Returns {bat_{id}: {splits, hand}, pit_{id}: {splits, hand}} cache dict.
+    Cache TTL: 6 hours (splits don't change intraday).
+    """
+    cache_file = 'splits_cache.json'
+    cache = {}
+    if os.path.exists(cache_file):
+        age_hours = (datetime.now().timestamp() - os.path.getmtime(cache_file)) / 3600
+        if age_hours < 6:
+            with open(cache_file, 'r') as f:
+                cache = json.load(f)
+
+    all_batter_ids  = set()
+    all_pitcher_ids = set()
+    for gd in lineup_data.values():
+        all_batter_ids.update(gd.get('home_lineup', []))
+        all_batter_ids.update(gd.get('away_lineup', []))
+        if gd.get('home_pitcher_id'): all_pitcher_ids.add(gd['home_pitcher_id'])
+        if gd.get('away_pitcher_id'): all_pitcher_ids.add(gd['away_pitcher_id'])
+
+    # Batch-fetch handedness for anyone not cached
+    missing_hand = [p for p in (all_batter_ids | all_pitcher_ids)
+                    if f"bat_{p}" not in cache and f"pit_{p}" not in cache]
+    hand_info = get_players_hand(missing_hand)
+
+    # Fetch batter splits
+    for pid in all_batter_ids:
+        key = f"bat_{pid}"
+        if key not in cache:
+            splits = get_player_split_woba(pid, season)
+            hand   = hand_info.get(pid, {}).get('bat_hand', 'R')
+            cache[key] = {'splits': splits, 'hand': hand}
+
+    # Fetch pitcher splits + handedness
+    for pid in all_pitcher_ids:
+        key = f"pit_{pid}"
+        if key not in cache:
+            splits = get_pitcher_split_fip(pid, season)
+            hand   = hand_info.get(pid, {}).get('pitch_hand', 'R')
+            cache[key] = {'splits': splits, 'hand': hand}
+
+    with open(cache_file, 'w') as f:
+        json.dump(cache, f)
+
+    return cache
+
+def compute_platoon_factors(home_lineup, away_lineup, home_pitcher_id, away_pitcher_id,
+                             splits_cache, lg_avgs):
+    """
+    Returns (home_off_factor, away_off_factor, matchup_notes).
+    Factor > 1.0 = favorable platoon matchup, < 1.0 = unfavorable.
+    No artificial cap — PA/IP minimums already guard against small samples.
+    """
+    lg_woba = lg_avgs.get('lg_woba', 0.315)
+
+    def lineup_factor(lineup_ids, pitcher_id, cache):
+        pit_info     = cache.get(f"pit_{pitcher_id}", {})
+        pitcher_hand = pit_info.get('hand', 'R')
+        split_key    = 'vs_rhp' if pitcher_hand == 'R' else 'vs_lhp'
+        woba_vals = []
+        for pid in lineup_ids:
+            bat_info = cache.get(f"bat_{pid}", {})
+            splits   = bat_info.get('splits') or {}
+            woba     = splits.get(split_key)
+            if woba and woba > 0:
+                woba_vals.append(woba)
+        if len(woba_vals) < 3:   # need ≥3 batters with qualifying data
+            return 1.0, pitcher_hand, len(woba_vals)
+        factor = sum(woba_vals) / len(woba_vals) / lg_woba
+        return factor, pitcher_hand, len(woba_vals)
+
+    home_factor, away_hand, home_n = lineup_factor(home_lineup, away_pitcher_id, splits_cache)
+    away_factor, home_hand, away_n = lineup_factor(away_lineup, home_pitcher_id, splits_cache)
+
+    notes = (
+        f"vs {'L' if away_hand == 'L' else 'R'}HP ({home_n} batters) | "
+        f"vs {'L' if home_hand == 'L' else 'R'}HP ({away_n} batters)"
+    )
+    return home_factor, away_factor, notes
 
 def get_all_rolling_averages(team_ids, days_short=7, days_long=15):
     results = {}
@@ -665,94 +1058,157 @@ def get_yesterdays_results():
 
 yesterdays_results = get_yesterdays_results()
 
+_NO_BET_VALS = {'No Bet', 'No Edge', 'No Line', 'nan', 'None', ''}
+
+def _is_active_bet(val):
+    return pd.notna(val) and str(val) not in _NO_BET_VALS
+
+def compute_run_change(prev_bet, new_bet):
+    prev = _is_active_bet(prev_bet)
+    new  = _is_active_bet(new_bet)
+    if not prev and not new:   return '—'
+    if not prev and new:       return 'EDGE GAINED'
+    if prev and not new:       return 'EDGE LOST'
+    if str(prev_bet) != str(new_bet): return 'PICK CHANGED'
+    return '—'
+
+def get_final_run(game_time_str, row):
+    """Return the run number that was the last scheduled run before game time."""
+    try:
+        hour = int(str(game_time_str).split(':')[0])
+    except Exception:
+        hour = 19
+    cutoff = 1 if hour < 11 else (2 if hour < 16 else 3)
+    for run in range(cutoff, 0, -1):
+        if _is_active_bet(row.get(f'run{run}_bet_team')):
+            return run
+    return cutoff
+
 def log_predictions(predictions, results):
     log_file = 'predictions_log.csv'
-    
-    # Determine which run this is based on current hour
+
     from datetime import datetime
     hour = datetime.now().hour
-    if hour < 11:
-        run_num = 1
-        run_label = '9am'
-    elif hour < 15:
-        run_num = 2
-        run_label = '12pm'
-    else:
-        run_num = 3
-        run_label = '4pm'
-    
+    run_num   = 1 if hour < 11 else (2 if hour < 15 else 3)
+    today_str = date.today().strftime('%Y-%m-%d')
+    yesterday_str = (date.today() - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+
     if not predictions:
         return
 
-    # Load existing log or create new one
     columns = [
-        'date', 'home_team', 'away_team', 'bet_type',
+        'date', 'game_time', 'home_team', 'away_team', 'bet_type',
         'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
-        'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge',
-        'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge',
-        'home_score', 'away_score', 'winner', 'result', 'flag'
+        'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
+        'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
+        'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
+        'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
+        'actual_home_score', 'actual_away_score', 'winner', 'result',
     ]
-    
+
     if os.path.exists(log_file):
         df = pd.read_csv(log_file, dtype=str)
+        # Rename old column names if migrating from a previous schema
+        df = df.rename(columns={'home_score': 'actual_home_score', 'away_score': 'actual_away_score'})
+        for col in columns:
+            if col not in df.columns:
+                df[col] = None
     else:
         df = pd.DataFrame(columns=columns)
-    
+
+    # ── Pass 1: log today's predictions — always PENDING ──────────────────────
     for pred in predictions:
         game_date = pred['date']
-        home_fg = pred['home_fg']
-        away_fg = pred['away_fg']
-        bet_type = pred['bet_type']
-        
-        # Find existing row for this game and bet type
-        mask = (df['date'] == game_date) & \
-               (df['home_team'] == home_fg) & \
-               (df['away_team'] == away_fg) & \
-               (df['bet_type'] == bet_type)
-        
+        home_fg   = pred['home_fg']
+        away_fg   = pred['away_fg']
+        bet_type  = pred['bet_type']
+        game_time = pred.get('game_time', '')
+
+        mask = (
+            (df['date']      == game_date) &
+            (df['home_team'] == home_fg)   &
+            (df['away_team'] == away_fg)   &
+            (df['bet_type']  == bet_type)
+        )
+
         if df[mask].empty:
-            # Create new row
             new_row = {col: None for col in columns}
-            new_row['date'] = game_date
+            new_row['date']      = game_date
+            new_row['game_time'] = game_time
             new_row['home_team'] = home_fg
             new_row['away_team'] = away_fg
-            new_row['bet_type'] = bet_type
-            new_row[f'run{run_num}_bet_team'] = pred['bet_team']
+            new_row['bet_type']  = bet_type
+            new_row[f'run{run_num}_bet_team']  = pred['bet_team']
             new_row[f'run{run_num}_model_pct'] = pred['model_pct']
             new_row[f'run{run_num}_book_line'] = pred['book_line']
-            new_row[f'run{run_num}_edge'] = pred['edge']
-            
-            # Add results if available
-            game_key = f"{away_fg}_{home_fg}"
-            if game_key in results:
-                r = results[game_key]
-                new_row['home_score'] = str(r['home_score'])
-                new_row['away_score'] = str(r['away_score'])
-                new_row['winner'] = r['winner']
-                new_row['result'] = evaluate_result(pred, r)
-            
-            new_row['flag'] = 'CONSISTENT'
+            new_row[f'run{run_num}_edge']      = pred['edge']
+            new_row['raw_model_pct']           = pred.get('raw_model_pct', '')
+            new_row['home_platoon_factor']     = pred.get('home_platoon_factor', '')
+            new_row['away_platoon_factor']     = pred.get('away_platoon_factor', '')
+            new_row['platoon_confirmed']       = pred.get('platoon_confirmed', 'No')
+            final_run = get_final_run(game_time, new_row)
+            new_row['final_run']       = str(final_run)
+            new_row['final_bet_team']  = new_row.get(f'run{final_run}_bet_team')
+            new_row['final_model_pct'] = new_row.get(f'run{final_run}_model_pct')
+            new_row['final_book_line'] = new_row.get(f'run{final_run}_book_line')
+            new_row['final_edge']      = new_row.get(f'run{final_run}_edge')
+            new_row['result'] = 'PENDING'
             df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
         else:
-            # Update existing row
             idx = df[mask].index[0]
-            df.at[idx, f'run{run_num}_bet_team'] = pred['bet_team']
+            # Backfill game_time if missing (rows created before column existed)
+            existing_gt = df.at[idx, 'game_time']
+            if not existing_gt or str(existing_gt) in ('', 'nan', 'None'):
+                df.at[idx, 'game_time'] = game_time
+            if run_num > 1:
+                prev_bet = df.at[idx, f'run{run_num - 1}_bet_team']
+                df.at[idx, f'run{run_num}_change'] = compute_run_change(prev_bet, pred['bet_team'])
+            df.at[idx, f'run{run_num}_bet_team']  = pred['bet_team']
             df.at[idx, f'run{run_num}_model_pct'] = pred['model_pct']
             df.at[idx, f'run{run_num}_book_line'] = pred['book_line']
-            df.at[idx, f'run{run_num}_edge'] = pred['edge']
-            
-            # Add results if available
-            game_key = f"{away_fg}_{home_fg}"
-            if game_key in results:
-                r = results[game_key]
-                df.at[idx, 'home_score'] = str(r['home_score'])
-                df.at[idx, 'away_score'] = str(r['away_score'])
-                df.at[idx, 'winner'] = r['winner']
-                df.at[idx, 'result'] = evaluate_result(pred, r)
-            
-            # Update flag
-            df.at[idx, 'flag'] = evaluate_flag(df.iloc[idx])
-    
+            df.at[idx, f'run{run_num}_edge']      = pred['edge']
+            # Update platoon fields — lineup may have been confirmed since last run
+            df.at[idx, 'raw_model_pct']       = pred.get('raw_model_pct') or df.at[idx, 'raw_model_pct']
+            df.at[idx, 'home_platoon_factor'] = pred.get('home_platoon_factor') or df.at[idx, 'home_platoon_factor']
+            df.at[idx, 'away_platoon_factor'] = pred.get('away_platoon_factor') or df.at[idx, 'away_platoon_factor']
+            if pred.get('platoon_confirmed') == 'Yes':
+                df.at[idx, 'platoon_confirmed'] = 'Yes'
+            gt = df.at[idx, 'game_time'] or game_time
+            final_run = get_final_run(gt, df.loc[idx])
+            df.at[idx, 'final_run']       = str(final_run)
+            df.at[idx, 'final_bet_team']  = df.at[idx, f'run{final_run}_bet_team']
+            df.at[idx, 'final_model_pct'] = df.at[idx, f'run{final_run}_model_pct']
+            df.at[idx, 'final_book_line'] = df.at[idx, f'run{final_run}_book_line']
+            df.at[idx, 'final_edge']      = df.at[idx, f'run{final_run}_edge']
+
+    # ── Pass 2: fill actual results for yesterday's rows ──────────────────────
+    # Completely separate from today's predictions — eliminates the bug where
+    # the same two teams playing back-to-back days would inherit yesterday's result.
+    for idx in df[df['date'] == yesterday_str].index:
+        row      = df.loc[idx]
+        game_key = f"{row['away_team']}_{row['home_team']}"
+        if game_key not in results:
+            continue
+        r = results[game_key]
+        df.at[idx, 'actual_home_score'] = str(r['home_score'])
+        df.at[idx, 'actual_away_score'] = str(r['away_score'])
+        df.at[idx, 'winner']            = r['winner']
+        final_pred = {
+            'bet_type': row['bet_type'],
+            'bet_team': row.get('final_bet_team'),
+            'book_line': row.get('final_book_line'),
+        }
+        df.at[idx, 'result'] = evaluate_result(final_pred, r)
+
+    # Safety net: today's rows are always PENDING with no scores, regardless of old data
+    today_mask = df['date'] == today_str
+    df.loc[today_mask, 'result']            = 'PENDING'
+    df.loc[today_mask, 'actual_home_score'] = None
+    df.loc[today_mask, 'actual_away_score'] = None
+    df.loc[today_mask, 'winner']            = None
+
+    df = df.reindex(columns=columns)
+    df = df.sort_values(['date', 'game_time'], ascending=[False, True], na_position='last').reset_index(drop=True)
     df.to_csv(log_file, index=False)
     generate_excel_log(df)
     update_google_sheets(df)
@@ -818,37 +1274,51 @@ def generate_excel_log(df):
     try:
         import openpyxl
         from openpyxl.styles import PatternFill
-        
+
         excel_file = 'predictions_log.xlsx'
         df.to_excel(excel_file, index=False)
-        
+
         wb = openpyxl.load_workbook(excel_file)
         ws = wb.active
-        
-        green = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
-        red = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+
+        green  = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
+        red    = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
         yellow = PatternFill(start_color='FFEB9C', end_color='FFEB9C', fill_type='solid')
-        
-        flag_col = df.columns.get_loc('flag') + 1
-        result_col = df.columns.get_loc('result') + 1
-        
-        for row_idx, row in enumerate(ws.iter_rows(min_row=2), start=2):
-            flag = ws.cell(row=row_idx, column=flag_col).value
-            result = ws.cell(row=row_idx, column=result_col).value
-            
-            if flag in ['TEAM CHANGED', 'EDGE LOST', 'EDGE GAINED']:
-                fill = yellow
-            elif result == 'WIN':
-                fill = green
-            elif result == 'LOSS':
-                fill = red
-            else:
-                fill = None
-            
-            if fill:
-                for cell in row:
-                    cell.fill = fill
-        
+        orange = PatternFill(start_color='F4B942', end_color='F4B942', fill_type='solid')
+
+        col_names = [c.value for c in ws[1]]
+        def col_idx(name):
+            try:
+                return col_names.index(name) + 1
+            except ValueError:
+                return None
+
+        result_col   = col_idx('result')
+        change_cols  = [col_idx('run2_change'), col_idx('run3_change')]
+
+        change_colors = {
+            'PICK CHANGED': orange,
+            'EDGE GAINED':  green,
+            'EDGE LOST':    red,
+        }
+
+        for row_idx in range(2, ws.max_row + 1):
+            # Color entire row by result
+            if result_col:
+                result = ws.cell(row=row_idx, column=result_col).value
+                row_fill = green if result == 'WIN' else (red if result == 'LOSS' else None)
+                if row_fill:
+                    for col in range(1, ws.max_column + 1):
+                        ws.cell(row=row_idx, column=col).fill = row_fill
+
+            # Overlay change columns with their own colors (takes priority)
+            for cc in change_cols:
+                if cc is None:
+                    continue
+                val = ws.cell(row=row_idx, column=cc).value
+                if val in change_colors:
+                    ws.cell(row=row_idx, column=cc).fill = change_colors[val]
+
         wb.save(excel_file)
     except Exception as e:
         print(f"Excel generation failed: {e}")
@@ -953,77 +1423,76 @@ def get_total_line(game):
 
 def calculate_league_averages(all_woba, all_fip, team_xwoba):
     # Offensive averages
-    lg_woba = np.mean([v['woba'] for v in all_woba.values()])
-    lg_xwoba = np.mean(list(team_xwoba.values()))
-    lg_k_pct_off = np.mean([v['k_pct'] for v in all_woba.values()])
-    lg_bb_pct_off = np.mean([v['bb_pct'] for v in all_woba.values()])
-    
+    lg_woba  = np.mean([v['woba'] for v in all_woba.values()])
+    lg_xwoba = np.mean(list(team_xwoba.values())) if team_xwoba else 0.320
+    babips   = [v['babip'] for v in all_woba.values() if v.get('babip') is not None]
+    lg_babip_off = np.mean(babips) if babips else 0.300
+
     # Pitching averages
-    lg_fip = np.mean([v['fip'] for v in all_fip.values()])
-    lg_xfip = np.mean([v['xfip'] for v in all_fip.values()])
+    lg_fip      = np.mean([v['fip']   for v in all_fip.values()])
+    lg_xfip     = np.mean([v['xfip']  for v in all_fip.values()])
     lg_k_pct_pit = np.mean([v['k_pct'] for v in all_fip.values()])
     lg_bb_pct_pit = np.mean([v['bb_pct'] for v in all_fip.values()])
-    
+
     return {
-        'lg_woba': lg_woba,
-        'lg_xwoba': lg_xwoba,
-        'lg_k_pct_off': lg_k_pct_off,
-        'lg_bb_pct_off': lg_bb_pct_off,
-        'lg_fip': lg_fip,
-        'lg_xfip': lg_xfip,
+        'lg_woba':      lg_woba,
+        'lg_xwoba':     lg_xwoba,
+        'lg_babip_off': lg_babip_off,
+        'lg_fip':       lg_fip,
+        'lg_xfip':      lg_xfip,
         'lg_k_pct_pit': lg_k_pct_pit,
-        'lg_bb_pct_pit': lg_bb_pct_pit
+        'lg_bb_pct_pit': lg_bb_pct_pit,
     }
 
-def calculate_team_ratings(team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs):
-    # Get rolling averages
-    hit_7 = rolling[team]['hit_7']
+def calculate_team_ratings(team, rolling, all_woba, all_fip, team_xwoba, lg_avgs, lg_avg_runs, injury_adj=None):
+    # Rolling averages — 7-day weighted 70%, 15-day 30% (backtest optimized)
+    hit_7  = rolling[team]['hit_7']
     hit_15 = rolling[team]['hit_15']
-    pitch_7 = rolling[team]['pitch_7']
+    pitch_7  = rolling[team]['pitch_7']
     pitch_15 = rolling[team]['pitch_15']
-    rolling_off = (hit_7 * 0.60) + (hit_15 * 0.40)
-    rolling_pit = (pitch_7 * 0.60) + (pitch_15 * 0.40)
+    rolling_off = (hit_7 * 0.70) + (hit_15 * 0.30)
+    rolling_pit = (pitch_7 * 0.70) + (pitch_15 * 0.30)
 
-    # Convert to ratings relative to league average
     rolling_off_rating = rolling_off / lg_avg_runs
     rolling_pit_rating = lg_avg_runs / rolling_pit if rolling_pit > 0 else 1.0
 
     # Offensive ratings
-    woba_rating = all_woba[team]['woba'] / lg_avgs['lg_woba'] if team in all_woba else 1.0
-    xwoba_rating = team_xwoba[team] / lg_avgs['lg_xwoba'] if team in team_xwoba else 1.0
-    
-    # K% and BB% for offense - higher K% is bad, higher BB% is good
-    k_off_rating = lg_avgs['lg_k_pct_off'] / all_woba[team]['k_pct'] if team in all_woba and all_woba[team]['k_pct'] > 0 else 1.0
-    bb_off_rating = all_woba[team]['bb_pct'] / lg_avgs['lg_bb_pct_off'] if team in all_woba and lg_avgs['lg_bb_pct_off'] > 0 else 1.0
+    woba_rating  = all_woba[team]['woba'] / lg_avgs['lg_woba'] if team in all_woba else 1.0
+    xwoba_rating = team_xwoba[team] / lg_avgs['lg_xwoba'] if team in team_xwoba and lg_avgs['lg_xwoba'] > 0 else 1.0
+    babip_val    = all_woba[team].get('babip') if team in all_woba else None
+    babip_rating = (babip_val / lg_avgs['lg_babip_off']
+                    if babip_val is not None and lg_avgs['lg_babip_off'] > 0 else 1.0)
 
-    # Pitching ratings - lower FIP/xFIP is better so we invert
-    fip_rating = lg_avgs['lg_fip'] / all_fip[team]['fip'] if team in all_fip and all_fip[team]['fip'] > 0 else 1.0
-    xfip_rating = lg_avgs['lg_xfip'] / all_fip[team]['xfip'] if team in all_fip and all_fip[team]['xfip'] > 0 else 1.0
-    
-    # K% and BB% for pitching - higher K% is good, higher BB% is bad
-    k_pit_rating = all_fip[team]['k_pct'] / lg_avgs['lg_k_pct_pit'] if team in all_fip and lg_avgs['lg_k_pct_pit'] > 0 else 1.0
+    # Pitching ratings — lower FIP/xFIP is better, so invert
+    fip_rating   = lg_avgs['lg_fip']  / all_fip[team]['fip']  if team in all_fip and all_fip[team]['fip']  > 0 else 1.0
+    xfip_rating  = lg_avgs['lg_xfip'] / all_fip[team]['xfip'] if team in all_fip and all_fip[team]['xfip'] > 0 else 1.0
+    k_pit_rating  = all_fip[team]['k_pct'] / lg_avgs['lg_k_pct_pit'] if team in all_fip and lg_avgs['lg_k_pct_pit'] > 0 else 1.0
     bb_pit_rating = lg_avgs['lg_bb_pct_pit'] / all_fip[team]['bb_pct'] if team in all_fip and all_fip[team]['bb_pct'] > 0 else 1.0
 
-    # Combine with equal weights
     off_rating = (
         rolling_off_rating * OFFENSE_WEIGHTS['rolling'] +
-        woba_rating * OFFENSE_WEIGHTS['woba'] +
-        xwoba_rating * OFFENSE_WEIGHTS['xwoba'] +
-        k_off_rating * OFFENSE_WEIGHTS['k_pct'] +
-        bb_off_rating * OFFENSE_WEIGHTS['bb_pct']
+        woba_rating        * OFFENSE_WEIGHTS['woba']   +
+        xwoba_rating       * OFFENSE_WEIGHTS['xwoba']  +
+        babip_rating       * OFFENSE_WEIGHTS['babip']
     )
 
     pit_rating = (
         rolling_pit_rating * PITCHING_WEIGHTS['rolling'] +
-        fip_rating * PITCHING_WEIGHTS['fip'] +
-        xfip_rating * PITCHING_WEIGHTS['xfip'] +
-        k_pit_rating * PITCHING_WEIGHTS['k_pct'] +
-        bb_pit_rating * PITCHING_WEIGHTS['bb_pct']
+        fip_rating         * PITCHING_WEIGHTS['fip']    +
+        xfip_rating        * PITCHING_WEIGHTS['xfip']   +
+        k_pit_rating       * PITCHING_WEIGHTS['k_pct']  +
+        bb_pit_rating      * PITCHING_WEIGHTS['bb_pct']
     )
 
-    # Apply caps
-    off_rating = max(0.60, min(1.60, off_rating))
-    pit_rating = max(0.60, min(1.60, pit_rating))
+    # Apply IL injury adjustments (tapered — only active for first 14 days)
+    if injury_adj and team in injury_adj:
+        adj = injury_adj[team]
+        off_rating -= adj['off_adj']
+        pit_rating -= adj['pit_adj']
+
+    # Caps from backtest: low=0.65, high=1.50
+    off_rating = max(0.65, min(1.50, off_rating))
+    pit_rating = max(0.65, min(1.50, pit_rating))
 
     return off_rating, pit_rating
 
@@ -1136,6 +1605,58 @@ def send_email_report(body, run_label):
     except Exception as e:
         print(f"Email failed: {e}")
 
+MODEL_V2_START = '2026-05-21'   # date all major changes went live
+
+def _edge_tier(e):
+    try:
+        pct = float(str(e).replace('%', '').replace('+', ''))
+        if pct >= 15:   return '15%+'
+        if pct >= 10:   return '10-15%'
+        if pct >= 7:    return '7-10%'
+        return None
+    except Exception:
+        return None
+
+def _print_period_stats(settled, pending_count):
+    if settled.empty:
+        print(f"  No settled bets yet. ({pending_count} pending)")
+        return
+
+    w  = (settled['result'] == 'WIN').sum()
+    l  = (settled['result'] == 'LOSS').sum()
+    p  = (settled['result'] == 'PUSH').sum()
+    wr = w / (w + l) if (w + l) > 0 else 0
+    print(f"  Overall:    {w}W - {l}L - {p}P  |  Win Rate: {wr:.1%}  |  Pending: {pending_count}")
+    print()
+
+    for bet_type, label in [('Moneyline', 'Moneyline '), ('Over/Under', 'Over/Under')]:
+        sub = settled[settled['bet_type'] == bet_type]
+        if sub.empty:
+            continue
+        sw  = (sub['result'] == 'WIN').sum()
+        sl  = (sub['result'] == 'LOSS').sum()
+        sp  = (sub['result'] == 'PUSH').sum()
+        swr = sw / (sw + sl) if (sw + sl) > 0 else 0
+        if bet_type == 'Moneyline':
+            roi = _roi_for_bets(sub)
+            print(f"  {label}:  {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}  |  ROI: {roi:+.1f}%")
+        else:
+            print(f"  {label}: {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}")
+
+    ml = settled[settled['bet_type'] == 'Moneyline'].copy()
+    if not ml.empty:
+        ml['tier'] = ml['edge'].apply(_edge_tier)
+        tier_group = ml[ml['tier'].notna()].groupby('tier')
+        print()
+        print("  Edge tiers (Moneyline):")
+        for tier in ['7-10%', '10-15%', '15%+']:
+            if tier in tier_group.groups:
+                g   = tier_group.get_group(tier)
+                tw  = (g['result'] == 'WIN').sum()
+                tl  = (g['result'] == 'LOSS').sum()
+                twr = tw / (tw + tl) if (tw + tl) > 0 else 0
+                print(f"    {tier:6s}: {tw}W - {tl}L  |  {twr:.1%}")
+
 def print_accuracy_report():
     log_file = 'predictions_log.csv'
     if not os.path.exists(log_file):
@@ -1143,84 +1664,92 @@ def print_accuracy_report():
 
     df = pd.read_csv(log_file, dtype=str)
 
-    # Build one row per prediction using the latest available run
+    # Build one analysis row per prediction using final_bet_team
     rows = []
     for _, row in df.iterrows():
-        bet_team = edge = book_line = None
-        for run in [3, 2, 1]:
-            t = row.get(f'run{run}_bet_team')
-            if pd.notna(t) and t not in ('No Bet', 'nan', 'None'):
-                bet_team = t
-                edge = row.get(f'run{run}_edge')
-                book_line = row.get(f'run{run}_book_line')
-                break
+        bet_team  = row.get('final_bet_team')
+        edge      = row.get('final_edge')
+        book_line = row.get('final_book_line')
+        if not _is_active_bet(bet_team):
+            for run in [3, 2, 1]:
+                t = row.get(f'run{run}_bet_team')
+                if _is_active_bet(t):
+                    bet_team  = t
+                    edge      = row.get(f'run{run}_edge')
+                    book_line = row.get(f'run{run}_book_line')
+                    break
         rows.append({
-            'date': row['date'],
-            'bet_type': row['bet_type'],
-            'bet_team': bet_team,
-            'edge': edge,
+            'date':      row.get('date', ''),
+            'bet_type':  row.get('bet_type', ''),
+            'bet_team':  bet_team,
+            'edge':      edge,
             'book_line': book_line,
-            'result': row.get('result'),
+            'result':    row.get('result'),
+            'platoon_confirmed': row.get('platoon_confirmed', 'No'),
+            'final_model_pct':  row.get('final_model_pct', ''),
+            'raw_model_pct':    row.get('raw_model_pct', ''),
         })
 
     analysis = pd.DataFrame(rows)
-    bets = analysis[analysis['bet_team'].notna()]
-    settled = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
-    pending = bets[bets['result'] == 'PENDING']
+    bets     = analysis[analysis['bet_team'].apply(_is_active_bet)]
+    settled  = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
+    pending  = bets[bets['result'] == 'PENDING']
+
+    # Split at the model v2 launch date
+    pre  = settled[settled['date'] <  MODEL_V2_START]
+    post = settled[settled['date'] >= MODEL_V2_START]
+    pre_pending  = pending[pending['date'] <  MODEL_V2_START]
+    post_pending = pending[pending['date'] >= MODEL_V2_START]
 
     print("\n=== ACCURACY REPORT ===\n")
 
-    if settled.empty:
-        print(f"No settled bets yet. ({len(pending)} pending)")
-        return
-
-    w = (settled['result'] == 'WIN').sum()
-    l = (settled['result'] == 'LOSS').sum()
-    p = (settled['result'] == 'PUSH').sum()
-    wr = w / (w + l) if (w + l) > 0 else 0
-    print(f"Overall:    {w}W - {l}L - {p}P  |  Win Rate: {wr:.1%}  |  Pending: {len(pending)}")
+    print(f"── Before {MODEL_V2_START} (original model) ─────────────────")
+    _print_period_stats(pre, len(pre_pending))
     print()
+    print(f"── From {MODEL_V2_START} onward (optimized model) ──────────")
+    _print_period_stats(post, len(post_pending))
 
-    for bet_type, label in [('Moneyline', 'Moneyline '), ('Over/Under', 'Over/Under')]:
-        sub = settled[settled['bet_type'] == bet_type]
-        sw = (sub['result'] == 'WIN').sum()
-        sl = (sub['result'] == 'LOSS').sum()
-        sp = (sub['result'] == 'PUSH').sum()
-        swr = sw / (sw + sl) if (sw + sl) > 0 else 0
-        if bet_type == 'Moneyline':
-            roi = _roi_for_bets(sub)
-            print(f"{label}:  {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}  |  ROI: {roi:+.1f}%")
-        else:
-            print(f"{label}: {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}")
+    # ── Platoon split analysis — v2 data only, moneyline, min 20 settled ─────
+    def to_pct(v):
+        try: return float(str(v).replace('%', ''))
+        except: return None
 
-    # Edge tier breakdown (moneyline only, settled)
-    ml = settled[settled['bet_type'] == 'Moneyline'].copy()
-    if not ml.empty:
-        def edge_tier(e):
-            if pd.isna(e):
-                return None
-            try:
-                pct = float(str(e).replace('%', '').replace('+', ''))
-                if pct >= 10:
-                    return '10%+'
-                elif pct >= 5:
-                    return '5-10%'
-                else:
-                    return '3-5%'
-            except ValueError:
-                return None
+    def wl(sub):
+        w  = (sub['result'] == 'WIN').sum()
+        l  = (sub['result'] == 'LOSS').sum()
+        wr = w / (w + l) if (w + l) > 0 else 0
+        return w, l, wr
 
-        ml['tier'] = ml['edge'].apply(edge_tier)
-        tier_group = ml[ml['tier'].notna()].groupby('tier')
+    plat = post[post['bet_type'] == 'Moneyline'].copy()
+    confirmed   = plat[plat['platoon_confirmed'] == 'Yes']
+    unconfirmed = plat[plat['platoon_confirmed'] != 'Yes']
+
+    MIN_SAMPLE = 20
+    print()
+    if len(confirmed) >= MIN_SAMPLE:
+        print("── Platoon analysis (v2 moneyline bets) ────────────────")
+        cw, cl, cwr = wl(confirmed)
+        uw, ul, uwr = wl(unconfirmed) if len(unconfirmed) > 0 else (0, 0, 0)
+        print(f"  Lineup confirmed    (n={len(confirmed):3d}): {cw}W - {cl}L  |  {cwr:.1%}")
+        if len(unconfirmed) > 0:
+            print(f"  Lineup unconfirmed  (n={len(unconfirmed):3d}): {uw}W - {ul}L  |  {uwr:.1%}")
+
+        confirmed['_fp'] = confirmed['final_model_pct'].apply(to_pct)
+        confirmed['_rp'] = confirmed['raw_model_pct'].apply(to_pct)
+        boosted = confirmed[confirmed['_fp'] > confirmed['_rp']]
+        lowered = confirmed[confirmed['_fp'] < confirmed['_rp']]
+        neutral = confirmed[confirmed['_fp'] == confirmed['_rp']]
+
         print()
-        print("Edge tiers (Moneyline):")
-        for tier in ['3-5%', '5-10%', '10%+']:
-            if tier in tier_group.groups:
-                g = tier_group.get_group(tier)
-                tw = (g['result'] == 'WIN').sum()
-                tl = (g['result'] == 'LOSS').sum()
-                twr = tw / (tw + tl) if (tw + tl) > 0 else 0
-                print(f"  {tier:6s}: {tw}W - {tl}L  |  {twr:.1%}")
+        for label, sub in [('Platoon boosted', boosted), ('Platoon lowered', lowered), ('Platoon neutral', neutral)]:
+            if len(sub) > 0:
+                sw, sl, swr = wl(sub)
+                print(f"  {label:16s}: (n={len(sub):3d}) {sw}W - {sl}L  |  {swr:.1%}")
+
+        if len(confirmed) < 50:
+            print(f"\n  (sample building — revisit at 50+ bets, currently {len(confirmed)})")
+    else:
+        print(f"── Platoon analysis: {len(confirmed)}/{MIN_SAMPLE} confirmed-lineup bets needed (v2 only)")
 
     print()
 
@@ -1245,6 +1774,9 @@ team_xwoba = cached_stats['team_xwoba']
 rolling = cached_stats['rolling']
 todays_starters = cached_stats.get('starters', {})
 lg_avgs = calculate_league_averages(all_woba, all_fip, team_xwoba)
+injury_adj    = get_injury_adjustments(team_ids, all_woba, all_fip, lg_avgs)
+lineups       = get_confirmed_lineups(first_game_date)
+platoon_splits = get_all_platoon_splits(lineups) if lineups else {}
 
 for key, status in game_statuses.items():
     parts = key.split('_')
@@ -1265,7 +1797,8 @@ _tee._buf.seek(0)
 
 print(f"\nUpcoming games today: {len(upcoming)}")
 
-print("\n=== TODAY'S EDGES ===\n")
+print(f"\n=== TODAY'S EDGES ===")
+print(f"Bankroll: ${BANKROLL:,.0f} | Kelly: Half ({KELLY_FRACTION}x) | Edge threshold: 7%\n")
 
 edge_games = []
 no_edge_games = []
@@ -1343,7 +1876,37 @@ for game in upcoming:
     if away_starter and away_starter['innings'] < MIN_INNINGS:
         low_sample.append(f"{away_name} starter {away_starter['name']} ({away_starter['innings']} IP)")
 
-    result = calculate_matchup(home_fg, away_fg, 2026, rolling=rolling, starters=todays_starters)
+    # Compute platoon factors if lineup is confirmed for this game
+    platoon_data  = None
+    platoon_text  = ""
+    game_key_plat = (home_fg, away_fg)
+    if game_key_plat in lineups and platoon_splits:
+        gd = lineups[game_key_plat]
+        if gd['home_lineup'] and gd['away_lineup']:
+            h_factor, a_factor, plat_notes = compute_platoon_factors(
+                gd['home_lineup'], gd['away_lineup'],
+                gd['home_pitcher_id'], gd['away_pitcher_id'],
+                platoon_splits, lg_avgs
+            )
+            platoon_data = (h_factor, a_factor)
+            platoon_text = (
+                f"\n   📐 Platoon — {home_name}: {h_factor - 1:+.1%} | "
+                f"{away_name}: {a_factor - 1:+.1%}  ({plat_notes})"
+            )
+        else:
+            platoon_text = "\n   📐 Platoon — Lineup not yet confirmed"
+    else:
+        platoon_text = "\n   📐 Platoon — Lineup not yet confirmed"
+
+    # Always compute raw (no platoon) result for tracking purposes
+    raw_result = calculate_matchup(home_fg, away_fg, 2026, rolling=rolling, starters=todays_starters,
+                                    injury_adj=injury_adj, platoon_data=None)
+    if raw_result is None:
+        continue
+    raw_home_pct, raw_away_pct = raw_result[0], raw_result[1]
+
+    result = calculate_matchup(home_fg, away_fg, 2026, rolling=rolling, starters=todays_starters,
+                                injury_adj=injury_adj, platoon_data=platoon_data)
     if result is None:
         continue
 
@@ -1355,19 +1918,36 @@ for game in upcoming:
 
     warning = f"\n   ⚠️  Low sample: {', '.join(low_sample)}" if low_sample else ""
 
+    # Collect injury notes for both teams
+    inj_notes = []
+    for team_fg in [home_fg, away_fg]:
+        if injury_adj and team_fg in injury_adj and injury_adj[team_fg]['notes']:
+            inj_notes.extend(injury_adj[team_fg]['notes'])
+    injury_text = ("\n   🏥 " + " | ".join(inj_notes)) if inj_notes else ""
+
     moneyline_edge = False
     ou_edge = False
     game_text = f"{away_name} @ {home_name} - {time_str}"
     
-    if home_edge > 0.03:
-        moneyline_text = f"   💰 Moneyline: Bet {home_name} | Model: {home_win_pct:.1%} | {best_home_book}: {home_market_line} | Edge: +{home_edge:.1%}"
+    if home_edge > 0.07:
+        kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line)
+        moneyline_text = (
+            f"   💰 Moneyline: Bet {home_name} | Model: {home_win_pct:.1%} | "
+            f"{best_home_book}: {home_market_line} | Edge: +{home_edge:.1%} | "
+            f"Kelly: {kelly_pct}% (${kelly_amt:.0f})"
+        )
         moneyline_edge = True
         bet_fg = home_fg
         bet_pct = home_win_pct
         bet_line = home_market_line
         bet_edge = home_edge
-    elif away_edge > 0.03:
-        moneyline_text = f"   💰 Moneyline: Bet {away_name} | Model: {away_win_pct:.1%} | {best_away_book}: {away_market_line} | Edge: +{away_edge:.1%}"
+    elif away_edge > 0.07:
+        kelly_pct, kelly_amt = kelly_bet_size(away_win_pct, away_market_line)
+        moneyline_text = (
+            f"   💰 Moneyline: Bet {away_name} | Model: {away_win_pct:.1%} | "
+            f"{best_away_book}: {away_market_line} | Edge: +{away_edge:.1%} | "
+            f"Kelly: {kelly_pct}% (${kelly_amt:.0f})"
+        )
         moneyline_edge = True
         bet_fg = away_fg
         bet_pct = away_win_pct
@@ -1378,13 +1958,31 @@ for game in upcoming:
 
     if total_data:
         book_total = total_data['total']
-        ou_diff = avg_total - book_total
+        ou_diff    = avg_total - book_total
+
+        # Derive over/under probability from Poisson total via normal approximation
+        # Total runs ~ Poisson(home_lambda + away_lambda), variance = mean
+        total_lambda = home_lambda + away_lambda
+        z = (book_total + 0.5 - total_lambda) / math.sqrt(max(total_lambda, 0.1))
+        over_prob  = 0.5 * (1 - math.erf(z / math.sqrt(2)))
+        under_prob = 1.0 - over_prob
+
         if ou_diff > 1.5:
-            ou_text = f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Over {total_data['over_price']}) | Edge: +{ou_diff:.1f} runs"
+            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(over_prob, total_data['over_price'])
+            ou_text = (
+                f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | "
+                f"{total_data['book']}: {book_total} (Over {total_data['over_price']}) | "
+                f"Edge: +{ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.0f})"
+            )
             ou_edge = True
 
         elif ou_diff < -1.5:
-            ou_text = f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | {total_data['book']}: {book_total} (Under {total_data['under_price']}) | Edge: {ou_diff:.1f} runs"
+            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(under_prob, total_data['under_price'])
+            ou_text = (
+                f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | "
+                f"{total_data['book']}: {book_total} (Under {total_data['under_price']}) | "
+                f"Edge: {ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.0f})"
+            )
             ou_edge = True
 
         else:
@@ -1406,16 +2004,32 @@ for game in upcoming:
         ml_book_line = str(home_market_line if home_win_pct > away_win_pct else away_market_line)
         ml_edge = 'No Edge'
 
+    game_time_24h = game_time.strftime('%H:%M')
+
+    home_pf = round(platoon_data[0], 4) if platoon_data else None
+    away_pf = round(platoon_data[1], 4) if platoon_data else None
+
+    # Raw model pct for the bet team (unadjusted, for platoon comparison)
+    if moneyline_edge:
+        raw_ml_pct = f"{raw_home_pct:.1%}" if bet_fg == home_fg else f"{raw_away_pct:.1%}"
+    else:
+        raw_ml_pct = f"{max(raw_home_pct, raw_away_pct):.1%}"
+
     todays_predictions.append({
-        'date': first_game_date,
-        'run_time': run_time,
-        'home_fg': home_fg,
-        'away_fg': away_fg,
-        'bet_type': 'Moneyline',
-        'bet_team': ml_bet_team,
-        'model_pct': ml_model_pct,
-        'book_line': ml_book_line,
-        'edge': ml_edge
+        'date':               first_game_date,
+        'game_time':          game_time_24h,
+        'run_time':           run_time,
+        'home_fg':            home_fg,
+        'away_fg':            away_fg,
+        'bet_type':           'Moneyline',
+        'bet_team':           ml_bet_team,
+        'model_pct':          ml_model_pct,
+        'raw_model_pct':      raw_ml_pct,
+        'book_line':          ml_book_line,
+        'edge':               ml_edge,
+        'home_platoon_factor': str(home_pf) if home_pf is not None else '',
+        'away_platoon_factor': str(away_pf) if away_pf is not None else '',
+        'platoon_confirmed':  'Yes' if platoon_data else 'No',
     })
 
     # Log O/U for all games
@@ -1426,37 +2040,48 @@ for game in upcoming:
         else:
             ou_bet_team = 'No Bet'
             ou_edge_str = 'No Edge'
-        
+
+        raw_ou_total = f"{raw_result[2]:.1f}"
         todays_predictions.append({
-            'date': first_game_date,
-            'run_time': run_time,
-            'home_fg': home_fg,
-            'away_fg': away_fg,
-            'bet_type': 'Over/Under',
-            'bet_team': ou_bet_team,
-            'model_pct': f"{avg_total:.1f}",
-            'book_line': str(book_total),
-            'edge': ou_edge_str
+            'date':               first_game_date,
+            'game_time':          game_time_24h,
+            'run_time':           run_time,
+            'home_fg':            home_fg,
+            'away_fg':            away_fg,
+            'bet_type':           'Over/Under',
+            'bet_team':           ou_bet_team,
+            'model_pct':          f"{avg_total:.1f}",
+            'raw_model_pct':      raw_ou_total,
+            'book_line':          str(book_total),
+            'edge':               ou_edge_str,
+            'home_platoon_factor': str(home_pf) if home_pf is not None else '',
+            'away_platoon_factor': str(away_pf) if away_pf is not None else '',
+            'platoon_confirmed':  'Yes' if platoon_data else 'No',
         })
     else:
         todays_predictions.append({
-            'date': first_game_date,
-            'run_time': run_time,
-            'home_fg': home_fg,
-            'away_fg': away_fg,
-            'bet_type': 'Over/Under',
-            'bet_team': 'No Bet',
-            'model_pct': f"{avg_total:.1f}",
-            'book_line': 'N/A',
-            'edge': 'No Line'
+            'date':               first_game_date,
+            'game_time':          game_time_24h,
+            'run_time':           run_time,
+            'home_fg':            home_fg,
+            'away_fg':            away_fg,
+            'bet_type':           'Over/Under',
+            'bet_team':           'No Bet',
+            'model_pct':          f"{avg_total:.1f}",
+            'raw_model_pct':      f"{raw_result[2]:.1f}",
+            'book_line':          'N/A',
+            'edge':               'No Line',
+            'home_platoon_factor': str(home_pf) if home_pf is not None else '',
+            'away_platoon_factor': str(away_pf) if away_pf is not None else '',
+            'platoon_confirmed':  'Yes' if platoon_data else 'No',
         })
 
     if moneyline_edge or ou_edge:
         edge_games.append({
-            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}"
+            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}{injury_text}"
         })
     else:
-        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}")
+        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}{injury_text}")
 
 # Print edges
 if edge_games:
@@ -1500,7 +2125,6 @@ log_predictions(todays_predictions, yesterdays_results)
 from datetime import datetime as _dt
 _hour = _dt.now().hour
 _run_label = '9am' if _hour < 11 else ('12pm' if _hour < 15 else '4pm')
-_email_body = _tee.getvalue()
-
 print_accuracy_report()
+_email_body = _tee.getvalue()
 send_email_report(_email_body, _run_label)
