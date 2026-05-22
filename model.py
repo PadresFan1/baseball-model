@@ -1103,7 +1103,7 @@ def log_predictions(predictions, results):
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
-        'actual_home_score', 'actual_away_score', 'winner', 'result',
+        'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
     ]
 
     if os.path.exists(log_file):
@@ -1113,17 +1113,30 @@ def log_predictions(predictions, results):
             if col not in df.columns:
                 df[col] = None
 
-        # Retroactive fix: re-evaluate O/U rows that have scores but result stuck at PENDING
-        # Caused by the original evaluate_result not handling 'Over/Under' bet_type
+        has_scores = (
+            df['actual_home_score'].notna() &
+            ~df['actual_home_score'].isin(['', 'nan', 'None']) &
+            df['actual_away_score'].notna() &
+            ~df['actual_away_score'].isin(['', 'nan', 'None'])
+        )
+
+        # Retroactive fix: ML No Bet rows with scores stuck at PENDING → N/A
+        ml_nobet_mask = (
+            (df['bet_type'] == 'Moneyline') &
+            ~df['final_bet_team'].apply(_is_active_bet) &
+            (df['result'].isin(['PENDING', '']) | df['result'].isna()) &
+            has_scores
+        )
+        df.loc[ml_nobet_mask, 'result'] = 'N/A'
+
+        # Retroactive fix: O/U rows with scores but result stuck at PENDING
         ou_fix_mask = (
             (df['bet_type'] == 'Over/Under') &
             (df['result'].isin(['PENDING', '']) | df['result'].isna()) &
-            df['actual_home_score'].notna() &
-            ~df['actual_home_score'].isin(['', 'nan', 'None'])
+            has_scores
         )
         for idx in df[ou_fix_mask].index:
             row = df.loc[idx]
-            # Get bet_team — try final_bet_team first, fall back through runs
             bet_team = row.get('final_bet_team')
             if not _is_active_bet(bet_team):
                 for run in [3, 2, 1]:
@@ -1131,7 +1144,6 @@ def log_predictions(predictions, results):
                     if _is_active_bet(t):
                         bet_team = t
                         break
-            # Get book_line — try final_book_line first, fall back through runs
             book_line = row.get('final_book_line')
             if not book_line or str(book_line) in ('', 'nan', 'None'):
                 for run in [3, 2, 1]:
@@ -1150,6 +1162,29 @@ def log_predictions(predictions, results):
                     df.at[idx, 'result'] = new_result
             except Exception:
                 pass
+
+        # Retroactive fix: compute ou_direction for all O/U rows that have scores but no direction
+        if 'ou_direction' not in df.columns:
+            df['ou_direction'] = None
+        ou_dir_mask = (
+            (df['bet_type'] == 'Over/Under') &
+            (df['ou_direction'].isna() | df['ou_direction'].isin(['', 'nan', 'None']) |
+             df['ou_direction'].str.contains('nan', na=False)) &
+            has_scores
+        )
+        def _valid_pct(v):
+            return pd.notna(v) and str(v) not in ('', 'nan', 'None')
+
+        for idx in df[ou_dir_mask].index:
+            row = df.loc[idx]
+            model_total = next((row.get(f'run{r}_model_pct') for r in [3, 2, 1]
+                                if _valid_pct(row.get(f'run{r}_model_pct'))), None)
+            if not _valid_pct(model_total):
+                mt = row.get('final_model_pct')
+                model_total = mt if _valid_pct(mt) else None
+            direction = compute_ou_direction(model_total, row['actual_home_score'], row['actual_away_score'])
+            if direction:
+                df.at[idx, 'ou_direction'] = direction
     else:
         df = pd.DataFrame(columns=columns)
 
@@ -1237,12 +1272,23 @@ def log_predictions(predictions, results):
         }
         df.at[idx, 'result'] = evaluate_result(final_pred, r)
 
+        if row['bet_type'] == 'Over/Under':
+            model_total = next((row.get(f'run{rn}_model_pct') for rn in [3, 2, 1]
+                                if _valid_pct(row.get(f'run{rn}_model_pct'))), None)
+            if not _valid_pct(model_total):
+                mt = row.get('final_model_pct')
+                model_total = mt if _valid_pct(mt) else None
+            direction = compute_ou_direction(model_total, r['home_score'], r['away_score'])
+            if direction:
+                df.at[idx, 'ou_direction'] = direction
+
     # Safety net: today's rows are always PENDING with no scores, regardless of old data
     today_mask = df['date'] == today_str
     df.loc[today_mask, 'result']            = 'PENDING'
     df.loc[today_mask, 'actual_home_score'] = None
     df.loc[today_mask, 'actual_away_score'] = None
     df.loc[today_mask, 'winner']            = None
+    df.loc[today_mask, 'ou_direction']      = None
 
     df = df.reindex(columns=columns)
     df = df.sort_values(['date', 'game_time'], ascending=[False, True], na_position='last').reset_index(drop=True)
@@ -1250,9 +1296,30 @@ def log_predictions(predictions, results):
     generate_excel_log(df)
     update_google_sheets(df)
 
+def compute_ou_direction(model_total, actual_home, actual_away, close_threshold=1.0):
+    """Returns HIGH/LOW/CLOSE with signed error — how accurate was the model's run total?"""
+    try:
+        projected = float(model_total)
+        actual    = float(actual_home) + float(actual_away)
+        if pd.isna(projected) or pd.isna(actual):
+            return None
+        error = projected - actual
+        if abs(error) <= close_threshold:
+            return f'CLOSE {error:+.1f}'
+        elif error > 0:
+            return f'HIGH {error:+.1f}'
+        else:
+            return f'LOW {error:+.1f}'
+    except (ValueError, TypeError):
+        return None
+
 def evaluate_result(pred, game_result):
     bet_type  = pred.get('bet_type', '')
     bet_team  = pred.get('bet_team', '')
+    bet_team  = str(bet_team) if (bet_team is not None and str(bet_team) != 'nan') else ''
+
+    if bet_team in _NO_BET_VALS:
+        return 'N/A'
 
     if bet_type == 'Moneyline':
         if game_result['winner'] == bet_team:
@@ -1269,7 +1336,6 @@ def evaluate_result(pred, game_result):
             return 'PENDING'
         try:
             actual_total = float(home_score) + float(away_score)
-            # book_line format: "8.5@-110" (with odds) or "8.5" (no bet / legacy)
             raw = str(pred.get('book_line', ''))
             book_total = float(raw.split('@')[0])
         except (ValueError, TypeError):
@@ -1652,7 +1718,7 @@ def send_email_report(body, run_label):
             pass
 
     try:
-        subject = f"Baseball Model — {run_label} Run — {date.today().strftime('%a %b %d')}"
+        subject = f"Baseball Model - {date.today().strftime('%#m/%#d')}"
         msg = MIMEMultipart()
         msg['From']    = f'Betting Model <{sender}>'
         msg['To']      = recipient
@@ -1763,6 +1829,7 @@ def print_accuracy_report():
             'edge':      edge,
             'book_line': book_line,
             'result':    row.get('result'),
+            'ou_direction': row.get('ou_direction', ''),
             'platoon_confirmed': row.get('platoon_confirmed', 'No'),
             'final_model_pct':  row.get('final_model_pct', ''),
             'raw_model_pct':    row.get('raw_model_pct', ''),
@@ -1829,6 +1896,59 @@ def print_accuracy_report():
     else:
         print(f"── Platoon analysis: {len(confirmed)}/{MIN_SAMPLE} confirmed-lineup bets needed (v2 only)")
 
+    # ── O/U direction analysis — all O/U rows with a direction value ───────────
+    ou_all = analysis[analysis['bet_type'] == 'Over/Under'].copy()
+    ou_with_dir = ou_all[ou_all['ou_direction'].apply(
+        lambda x: bool(x) and str(x) not in ('', 'nan', 'None')
+    )]
+
+    if len(ou_with_dir) >= 5:
+        print()
+        print("── O/U projection accuracy (all games) ─────────────────")
+
+        def parse_dir(d):
+            try:
+                parts = str(d).split()
+                label = parts[0]
+                err   = float(parts[1])
+                return label, err
+            except Exception:
+                return None, None
+
+        labels = ou_with_dir['ou_direction'].apply(lambda d: parse_dir(d)[0])
+        errors = ou_with_dir['ou_direction'].apply(lambda d: parse_dir(d)[1]).dropna()
+
+        n_high  = (labels == 'HIGH').sum()
+        n_low   = (labels == 'LOW').sum()
+        n_close = (labels == 'CLOSE').sum()
+        n_total = len(ou_with_dir)
+
+        avg_err  = errors.mean()
+        avg_abs  = errors.abs().mean()
+
+        print(f"  Games tracked: {n_total}  |  Avg error: {avg_err:+.2f} runs  |  Avg abs error: {avg_abs:.2f} runs")
+        print(f"  HIGH (too high):  {n_high:3d}  ({n_high/n_total:.0%})")
+        print(f"  LOW  (too low):   {n_low:3d}  ({n_low/n_total:.0%})")
+        print(f"  CLOSE (±1 run):   {n_close:3d}  ({n_close/n_total:.0%})")
+
+        if avg_err > 0.5:
+            print(f"  >> Model is systematically HIGH by {avg_err:+.2f} runs on average")
+        elif avg_err < -0.5:
+            print(f"  >> Model is systematically LOW by {avg_err:+.2f} runs on average")
+
+        # Bet rows: direction vs result
+        ou_bets = ou_with_dir[ou_with_dir['bet_team'].apply(_is_active_bet)]
+        ou_settled = ou_bets[ou_bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
+        if len(ou_settled) >= 3:
+            print()
+            print(f"  Bet results by direction (n={len(ou_settled)}):")
+            for lbl in ['HIGH', 'LOW', 'CLOSE']:
+                sub = ou_settled[ou_settled['ou_direction'].str.startswith(lbl)]
+                if len(sub) > 0:
+                    w = (sub['result'] == 'WIN').sum()
+                    l = (sub['result'] == 'LOSS').sum()
+                    wr = w / (w + l) if (w + l) > 0 else 0
+                    print(f"    {lbl:5s}: {w}W - {l}L  ({wr:.0%})")
     print()
 
 odds_data = get_cached_odds()
