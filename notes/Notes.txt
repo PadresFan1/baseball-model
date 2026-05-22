@@ -1,0 +1,106 @@
+BASEBALL MODEL - NOTES & FUTURE TO DO LIST
+===========================================
+Last Updated: May 10, 2026
+
+CURRENT STATUS
+--------------
+- Basic Poisson model working with rolling 7/15 day windows
+- Starter RA9 integrated with 55/45 starter/bullpen split
+- Odds API connected with caching
+- Edge detection working with 3% threshold
+- Starter warning system working
+
+IMMEDIATE TO DO
+---------------
+- Add minimum innings threshold (15 IP) before trusting starter RA9
+- Add RA9 cap (7.00) to prevent extreme values
+- Build Excel output
+- Build email automation
+- Set up Windows Task Scheduler for 9am, 12pm, 4pm MST runs
+- Build results tracker for yesterday's picks
+- Upload project to GITHUB - DONE 5/11
+
+PUSHING UPDATES TO GITHUB
+-------------------
+git add .
+git commit -m "Updated notes with Git commit workflow"
+git push
+
+replace the text after -m in line two with whatever the update was
+-m is a message that will note what is new with the new update
+
+BACKTESTING RUN INFO
+-------------------
+There's no magic number, but a practical answer for your param space:
+
+- 3-5 runs (300-500 trials) — enough to start seeing which params consistently appear 
+in top results vs. which are just noise. evaluate_runs() will start showing clear 
+patterns in the parameter breakdown.
+- 10 runs (1000 trials) — the correlation output becomes reliable and you can 
+confidently narrow the param space.
+-Diminishing returns after ~15 runs for a space this size.
+-The signal to stop is when evaluate_runs() shows the same values winning 
+across runs — e.g. ml_edge_min = 0.05 keeps showing the highest avg ROI run 
+after run. At that point you've found something real rather than lucky. If the 
+top params keep changing run to run, keep going.
+- A good workflow: run 5 times, look at the evaluation output, narrow the param space
+in the code based on what's winning, then run 5 more times with the tighter range. 
+
+FUTURE ENHANCEMENTS
+-------------------
+- Add GB%/FB% pitcher tendency profile
+- Add wrc+, woba, and other advanced metrics
+- Add park factors per stadium
+- Add weather/wind conditions
+- Add platoon splits (lefty/righty matchups)
+- Add bullpen availability based on recent usage
+- Add individual reliever matchup logic vs opposing lineup
+- Add confirmed lineup integration from MLB API
+- Add last 3 starts weighting for starters (50/30/20)
+
+OUTPUT FORMAT UPDATE
+---------------------
+- Each game shows date, projected scores, total
+- Two indented lines per game: moneyline and O/U
+- 💰 = moneyline edge found
+- 📊 = O/U edge found  
+- ➖ = no edge on that market
+- ✅ at game level if ANY edge found
+- ❌ at game level if no edges found on either market
+- ⚠️ for starter warnings (unchanged)
+
+
+PRESEASON / APRIL CONSIDERATIONS
+---------------------------------
+- No rolling window data available at season start
+- Use FanGraphs ZiPS or Steamer projections as starting lambda
+- Gradually shift weight from projections to actual results through April
+- By May rolling windows should have enough data to take over
+- Download projected team offense and pitching from FanGraphs preseason
+
+PLAYOFF CONSIDERATIONS
+----------------------
+- Build separate playoff mode with different weights
+- Starters pitch deeper or get pulled earlier
+- Bullpen usage flips completely - closers pitch multiple innings
+- Off days allow aces on short rest and best arms more frequently
+- Small sample sizes again - only 5-15 playoff games
+- Home field and crowd factor more heavily
+- Manager tendencies become more important
+
+DATA SOURCES
+------------
+- FanGraphs: team offense and pitching (manual download for now)
+- MLB Stats API: daily game logs, probable starters, schedules
+- The Odds API: live moneylines (500 free credits/month)
+- Future: FanGraphs individual pitcher stats (GB%, FB%, splits)
+- Future: Weather API for wind/conditions
+- Future: FanGraphs preseason projections (ZiPS/Steamer)
+
+KNOWN LIMITATIONS
+-----------------
+- Team level pitching rolls don't account for who's actually pitching
+- Early season data has small sample size issues
+- Playoffs require different model entirely
+- Starters not posted until morning of game day
+- Model runs 3x daily: 9am, 12pm, 4pm MST

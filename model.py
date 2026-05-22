@@ -205,7 +205,7 @@ def ip_to_float(ip_str):
         return 0.0
 
 def get_cached_odds():
-    cache_file='odds_cache.json'
+    cache_file='cache/odds_cache.json'
 
     # Check if cache exists and is fresh
     if os.path.exists(cache_file):
@@ -271,12 +271,12 @@ def get_park_factor(home_team, season=2025):
     return row['1yr'].values[0] / 100
 
 # Load offense data
-offense_2021 = pd.read_csv('offense_2021.csv')
-offense_2022 = pd.read_csv('offense_2022.csv')
-offense_2023 = pd.read_csv('offense_2023.csv')
-offense_2024 = pd.read_csv('offense_2024.csv')
-offense_2025 = pd.read_csv('offense_2025.csv')
-offense_2026 = pd.read_csv('offense_2026.csv')
+offense_2021 = pd.read_csv('season_stats/offense_2021.csv')
+offense_2022 = pd.read_csv('season_stats/offense_2022.csv')
+offense_2023 = pd.read_csv('season_stats/offense_2023.csv')
+offense_2024 = pd.read_csv('season_stats/offense_2024.csv')
+offense_2025 = pd.read_csv('season_stats/offense_2025.csv')
+offense_2026 = pd.read_csv('season_stats/offense_2026.csv')
 
 # Assign years
 offense_2021['year'] = 2021
@@ -290,12 +290,12 @@ offense_2026['year'] = 2026
 offense = pd.concat([offense_2021, offense_2022, offense_2023, offense_2024,offense_2025,offense_2026])
 
 # Load pitching data
-pitching_2021 = pd.read_csv('pitching_2021.csv')
-pitching_2022 = pd.read_csv('pitching_2022.csv')
-pitching_2023 = pd.read_csv('pitching_2023.csv')
-pitching_2024 = pd.read_csv('pitching_2024.csv')
-pitching_2025 = pd.read_csv('pitching_2025.csv')
-pitching_2026 = pd.read_csv('pitching_2026.csv')
+pitching_2021 = pd.read_csv('season_stats/pitching_2021.csv')
+pitching_2022 = pd.read_csv('season_stats/pitching_2022.csv')
+pitching_2023 = pd.read_csv('season_stats/pitching_2023.csv')
+pitching_2024 = pd.read_csv('season_stats/pitching_2024.csv')
+pitching_2025 = pd.read_csv('season_stats/pitching_2025.csv')
+pitching_2026 = pd.read_csv('season_stats/pitching_2026.csv')
 
 # Assign years
 pitching_2021['year'] = 2021
@@ -938,7 +938,7 @@ def get_all_platoon_splits(lineup_data, season=2026):
     Returns {bat_{id}: {splits, hand}, pit_{id}: {splits, hand}} cache dict.
     Cache TTL: 6 hours (splits don't change intraday).
     """
-    cache_file = 'splits_cache.json'
+    cache_file = 'cache/splits_cache.json'
     cache = {}
     if os.path.exists(cache_file):
         age_hours = (datetime.now().timestamp() - os.path.getmtime(cache_file)) / 3600
@@ -1085,7 +1085,7 @@ def get_final_run(game_time_str, row):
     return cutoff
 
 def log_predictions(predictions, results):
-    log_file = 'predictions_log.csv'
+    log_file = 'predictions/predictions_log.csv'
 
     from datetime import datetime
     hour = datetime.now().hour
@@ -1108,11 +1108,48 @@ def log_predictions(predictions, results):
 
     if os.path.exists(log_file):
         df = pd.read_csv(log_file, dtype=str)
-        # Rename old column names if migrating from a previous schema
         df = df.rename(columns={'home_score': 'actual_home_score', 'away_score': 'actual_away_score'})
         for col in columns:
             if col not in df.columns:
                 df[col] = None
+
+        # Retroactive fix: re-evaluate O/U rows that have scores but result stuck at PENDING
+        # Caused by the original evaluate_result not handling 'Over/Under' bet_type
+        ou_fix_mask = (
+            (df['bet_type'] == 'Over/Under') &
+            (df['result'].isin(['PENDING', '']) | df['result'].isna()) &
+            df['actual_home_score'].notna() &
+            ~df['actual_home_score'].isin(['', 'nan', 'None'])
+        )
+        for idx in df[ou_fix_mask].index:
+            row = df.loc[idx]
+            # Get bet_team — try final_bet_team first, fall back through runs
+            bet_team = row.get('final_bet_team')
+            if not _is_active_bet(bet_team):
+                for run in [3, 2, 1]:
+                    t = row.get(f'run{run}_bet_team')
+                    if _is_active_bet(t):
+                        bet_team = t
+                        break
+            # Get book_line — try final_book_line first, fall back through runs
+            book_line = row.get('final_book_line')
+            if not book_line or str(book_line) in ('', 'nan', 'None'):
+                for run in [3, 2, 1]:
+                    bl = row.get(f'run{run}_book_line')
+                    if bl and str(bl) not in ('', 'nan', 'None'):
+                        book_line = bl
+                        break
+            try:
+                fake_result = {
+                    'home_score': row['actual_home_score'],
+                    'away_score': row['actual_away_score'],
+                }
+                pred = {'bet_type': 'Over/Under', 'bet_team': bet_team, 'book_line': book_line}
+                new_result = evaluate_result(pred, fake_result)
+                if new_result != 'PENDING':
+                    df.at[idx, 'result'] = new_result
+            except Exception:
+                pass
     else:
         df = pd.DataFrame(columns=columns)
 
@@ -1214,35 +1251,38 @@ def log_predictions(predictions, results):
     update_google_sheets(df)
 
 def evaluate_result(pred, game_result):
-    bet_type = pred['bet_type']
+    bet_type  = pred.get('bet_type', '')
+    bet_team  = pred.get('bet_team', '')
+
     if bet_type == 'Moneyline':
-        if game_result['winner'] == pred['bet_team']:
+        if game_result['winner'] == bet_team:
             return 'WIN'
         elif game_result['winner'] is None:
             return 'PENDING'
         else:
             return 'LOSS'
-    elif bet_type in ['Over', 'Under']:
+
+    elif bet_type == 'Over/Under':
         home_score = game_result.get('home_score')
         away_score = game_result.get('away_score')
         if home_score is None or away_score is None:
             return 'PENDING'
-        total = float(home_score) + float(away_score)
-        book_line = float(pred['book_line'])
-        if bet_type == 'Over':
-            if total > book_line:
-                return 'WIN'
-            elif total == book_line:
-                return 'PUSH'
-            else:
-                return 'LOSS'
-        else:
-            if total < book_line:
-                return 'WIN'
-            elif total == book_line:
-                return 'PUSH'
-            else:
-                return 'LOSS'
+        try:
+            actual_total = float(home_score) + float(away_score)
+            # book_line format: "8.5@-110" (with odds) or "8.5" (no bet / legacy)
+            raw = str(pred.get('book_line', ''))
+            book_total = float(raw.split('@')[0])
+        except (ValueError, TypeError):
+            return 'PENDING'
+        if bet_team == 'Over':
+            if actual_total > book_total:   return 'WIN'
+            elif actual_total == book_total: return 'PUSH'
+            else:                           return 'LOSS'
+        elif bet_team == 'Under':
+            if actual_total < book_total:   return 'WIN'
+            elif actual_total == book_total: return 'PUSH'
+            else:                           return 'LOSS'
+
     return 'PENDING'
 
 def evaluate_flag(row):
@@ -1275,7 +1315,7 @@ def generate_excel_log(df):
         import openpyxl
         from openpyxl.styles import PatternFill
 
-        excel_file = 'predictions_log.xlsx'
+        excel_file = 'predictions/predictions_log.xlsx'
         df.to_excel(excel_file, index=False)
 
         wb = openpyxl.load_workbook(excel_file)
@@ -1497,7 +1537,7 @@ def calculate_team_ratings(team, rolling, all_woba, all_fip, team_xwoba, lg_avgs
     return off_rating, pit_rating
 
 def get_cached_stats(team_ids, game_date=None):
-    cache_file = 'stats_cache.json'
+    cache_file = 'cache/stats_cache.json'
     
     if os.path.exists(cache_file):
         modified_time = os.path.getmtime(cache_file)
@@ -1538,7 +1578,7 @@ def update_google_sheets(df):
         import gspread
         from google.oauth2.service_account import Credentials
         
-        creds_path = os.getenv('GOOGLE_CREDENTIALS_PATH', 'google_credentials.json')
+        creds_path = os.getenv('GOOGLE_CREDENTIALS_PATH', 'cache/google_credentials.json')
         
         scopes = [
             'https://www.googleapis.com/auth/spreadsheets',
@@ -1566,8 +1606,17 @@ def _roi_for_bets(bets_df):
     for _, row in bets_df.iterrows():
         if row['result'] not in ('WIN', 'LOSS'):
             continue
+        raw      = str(row.get('book_line', ''))
+        bet_type = str(row.get('bet_type', ''))
         try:
-            line = float(row['book_line'])
+            if '@' in raw:
+                # O/U format "8.5@-110" — odds are after the @
+                line = float(raw.split('@')[1])
+            elif bet_type == 'Over/Under':
+                # Old O/U row — no odds stored, skip to avoid corruption
+                continue
+            else:
+                line = float(raw)
         except (ValueError, TypeError):
             continue
         wagered += 100
@@ -1587,8 +1636,20 @@ def send_email_report(body, run_label):
     recipient = os.getenv('EMAIL_RECIPIENT')
 
     if not all([sender, password, recipient]):
-        print("Email not configured — skipping. Add EMAIL_SENDER, EMAIL_APP_PASSWORD, EMAIL_RECIPIENT to .env")
+        print("Email not configured — skipping.")
         return
+
+    # Throttle: skip if an email was sent within the last 2 hours
+    stamp_file = 'cache/email_last_sent.txt'
+    if os.path.exists(stamp_file):
+        try:
+            last_sent  = float(open(stamp_file).read().strip())
+            hours_ago  = (datetime.now().timestamp() - last_sent) / 3600
+            if hours_ago < 2:
+                print(f"Email skipped — last sent {hours_ago:.1f}h ago (2h throttle)")
+                return
+        except Exception:
+            pass
 
     try:
         subject = f"Baseball Model — {run_label} Run — {date.today().strftime('%a %b %d')}"
@@ -1601,6 +1662,9 @@ def send_email_report(body, run_label):
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
             server.login(sender, password)
             server.sendmail(sender, recipient, msg.as_string())
+
+        with open(stamp_file, 'w') as f:
+            f.write(str(datetime.now().timestamp()))
         print(f"Email sent to {recipient}")
     except Exception as e:
         print(f"Email failed: {e}")
@@ -1617,7 +1681,17 @@ def _edge_tier(e):
     except Exception:
         return None
 
-def _print_period_stats(settled, pending_count):
+def _ou_edge_tier(e):
+    try:
+        runs = abs(float(str(e).replace('runs', '').replace('+', '').strip()))
+        if runs >= 3.5:  return '3.5+ runs'
+        if runs >= 2.5:  return '2.5-3.5 runs'
+        if runs >= 1.5:  return '1.5-2.5 runs'
+        return None
+    except Exception:
+        return None
+
+def _print_period_stats(settled, pending_count, show_roi=True):
     if settled.empty:
         print(f"  No settled bets yet. ({pending_count} pending)")
         return
@@ -1629,7 +1703,10 @@ def _print_period_stats(settled, pending_count):
     print(f"  Overall:    {w}W - {l}L - {p}P  |  Win Rate: {wr:.1%}  |  Pending: {pending_count}")
     print()
 
-    for bet_type, label in [('Moneyline', 'Moneyline '), ('Over/Under', 'Over/Under')]:
+    for bet_type, label, tiers, tier_fn in [
+        ('Moneyline',  'Moneyline ', ['7-10%', '10-15%', '15%+'],                      _edge_tier),
+        ('Over/Under', 'Over/Under', ['1.5-2.5 runs', '2.5-3.5 runs', '3.5+ runs'],   _ou_edge_tier),
+    ]:
         sub = settled[settled['bet_type'] == bet_type]
         if sub.empty:
             continue
@@ -1637,28 +1714,29 @@ def _print_period_stats(settled, pending_count):
         sl  = (sub['result'] == 'LOSS').sum()
         sp  = (sub['result'] == 'PUSH').sum()
         swr = sw / (sw + sl) if (sw + sl) > 0 else 0
-        if bet_type == 'Moneyline':
+        if show_roi:
             roi = _roi_for_bets(sub)
             print(f"  {label}:  {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}  |  ROI: {roi:+.1f}%")
         else:
-            print(f"  {label}: {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}")
-
-    ml = settled[settled['bet_type'] == 'Moneyline'].copy()
-    if not ml.empty:
-        ml['tier'] = ml['edge'].apply(_edge_tier)
-        tier_group = ml[ml['tier'].notna()].groupby('tier')
+            print(f"  {label}:  {sw}W - {sl}L - {sp}P  |  Win Rate: {swr:.1%}")
         print()
-        print("  Edge tiers (Moneyline):")
-        for tier in ['7-10%', '10-15%', '15%+']:
+        sub = sub.copy()
+        sub['tier'] = sub['edge'].apply(tier_fn)
+        tier_group  = sub[sub['tier'].notna()].groupby('tier')
+        if not tier_group.groups:
+            continue
+        print(f"  Edge tiers ({label.strip()}):")
+        for tier in tiers:
             if tier in tier_group.groups:
                 g   = tier_group.get_group(tier)
                 tw  = (g['result'] == 'WIN').sum()
                 tl  = (g['result'] == 'LOSS').sum()
                 twr = tw / (tw + tl) if (tw + tl) > 0 else 0
-                print(f"    {tier:6s}: {tw}W - {tl}L  |  {twr:.1%}")
+                print(f"    {tier:15s}: {tw}W - {tl}L  |  {twr:.1%}")
+        print()
 
 def print_accuracy_report():
-    log_file = 'predictions_log.csv'
+    log_file = 'predictions/predictions_log.csv'
     if not os.path.exists(log_file):
         return
 
@@ -1704,10 +1782,10 @@ def print_accuracy_report():
     print("\n=== ACCURACY REPORT ===\n")
 
     print(f"── Before {MODEL_V2_START} (original model) ─────────────────")
-    _print_period_stats(pre, len(pre_pending))
+    _print_period_stats(pre, len(pre_pending), show_roi=False)
     print()
     print(f"── From {MODEL_V2_START} onward (optimized model) ──────────")
-    _print_period_stats(post, len(post_pending))
+    _print_period_stats(post, len(post_pending), show_roi=True)
 
     # ── Platoon split analysis — v2 data only, moneyline, min 20 settled ─────
     def to_pct(v):
@@ -2037,9 +2115,13 @@ for game in upcoming:
         if ou_edge:
             ou_bet_team = 'Over' if ou_diff > 0 else 'Under'
             ou_edge_str = f"{ou_diff:+.1f} runs"
+            # Store as "total@odds" so actual odds are available for ROI calculation
+            ou_odds     = total_data['over_price'] if ou_diff > 0 else total_data['under_price']
+            ou_book_line = f"{book_total}@{ou_odds}"
         else:
-            ou_bet_team = 'No Bet'
-            ou_edge_str = 'No Edge'
+            ou_bet_team  = 'No Bet'
+            ou_edge_str  = 'No Edge'
+            ou_book_line = str(book_total)
 
         raw_ou_total = f"{raw_result[2]:.1f}"
         todays_predictions.append({
@@ -2052,7 +2134,7 @@ for game in upcoming:
             'bet_team':           ou_bet_team,
             'model_pct':          f"{avg_total:.1f}",
             'raw_model_pct':      raw_ou_total,
-            'book_line':          str(book_total),
+            'book_line':          ou_book_line,
             'edge':               ou_edge_str,
             'home_platoon_factor': str(home_pf) if home_pf is not None else '',
             'away_platoon_factor': str(away_pf) if away_pf is not None else '',

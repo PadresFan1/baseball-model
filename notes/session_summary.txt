@@ -1,0 +1,321 @@
+BASEBALL MODEL — FULL SESSION SUMMARY
+======================================
+Dates: May 17–21, 2026
+
+OVERVIEW
+--------
+This session covered: bug fixes, accuracy tracking, full parameter optimization
+via random search backtest (rounds 1-6, 7,000+ trials), statcast and bullpen
+data integration, 8.3x performance speedup, email reports, Kelly Criterion,
+injury adjustment system, platoon splits, prediction log restructure, O/U
+tracking, and 2025 data expansion.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 1: BUG FIXES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+model.py fixes:
+- calculate_matchup(): dead code removed (get_total_line, home_line/away_line).
+- UnicodeEncodeError: sys.stdout.reconfigure(encoding='utf-8') at top.
+- TypeError in log_predictions(): integer scores into str-typed DataFrame. Fixed str().
+- Google Sheets 429: replaced ~62 append_row() calls with single sheet.update().
+- evaluate_result() for Over/Under: was checking bet_type in ['Over','Under'] but
+  stored value is 'Over/Under'. Fixed to use bet_type == 'Over/Under' with
+  bet_team for direction.
+- O/U results retroactively fixed: old rows had result=PENDING because
+  evaluate_result never matched 'Over/Under'. Added retroactive fix pass in
+  log_predictions() that re-evaluates rows with actual scores but stale PENDING.
+
+backtest.py fixes:
+- random_search() was never called. Fixed.
+- get_league_hr_fb_rate() called but not defined. Added.
+- calc_xfip() KeyError on missing dict keys. Fixed.
+- ip_to_float(): "5.1" means 5⅓ IP, not 5.1. Added converter.
+- load_woba_fip_constants(): 'season' vs 'Season'. Fixed.
+- KeyError 'w_barrel_bat': removed from param space but still in formula. Fixed.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 2: MODEL WEIGHTS (v2 — launched 2026-05-21)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OFFENSE_WEIGHTS (k_pct and bb_pct removed — no positive contribution in backtest):
+    rolling: 0.090
+    woba:    0.378   ← dominant offensive signal
+    xwoba:   0.264
+    babip:   0.268   ← added (computed from existing statsapi data)
+
+PITCHING_WEIGHTS (normalized over 5 available live-model stats):
+    rolling: 0.078
+    fip:     0.240
+    xfip:    0.220
+    k_pct:   0.192
+    bb_pct:  0.270   ← consistently important
+
+Other parameter updates:
+- Edge threshold: 0.03 → 0.07
+- Rating caps: 0.60-1.60 → 0.65-1.50
+- Rolling blend: 0.60/0.40 → 0.70/0.30 (7-day/15-day)
+- MODEL_V2_START = '2026-05-21' (hardcoded split in accuracy report)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 3: KELLY CRITERION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+kelly_bet_size(model_prob, american_odds, bankroll, fraction):
+  Formula: f* = (b*p - q) / b  where b = net odds per $1
+  Half-Kelly by default (fraction=0.5), capped at 15% of bankroll per bet.
+  BANKROLL read from .env (default $1,000 if not set).
+
+Moneyline: uses model win probability directly.
+Over/Under: derives win probability from Poisson normal approximation:
+  z = (book_total + 0.5 - total_lambda) / sqrt(total_lambda)
+  over_prob = 0.5 * (1 - erf(z / sqrt(2)))
+
+Output format:
+  💰 Moneyline: Bet {team} | Model: 55.2% | DK: -130 | Edge: +7.1% | Kelly: 2.4% ($24)
+  📊 Over/Under: OVER | Model: 9.4 | Book: 8.5 | Edge: +0.9 runs | Kelly: 1.2% ($12)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 4: INJURY ADJUSTMENT SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+get_injury_adjustments(team_ids, all_woba, all_fip, lg_avgs):
+  - One API call: requests.get('https://statsapi.mlb.com/api/v1/transactions', ...)
+    with startDate=season_start, endDate=today, sportId=1
+  - Builds placed-but-not-activated set = currently on IL
+  - Filters to < 14 days on IL only (rolling averages catch up by day 14)
+  - Taper: (14 - days_on_il) / 14 → full weight day 1, zero by day 14
+  - For each recent IL player, fetches season stats and computes impact:
+    * Hitter: (player_woba/lg_woba - 1) * pa_share * taper → subtracted from off_rating
+      NO cap on pa_share (elite hitters naturally ~12-15% of team PA)
+    * Pitcher: (lg_fip/player_fip - 1) * ip_share * taper → subtracted from pit_rating
+      Capped at 25% IP share (starters pitch every 5th day)
+  - Thresholds: 30 PA minimum for hitters, 10 IP minimum for pitchers
+  - Output: 🏥 line in game text when injury affects either team
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 5: PLATOON SPLITS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+get_confirmed_lineups(game_date):
+  Direct MLB API call with hydrate=lineups,probablePitcher.
+  Returns {(home_fg, away_fg): {home_lineup, away_lineup, home_pitcher_id, away_pitcher_id}}
+  Only populates when MLB posts lineups (~2hrs before first pitch).
+
+get_players_hand(player_ids):
+  Batch fetch handedness for all lineup players in one API call.
+  {player_id: {bat_hand, pitch_hand}}
+
+get_player_split_woba(player_id, season, min_pa=30):
+  Per-player wOBA vs LHP and vs RHP from MLB Stats API statSplits.
+  Returns {vs_lhp: woba, vs_rhp: woba} or None if insufficient PA.
+
+get_pitcher_split_fip(pitcher_id, season, min_ip=5):
+  Pitcher FIP vs LHB and vs RHB from statSplits.
+  Returns {vs_lhb: fip, vs_rhb: fip} or None.
+
+get_all_platoon_splits(lineup_data, season):
+  Orchestrates all splits fetches, caches to splits_cache.json (6hr TTL).
+  Cache key: bat_{player_id} or pit_{player_id}.
+
+compute_platoon_factors(home_lineup, away_lineup, ...):
+  For each team: finds which batters' split to use (vs_rhp if facing RHP, vs_lhp if facing LHP).
+  Requires ≥3 batters with qualifying data.
+  Factor = lineup_avg_woba_vs_pitcher_hand / lg_woba
+  NO artificial cap — PA threshold and ≥3 batter minimum are the safeguards.
+  Returns (home_off_factor, away_off_factor, matchup_notes).
+
+Applied to: home_lambda and away_lambda directly in calculate_matchup().
+Display: platoon_text NOT shown in output — tracked silently for 3-week retrospective.
+
+Platoon tracking columns (in predictions_log.csv):
+  raw_model_pct        — win probability WITHOUT platoon adjustment
+  home_platoon_factor  — home offense factor (>1 = favorable matchup)
+  away_platoon_factor  — away offense factor
+  platoon_confirmed    — Yes/No whether lineup was posted before game time
+
+Accuracy report: platoon analysis section activates after 20+ settled
+confirmed-lineup moneyline bets. Shows:
+  - Lineup confirmed vs unconfirmed W-L comparison
+  - "Platoon boosted model" vs "Platoon lowered model" win rates
+  Key question: does boosted > lowered validate the adjustment?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 6: PREDICTION LOG RESTRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+New column structure (predictions_log.csv):
+  date, game_time, home_team, away_team, bet_type,
+  run1_bet_team, run1_model_pct, run1_book_line, run1_edge,
+  run2_bet_team, run2_model_pct, run2_book_line, run2_edge, run2_change,
+  run3_bet_team, run3_model_pct, run3_book_line, run3_edge, run3_change,
+  final_run, final_bet_team, final_model_pct, final_book_line, final_edge,
+  raw_model_pct, home_platoon_factor, away_platoon_factor, platoon_confirmed,
+  actual_home_score, actual_away_score, winner, result
+
+Key design decisions:
+- game_time: stored as "HH:MM" 24-hour MST (determines which run is "final")
+- run2_change / run3_change: EDGE GAINED / EDGE LOST / PICK CHANGED / —
+- final_run: last scheduled run BEFORE game time (not just last logged run)
+  * game < 11am → final_run = 1, game 11am-4pm → final_run = 2, game ≥ 4pm → final_run = 3
+- result: evaluated against final_bet_team only (not whichever run happened to be last)
+- actual_home_score/actual_away_score: always blank for today's games (PENDING)
+  Two-pass system: Pass 1 logs today as PENDING, Pass 2 updates yesterday's rows with results.
+  This eliminates the bug where same teams playing back-to-back days got yesterday's result.
+- O/U book_line format: "8.5@-110" (total@odds) so juice is stored separately from the line
+- Google Sheets: cleared and rewritten every run (full overwrite from CSV)
+- Sort order: newest date first, earliest game time first within each day
+- Email throttle: 2-hour minimum between sends (email_last_sent.txt timestamp file)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 7: ACCURACY REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Split at MODEL_V2_START = '2026-05-21':
+  - Pre-5/21: shows W-L, win rate, edge tiers. NO ROI (odds not stored correctly for O/U).
+  - Post-5/21: shows W-L, win rate, ROI, edge tiers for both ML and O/U.
+
+Edge tiers:
+  Moneyline: 7-10%, 10-15%, 15%+
+  Over/Under: 1.5-2.5 runs, 2.5-3.5 runs, 3.5+ runs
+
+ROI calculation:
+  Moneyline: book_line is American odds (e.g., -130)
+  Over/Under: book_line is "8.5@-110" format — odds parsed after @ symbol
+  Old O/U rows without @ format are skipped in ROI (no corruption)
+
+Platoon analysis section: activates at 20+ settled confirmed-lineup ML bets.
+Accuracy report now included in email (moved buffer capture to after print_accuracy_report).
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 8: BACKTEST INFRASTRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+(unchanged from prior sessions — see Section 3/5 in REFERENCE.md for full detail)
+
+Key additions this session:
+- 2025 data added: game logs pulled from MLB Stats API (pull_historical_game_logs
+  now detects missing seasons and pulls only those, preserving existing data).
+  Statcast also expanded to include 2025 (delete statcast_cache.json to rebuild).
+- pull_historical_game_logs() now incremental: checks which seasons are present
+  in historical_game_logs.json, only fetches missing ones via MLB Stats API.
+- odds_2025_supplement.csv: merged automatically at startup via backtest.py.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 9: PARAMETER OPTIMIZATION RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOTAL: 7,000+ trials across 60+ runs, rounds 1-6
+
+ROUND 5 RESULTS (1,000 trials, top-10 at n>=300):
+  avg ROI: +14.49% at avg 383 bets/trial
+  Best: ROI=16.33%, n=403, win_rate=51.86%
+  Cross-round improvement: R1-3 avg -1.51%, R4 avg +0.11%, R5 avg +0.53%
+
+Top-10 R5 averages (used to set live model weights):
+  rolling_weight_7:  0.68 → 0.70 used in model
+  w_rolling_off:     0.090
+  w_woba:            0.378 (dominant)
+  w_xwoba_bat:       0.264
+  w_babip_bat:       0.268
+  w_rolling_pit:     0.054
+  w_fip:             0.166 (pitching)
+  w_xfip:            0.152
+  w_k_pit:           0.133
+  w_bb_pit:          0.187 (consistently elevated)
+  w_xwoba_pit:       0.118
+  w_babip_pit:       0.064
+  w_barrel_pit:      0.127
+
+ROUND 6 (currently running):
+  PARAM_ROUND = 6
+  New parameter: ou_run_threshold [1.0, 1.5, 2.0, 2.5, 3.0]
+  O/U tracking alongside ML: n_ou_bets, ou_win_rate, ou_roi, ou_profit
+  Primary sort: combined_roi = (ml_profit + ou_profit) / total_wagered * 100
+  Seasons: 2021-2025 (first round with 2025 out-of-sample data)
+  2025 data: 608 O/U games (full Aug 17–Oct 1), 28 ML games (pre-game odds limitation)
+  N_RUNS = 10 (~2 hours)
+  Files: search_YYYY-MM-DD_seed{N}_100trials_r6.csv
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 10: DATA SOURCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SportsGameOdds API (sportsgameodds.com):
+  Base URL: https://api.sportsgameodds.com/v2/events
+  Auth: x-api-key header
+  Free tier: 2,500 events/month (per-event, not per-bookmaker)
+  Used for: fetching Aug 17–Oct 1, 2025 odds to complete 2025 dataset
+  Script: fetch_2025_odds.py
+  Key limitation: stores only last-known odds (in-game for finalized events).
+    Pre-game ML: only 28/608 games had a bookmaker with pre-game timestamp.
+    Total line (overUnder): reliable for all games (doesn't move in-game).
+  Approach: pre_game_odds() function filters by lastUpdatedAt < startsAt.
+    Total line: taken from any bookmaker (no timestamp filter needed).
+    O/U juice: None when no pre-game data (ROI skipped; WIN/LOSS still tracked).
+  Output: historical_data/odds_2025_supplement.csv
+    Columns: date, home_team, away_team, home_score, away_score,
+             fd_home_ml, fd_away_ml, fd_total, fd_over_odds, fd_under_odds
+  Team ID format: HOUSTON_ASTROS_MLB → mapped to FG abbreviation via TEAM_ID_MAP
+
+Historical odds (mlb_odds_dataset.json):
+  Covers 2021–Aug 16, 2025
+  Format: {date: [{gameView: {homeTeam, awayTeam, scores}, odds: {moneyline, totals}}]}
+  Has FanDuel + DraftKings + Caesars + Bet365 for both ML and O/U.
+  Backtest uses FanDuel (fd_home_ml, fd_away_ml, fd_total, fd_over_odds, fd_under_odds).
+
+MLB Stats API (statsapi package):
+  All team stats, game logs, rosters, probable starters, transactions (IL data).
+  Transactions endpoint called directly via requests (statsapi package validation rejects
+  startDate/endDate combo): https://statsapi.mlb.com/api/v1/transactions
+
+The Odds API (api.the-odds-api.com):
+  Live odds for model.py. API_KEY in .env.
+  Building own 2026 historical dataset as season progresses.
+
+2026 data plan:
+  model.py caches daily odds → building complete 2026 odds history organically.
+  In offseason, may be able to pull remaining 2025 data from The Odds API historical
+  endpoint (paid feature) or wait for free tier availability.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SECTION 11: KEY DECISIONS & RATIONALE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- No PA cap on hitter injury adjustments: elite hitters naturally cap at ~12-15%
+  of team PA, so an artificial cap would understate players like Aaron Judge.
+  Pitchers retain 25% IP cap (starters only pitch every 5th day).
+
+- Platoon factor not capped: PA threshold (30 PA) and ≥3 batter minimum
+  already guard against small-sample extremes. Cap was solving a solved problem.
+
+- Platoon results not displayed in output: tracked silently for 3-week evaluation.
+  After 20+ settled confirmed-lineup bets, platoon analysis appears in accuracy report.
+  Key metric: do games where platoon boosted the model win at a higher rate than
+  games where it lowered the model?
+
+- O/U threshold not previously backtested: the 1.5-run threshold in the live model
+  was arbitrary. Round 6 tests [1.0, 1.5, 2.0, 2.5, 3.0] runs.
+
+- 2025 as out-of-sample validation: rounds 1-5 never saw 2025 data. When round 6
+  shows 2025 performance, it's a genuine test of generalization.
+
+- favorites_only=False locked: True showed 64-67% win rates but only at n=90-135.
+  At n>=300, all top-10 trials flip to False. Small-sample artifact confirmed.
+
+- Bullpen removed entirely: w_bullpen_fat -0.246 correlation (actively harmful),
+  w_bullpen_qual +0.007 (neutral noise). Removing improved model.
+
+- email_last_sent.txt: 2-hour throttle between emails. Delete file to force
+  immediate send regardless of last send time.

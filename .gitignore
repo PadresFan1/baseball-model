@@ -1,23 +1,26 @@
 # Secrets & credentials
 .env
-google_credentials.json
+cache/google_credentials.json
 
 # API/stats caches
-odds_cache.json
-stats_cache.json
+cache/odds_cache.json
+cache/stats_cache.json
+cache/splits_cache.json
+cache/email_last_sent.txt
 historical_data/statcast_cache.json
 historical_data/bullpen_cache.json
 
 # Proprietary odds data
-mlb_odds_dataset.json
+cache/mlb_odds_dataset.json
+historical_data/odds_2025_supplement.csv
 
 # Large historical data
 historical_data/historical_game_logs.json
 historical_data/player_team_map.json
 
 # Personal predictions log
-predictions_log.csv
-predictions_log.xlsx
+predictions/predictions_log.csv
+predictions/predictions_log.xlsx
 
 # Backtest results & checkpoints
 historical_data/random_search_results.csv
@@ -26,8 +29,8 @@ historical_data/random_search_checkpoint.json
 historical_data/evaluation_*.csv
 
 # Temp output files
-bt_out.txt
-bt_err.txt
+logs/bt_out.txt
+logs/bt_err.txt
 
 # Python
 __pycache__/
@@ -35,8 +38,3 @@ __pycache__/
 
 # Claude settings
 .claude/settings.local.json
-
-#Evaluations
-evaluation_2026-05-17_19-10_3runs.csv
-evaluation_2026-05-17_19-13_4runs.csv
-evaluation_2026-05-17_20-56_5runs.csv

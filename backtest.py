@@ -62,63 +62,65 @@ def random_search(n_trials=100, seed=None):
     start_time = time.time()
     checkpoint_file = 'historical_data/random_search_checkpoint.json'
 
-    # Auto-generate seed if not provided so each run explores different params
-    if seed is None:
-        seed = random.randint(1, 99999)
-    print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
-    random.seed(seed)
-
-    PARAM_ROUND = 5  # increment this whenever param_space changes
+    PARAM_ROUND = 6  # increment this whenever param_space changes
     # Round 1: base params, no statcast
     # Round 2: statcast added (xwoba_bat, babip_bat, barrel_bat/pit)
     # Round 3: bullpen added (bullpen_qual, bullpen_fat)
     # Round 4: bullpen removed, favorites_only locked False — 53% profitable
     # Round 5: locked edge/cap params, dropped barrel_bat, rebalanced bb_pit/fip/barrel_pit
+    # Round 6: added ou_run_threshold — O/U betting now tracked alongside ML
 
     param_space = {
-        'ml_edge_min':    [0.07],             # locked — clear winner across all rounds
-        'ml_edge_max':    [0.08],             # locked — +4.98% avg in top 25%
-        'favorites_only': [False],            # locked — True was small-sample artifact
+        'ml_edge_min':    [0.07],             # locked
+        'ml_edge_max':    [0.08],             # locked
+        'favorites_only': [False],            # locked
         'rolling_weight_7': [0.50, 0.60, 0.70, 0.80],
         'rolling_weight_15': None,
-        'rating_cap_low':  [0.65],            # locked — 0.70 not meaningfully different
-        'rating_cap_high': [1.50],            # locked — appeared in 8/10 top r4 trials
-        # Offense weights (barrel_bat dropped — -0.298 correlation in r4)
+        'rating_cap_low':  [0.65],            # locked
+        'rating_cap_high': [1.50],            # locked
+        'ou_run_threshold': [1.0, 1.5, 2.0, 2.5, 3.0],  # run diff needed to bet O/U
+        # Offense weights
         'w_rolling_off': [0.05, 0.08, 0.10],
         'w_woba':        [0.20, 0.30, 0.40],
         'w_xwoba_bat':   [0.10, 0.20, 0.30],
-        'w_babip_bat':   [0.15, 0.25, 0.35], # raised — +0.115 in r4
+        'w_babip_bat':   [0.15, 0.25, 0.35],
         # Pitching weights
         'w_rolling_pit': [0.05, 0.08, 0.10],
-        'w_fip':         [0.10, 0.20, 0.30], # pulled back — flipped negative in r4
+        'w_fip':         [0.10, 0.20, 0.30],
         'w_xfip':        [0.10, 0.20, 0.30],
         'w_k_pit':       [0.10, 0.20, 0.30],
-        'w_bb_pit':      [0.15, 0.25, 0.35], # pulled back — over-corrected in r4
+        'w_bb_pit':      [0.15, 0.25, 0.35],
         'w_xwoba_pit':   [0.10, 0.20, 0.30],
-        'w_babip_pit':   [0.05, 0.08, 0.12], # reduced — consistently negative
-        'w_barrel_pit':  [0.15, 0.25, 0.35], # raised — +0.136 in r4
+        'w_babip_pit':   [0.05, 0.08, 0.12],
+        'w_barrel_pit':  [0.15, 0.25, 0.35],
     }
 
-    # Resume from checkpoint if one exists
+    # Resume from checkpoint if one exists — restore seed from checkpoint so restart works
     results = []
     start_trial = 0
     if os.path.exists(checkpoint_file):
         with open(checkpoint_file) as f:
             checkpoint = json.load(f)
-        if checkpoint.get('seed') == seed and checkpoint.get('n_trials') == n_trials:
-            results = checkpoint['results']
+        if checkpoint.get('n_trials') == n_trials:
+            seed        = checkpoint['seed']   # use interrupted run's seed, not a new one
+            results     = checkpoint['results']
             start_trial = checkpoint['completed_trials']
-            # Fast-forward the RNG to the correct position
-            temp_seed = seed
-            random.seed(temp_seed)
+            random.seed(seed)
             for _ in range(start_trial):
                 for key in ['ml_edge_min', 'ml_edge_max', 'favorites_only', 'rolling_weight_7',
-                            'rating_cap_low', 'rating_cap_high', 'w_rolling_off', 'w_woba',
-                            'w_xwoba_bat', 'w_babip_bat', 'w_rolling_pit',
-                            'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
+                            'rating_cap_low', 'rating_cap_high', 'ou_run_threshold',
+                            'w_rolling_off', 'w_woba', 'w_xwoba_bat', 'w_babip_bat',
+                            'w_rolling_pit', 'w_fip', 'w_xfip', 'w_k_pit', 'w_bb_pit',
                             'w_xwoba_pit', 'w_babip_pit', 'w_barrel_pit']:
                     random.choice(param_space[key] or [0.0])
-            print(f"Resuming from trial {start_trial}/{n_trials} ({len(results)} results so far)")
+            print(f"Resuming run (seed={seed}) from trial {start_trial}/{n_trials} ({len(results)} results so far)")
+
+    # Fresh start — generate seed after checkpoint check so it's not wasted
+    if not results and start_trial == 0:
+        if seed is None:
+            seed = random.randint(1, 99999)
+        random.seed(seed)
+    print(f"Seed: {seed}  (pass seed={seed} to reproduce this run)")
 
     for trial in range(start_trial, n_trials):
         # Sample random parameters
@@ -129,6 +131,7 @@ def random_search(n_trials=100, seed=None):
             'rolling_weight_7': random.choice(param_space['rolling_weight_7']),
             'rating_cap_low':  random.choice(param_space['rating_cap_low']),
             'rating_cap_high': random.choice(param_space['rating_cap_high']),
+            'ou_run_threshold': random.choice(param_space['ou_run_threshold']),
             'w_rolling_off': random.choice(param_space['w_rolling_off']),
             'w_woba':        random.choice(param_space['w_woba']),
             'w_xwoba_bat':   random.choice(param_space['w_xwoba_bat']),
@@ -237,8 +240,10 @@ def evaluate_runs():
     if 'param_round' in combined.columns:
         print("Round summary:")
         for rnd, grp in combined.groupby('param_round'):
-            pct_pos = (grp['roi'] > 0).mean()
-            print(f"  Round {int(rnd)}: {len(grp):>5} trials | top ROI: {grp['roi'].max():+.1f}% | median: {grp['roi'].median():+.1f}% | % profitable: {pct_pos:.1%}")
+            pct_pos  = (grp['roi'] > 0).mean()
+            has_comb = 'combined_roi' in grp.columns and grp['combined_roi'].notna().any()
+            comb_str = f" | top combined: {grp['combined_roi'].max():+.1f}%" if has_comb else ""
+            print(f"  Round {int(rnd)}: {len(grp):>5} trials | top ML ROI: {grp['roi'].max():+.1f}% | median: {grp['roi'].median():+.1f}%{comb_str} | % profitable: {pct_pos:.1%}")
         print()
 
     # Per-run summary
@@ -251,12 +256,15 @@ def evaluate_runs():
         med_roi = df['roi'].median()
         print(f"  {meta}{rnd}  |  top ROI: {top_roi:+.1f}%  |  median ROI: {med_roi:+.1f}%  |  {len(df)} trials")
 
-    # Top 10 across all runs
-    top_cols = ['roi', 'win_rate', 'n_bets', 'ml_edge_min', 'ml_edge_max',
-                'favorites_only', 'rolling_weight_7', 'rating_cap_low', 'rating_cap_high', 'param_round', 'run_date']
+    # Top 10 across all runs — sort by combined_roi if available, else roi
+    sort_col = 'combined_roi' if 'combined_roi' in combined.columns else 'roi'
+    top_cols = ['combined_roi', 'roi', 'n_bets', 'ou_roi', 'n_ou_bets',
+                'ou_run_threshold', 'ml_edge_min', 'ml_edge_max',
+                'favorites_only', 'rolling_weight_7', 'rating_cap_low', 'rating_cap_high',
+                'param_round', 'run_date']
     available = [c for c in top_cols if c in combined.columns]
-    print(f"\nTop 10 results (all sample sizes):")
-    print(combined.nlargest(10, 'roi')[available].to_string(index=False))
+    print(f"\nTop 10 results (all sample sizes, sorted by {sort_col}):")
+    print(combined.nlargest(10, sort_col)[available].to_string(index=False))
 
     # Minimum sample size filter — more reliable signal
     min_bets = 300
@@ -264,14 +272,14 @@ def evaluate_runs():
     if not reliable.empty:
         pct = len(reliable) / len(combined)
         print(f"\nTop 10 results (n_bets >= {min_bets}, {len(reliable)} trials / {pct:.0%} of total):")
-        print(reliable.nlargest(10, 'roi')[available].to_string(index=False))
+        print(reliable.nlargest(10, sort_col)[available].to_string(index=False))
 
     # Parameter analysis — compare top 25% vs bottom 75%
     threshold = combined['roi'].quantile(0.75)
     top_q = combined[combined['roi'] >= threshold]
 
     discrete_params = ['ml_edge_min', 'ml_edge_max', 'favorites_only',
-                       'rating_cap_low', 'rating_cap_high']
+                       'rating_cap_low', 'rating_cap_high', 'ou_run_threshold']
 
     print(f"\nParameter breakdown (top 25% of trials, ROI >= {threshold:+.1f}%):")
     for param in discrete_params:
@@ -304,16 +312,21 @@ def evaluate_runs():
     combined_sorted.to_csv(combined_file, index=False)
     print(f"\nAll results saved to: {combined_file}")
 
-def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
+def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024, 2025]):
     log_path = 'historical_data/historical_game_logs.json'
+
+    # Load existing file if present — only pull seasons that are missing
+    all_logs = {}
     if os.path.exists(log_path):
         print("Loading historical game logs from file...")
         with open(log_path) as f:
-            return json.load(f)
-    
-    # Only hits the API if the file doesn't exist
-    all_logs = {}
-    for season in seasons:
+            all_logs = json.load(f)
+
+    missing = [s for s in seasons if str(s) not in all_logs]
+    if not missing:
+        return all_logs
+
+    for season in missing:
         print(f"Pulling {season} game logs...")
         season_logs = {}
         for fg_abbrev, team_id in team_ids.items():
@@ -330,10 +343,8 @@ def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
                     'group': 'pitching',
                     'season': season
                 })
-                
                 hit_games = hitting['stats'][0]['splits']
                 pit_games = pitching['stats'][0]['splits']
-                
                 season_logs[fg_abbrev] = {
                     'hitting': [{
                         'date': g['date'],
@@ -364,16 +375,14 @@ def pull_historical_game_logs(team_ids, seasons=[2021, 2022, 2023, 2024]):
             except Exception as e:
                 print(f"Error pulling {fg_abbrev} {season}: {e}")
                 continue
-
-        all_logs[season] = season_logs
+        all_logs[str(season)] = season_logs
         print(f"Pulled {len(season_logs)} teams for {season}")
 
     with open(log_path, 'w') as f:
         json.dump(all_logs, f)
-    print("Saved historical game logs")
+    print("Game logs updated.")
     return all_logs
 
-# Run this once to pull fresh data, then comment out again
 historical_logs = pull_historical_game_logs(TEAM_MAP)
 
 # Load historical game logs
@@ -412,7 +421,7 @@ def load_statcast_data(seasons=[2021, 2022, 2023, 2024]):
     print("Statcast data cached.")
     return all_data
 
-statcast_data = load_statcast_data([2021, 2022, 2023, 2024])
+statcast_data = load_statcast_data([2021, 2022, 2023, 2024, 2025])
 
 def precompute_statcast(season, statcast_data, target_dates):
     season_str = str(season)
@@ -597,8 +606,8 @@ def normalize_team(team):
 
 # Load season FanGraphs data
 def load_season_stats(year):
-    offense = pd.read_csv(f'offense_{year}.csv')
-    pitching = pd.read_csv(f'pitching_{year}.csv')
+    offense = pd.read_csv(f'season_stats/offense_{year}.csv')
+    pitching = pd.read_csv(f'season_stats/pitching_{year}.csv')
     
     # Normalize columns same as model.py
     for df in [offense, pitching]:
@@ -613,7 +622,7 @@ def load_season_stats(year):
     return offense, pitching
 
 # Load historical odds
-with open('mlb_odds_dataset.json', 'r') as f:
+with open('cache/mlb_odds_dataset.json', 'r') as f:
     raw_odds = json.load(f)
 
 rows = []
@@ -653,6 +662,13 @@ for date, games in raw_odds.items():
         rows.append(row)
 
 odds_df = pd.DataFrame(rows).sort_values('date').reset_index(drop=True)
+
+# Merge supplemental 2025 odds if available (fetched via fetch_2025_odds.py)
+_supp = 'historical_data/odds_2025_supplement.csv'
+if os.path.exists(_supp):
+    _supp_df = pd.read_csv(_supp)
+    odds_df  = pd.concat([odds_df, _supp_df], ignore_index=True).sort_values('date').reset_index(drop=True)
+    print(f"Merged 2025 supplement: {len(_supp_df)} additional games")
 
 # Load historical game logs
 with open('historical_data/historical_game_logs.json', 'r') as f:
@@ -971,7 +987,7 @@ def precompute_all_rolling(seasons, game_logs, odds_df):
     return team_cache, lg_cache
 
 rolling_team_cache, rolling_lg_cache = precompute_all_rolling(
-    [2021, 2022, 2023, 2024], game_logs, odds_df
+    [2021, 2022, 2023, 2024, 2025], game_logs, odds_df
 )
 
 # ============================================================
@@ -991,8 +1007,9 @@ def get_league_hr_fb_rate(game_logs, target_date, season):
                 total_fb += g['airOuts'] + g['homeRuns']
     return total_hr / total_fb if total_fb > 0 else 0.115
 
-def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
-    all_results = []
+def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024, 2025]):
+    all_results    = []
+    all_ou_results = []
     
     for season in seasons:
         season_odds = odds_df[odds_df['date'].str.startswith(str(season))]
@@ -1172,31 +1189,97 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024]):
                     'ml_odds': ml_odds,
                     'ml_result': ml_result
                 })
+
+            # ── Over/Under bet ────────────────────────────────────────────────
+            fd_total      = game.get('fd_total')
+            fd_over_odds  = game.get('fd_over_odds')
+            fd_under_odds = game.get('fd_under_odds')
+
+            # O/U bet — only requires the total line, juice optional (ROI skipped if absent)
+            if not pd.isna(fd_total):
+                ou_diff      = avg_total - fd_total
+                actual_total = home_score + away_score
+                ou_thresh    = params.get('ou_run_threshold', 1.5)
+
+                ou_bet    = None
+                ou_odds   = None
+                ou_result = None
+
+                if ou_diff > ou_thresh:
+                    ou_bet   = 'over'
+                    ou_odds  = fd_over_odds if not pd.isna(fd_over_odds) else None
+                    if actual_total > fd_total:   ou_result = 'WIN'
+                    elif actual_total == fd_total: ou_result = 'PUSH'
+                    else:                          ou_result = 'LOSS'
+                elif -ou_diff > ou_thresh:
+                    ou_bet   = 'under'
+                    ou_odds  = fd_under_odds if not pd.isna(fd_under_odds) else None
+                    if actual_total < fd_total:   ou_result = 'WIN'
+                    elif actual_total == fd_total: ou_result = 'PUSH'
+                    else:                          ou_result = 'LOSS'
+
+                if ou_bet:
+                    all_ou_results.append({'ou_odds': ou_odds, 'ou_result': ou_result})
     
     if not all_results:
         return None
-    
-    results_df = pd.DataFrame(all_results)
-    wins = len(results_df[results_df['ml_result'] == 'WIN'])
-    n_bets = len(results_df)
-    win_rate = wins / n_bets
-    total_bet = n_bets * 100
-    total_return = 0
-    for _, row in results_df.iterrows():
+
+    # ── Moneyline metrics ─────────────────────────────────────────────────────
+    ml_df      = pd.DataFrame(all_results)
+    n_bets     = len(ml_df)
+    ml_wins    = len(ml_df[ml_df['ml_result'] == 'WIN'])
+    win_rate   = ml_wins / n_bets
+    ml_wagered = n_bets * 100
+    ml_return  = 0
+    for _, row in ml_df.iterrows():
         if row['ml_result'] == 'WIN':
             odds = row['ml_odds']
-            if odds > 0:
-                total_return += 100 + (100 * odds / 100)
-            else:
-                total_return += 100 + (100 / abs(odds) * 100)
-    profit = total_return - total_bet
-    roi = profit / total_bet * 100
-        
+            ml_return += 100 + (100 * odds / 100) if odds > 0 else 100 + (100 / abs(odds) * 100)
+    ml_profit = ml_return - ml_wagered
+    roi       = ml_profit / ml_wagered * 100
+
+    # ── O/U metrics ───────────────────────────────────────────────────────────
+    n_ou_bets  = 0
+    ou_win_rate = 0.0
+    ou_roi     = 0.0
+    ou_profit  = 0.0
+
+    if all_ou_results:
+        ou_df      = pd.DataFrame(all_ou_results)
+        n_ou_bets  = len(ou_df)
+        ou_wins    = len(ou_df[ou_df['ou_result'] == 'WIN'])
+        ou_win_rate = ou_wins / n_ou_bets
+        # ROI only for bets where juice was available — WIN/LOSS tracked for all
+        ou_with_juice = ou_df[ou_df['ou_odds'].notna()]
+        if len(ou_with_juice) > 0:
+            ou_wagered = len(ou_with_juice) * 100
+            ou_return  = 0
+            for _, row in ou_with_juice.iterrows():
+                if row['ou_result'] == 'WIN':
+                    odds = float(row['ou_odds'])
+                    ou_return += 100 + (100 * odds / 100) if odds > 0 else 100 + (100 / abs(odds) * 100)
+                elif row['ou_result'] == 'PUSH':
+                    ou_return += 100
+            ou_profit = ou_return - ou_wagered
+            ou_roi    = ou_profit / ou_wagered * 100
+        else:
+            ou_profit = 0.0
+            ou_roi    = 0.0
+
+    # ── Combined portfolio ROI ────────────────────────────────────────────────
+    total_wagered = (n_bets + n_ou_bets) * 100
+    combined_roi  = (ml_profit + ou_profit) / total_wagered * 100 if total_wagered > 0 else 0
+
     return {
-        'n_bets': n_bets,
-        'win_rate': round(win_rate, 4),
-        'roi': round(roi, 4),
-        'profit': round(profit, 2)
+        'n_bets':       n_bets,
+        'win_rate':     round(win_rate, 4),
+        'roi':          round(roi, 4),
+        'profit':       round(ml_profit, 2),
+        'n_ou_bets':    n_ou_bets,
+        'ou_win_rate':  round(ou_win_rate, 4),
+        'ou_roi':       round(ou_roi, 4),
+        'ou_profit':    round(ou_profit, 2),
+        'combined_roi': round(combined_roi, 4),
     }
 
 def get_season_ratings(year):
@@ -1245,11 +1328,22 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
     return roi, profit
 
 N_RUNS = 10  # ~2 hours at 12 min/run
+_PARAM_ROUND = 6  # must match PARAM_ROUND inside random_search
 
-for run in range(N_RUNS):
-    print(f"\n{'='*55}")
-    print(f"  Run {run + 1} of {N_RUNS}")
-    print(f"{'='*55}")
-    random_search(n_trials=100)
+import glob as _glob_outer
+_completed_files = _glob_outer.glob(f'historical_data/search_*_100trials_r{_PARAM_ROUND}.csv')
+_completed_runs  = len(_completed_files)
+_remaining_runs  = max(0, N_RUNS - _completed_runs)
+
+if _remaining_runs == 0:
+    print(f"All {N_RUNS} runs already complete. Running evaluate_runs().")
+else:
+    if _completed_runs:
+        print(f"Found {_completed_runs} completed run(s). Running {_remaining_runs} more.")
+    for run in range(_remaining_runs):
+        print(f"\n{'='*55}")
+        print(f"  Run {_completed_runs + run + 1} of {N_RUNS}")
+        print(f"{'='*55}")
+        random_search(n_trials=100)
 
 evaluate_runs()
