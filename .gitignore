@@ -17,10 +17,19 @@ historical_data/odds_2025_supplement.csv
 # Large historical data
 historical_data/historical_game_logs.json
 historical_data/player_team_map.json
+historical_data/game_lineups.json
+historical_data/pitcher_hand_cache.json
 
-# Personal predictions log
+# Round 9 player-level Statcast CSVs (re-fetchable via fetch_player_data.py, ~54 MB)
+player_data/
+
+# Claude Code assistant memory (local only)
+memory/
+
+# Personal predictions log + archived backups
 predictions/predictions_log.csv
 predictions/predictions_log.xlsx
+predictions/archive/
 
 # Backtest results & checkpoints
 historical_data/random_search_results.csv
