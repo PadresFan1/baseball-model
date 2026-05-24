@@ -26,6 +26,9 @@ player_data/
 # Claude Code assistant memory (local only)
 memory/
 
+# Personal notes (local only)
+DO NOT DELETE/
+
 # Personal predictions log + archived backups
 predictions/predictions_log.csv
 predictions/predictions_log.xlsx

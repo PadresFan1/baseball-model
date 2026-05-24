@@ -113,8 +113,9 @@ from datetime import timezone, timedelta, datetime
 
 API_KEY  = os.getenv('API_KEY')
 BANKROLL = float(os.getenv('BANKROLL', '1000'))
-KELLY_FRACTION = 0.5   # half-Kelly reduces variance vs full Kelly
-OU_BETTING_ENABLED = False  # O/U shows negative ROI in backtesting — disabled until calibrated
+KELLY_FRACTION = 0.5          # half-Kelly reduces variance vs full Kelly
+MAX_BANKROLL_EXPOSURE = 0.15  # hard cap per bet regardless of Kelly edge
+OU_BETTING_ENABLED = False    # O/U shows negative ROI in backtesting — disabled until calibrated
 print(f"API Key loaded: {API_KEY is not None}")
 
 MST = timezone(timedelta(hours=-7))
@@ -177,22 +178,32 @@ def american_to_prob(line):
     else:
         return 100 / (line + 100)
 
+def calculate_kelly_stake(bankroll, market_odds, model_prob, odds_type='american'):
+    """
+    Returns recommended dollar stake using 1/2 Kelly criterion capped at MAX_BANKROLL_EXPOSURE.
+    American odds are converted to decimal; b = decimal_odds - 1 (net odds per $1 wagered).
+    fraction = 0.5 * ((b * p - q) / b); returns $0.00 when edge is zero or negative.
+    """
+    if odds_type == 'american':
+        decimal_odds = (1 + market_odds / 100) if market_odds > 0 else (1 + 100 / abs(market_odds))
+    else:
+        decimal_odds = float(market_odds)
+    b = decimal_odds - 1
+    if b <= 0:
+        return 0.0
+    fraction = 0.5 * ((b * model_prob - (1 - model_prob)) / b)
+    if fraction <= 0:
+        return 0.0
+    fraction = min(fraction, MAX_BANKROLL_EXPOSURE)
+    return round(bankroll * fraction, 2)
+
 def kelly_bet_size(model_prob, american_odds, bankroll=None, fraction=KELLY_FRACTION):
-    """
-    Returns (kelly_pct, bet_amount).
-    Uses fractional Kelly (default half) capped at 5% of bankroll per bet.
-    b = net odds per $1 wagered; f* = (b*p - q) / b
-    """
+    """Returns (kelly_pct, bet_amount) using calculate_kelly_stake as the canonical engine."""
     if bankroll is None:
         bankroll = BANKROLL
-    b = american_odds / 100.0 if american_odds > 0 else 100.0 / abs(american_odds)
-    p = model_prob
-    q = 1.0 - p
-    kelly = (b * p - q) / b
-    if kelly <= 0:
-        return 0.0, 0.0
-    kelly_adj = min(kelly * fraction, 0.15)  # cap at 15% bankroll
-    return round(kelly_adj * 100, 1), round(bankroll * kelly_adj, 2)
+    amount = calculate_kelly_stake(bankroll, american_odds, model_prob)
+    pct = round(amount / bankroll * 100, 1) if bankroll > 0 else 0.0
+    return pct, amount
 
 def ip_to_float(ip_str):
     """Convert MLB innings pitched string (e.g. '5.1'=5⅓, '5.2'=5⅔) to decimal."""
@@ -1119,6 +1130,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
+        'recommended_stake',
         'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
     ]
 
@@ -1258,6 +1270,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             new_row['home_platoon_factor']     = pred.get('home_platoon_factor', '')
             new_row['away_platoon_factor']     = pred.get('away_platoon_factor', '')
             new_row['platoon_confirmed']       = pred.get('platoon_confirmed', 'No')
+            new_row['recommended_stake']       = pred.get('recommended_stake', 0.0)
             final_run = get_final_run(game_time, new_row)
             new_row['final_run']       = str(final_run)
             new_row['final_bet_team']  = new_row.get(f'run{final_run}_bet_team')
@@ -1288,6 +1301,8 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             df.at[idx, 'away_platoon_factor'] = pred.get('away_platoon_factor') or df.at[idx, 'away_platoon_factor']
             if pred.get('platoon_confirmed') == 'Yes':
                 df.at[idx, 'platoon_confirmed'] = 'Yes'
+            if pred.get('recommended_stake') is not None:
+                df.at[idx, 'recommended_stake'] = pred['recommended_stake']
             gt = df.at[idx, 'game_time'] or game_time
             final_run = get_final_run(gt, df.loc[idx])
             df.at[idx, 'final_run']       = str(final_run)
@@ -1541,6 +1556,7 @@ def archive_existing_prediction_logs():
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
+        'recommended_stake',
         'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
     ]
 
@@ -1785,7 +1801,7 @@ def update_google_sheets(df):
         # Clear cell values only from row 2 downward — preserves Row 1 headers,
         # custom background colors, borders, data validation dropdowns, and
         # conditional formatting rules (values.clear does not touch formatting).
-        sheet.batch_clear(["A2:AJ2000"])
+        sheet.batch_clear(["A2:AK2000"])
 
         headers = df.columns.tolist()
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
@@ -2181,8 +2197,21 @@ _tee._buf.seek(0)
 
 print(f"\nUpcoming games today: {len(upcoming)}")
 
+# Effective bankroll = total bankroll minus capital committed to currently open/un-settled bets
+effective_bankroll = BANKROLL
+_eff_log = 'predictions/predictions_log.csv'
+if os.path.exists(_eff_log):
+    try:
+        _eff_df = pd.read_csv(_eff_log, dtype=str)
+        if 'recommended_stake' in _eff_df.columns and 'result' in _eff_df.columns:
+            _open = _eff_df[_eff_df['result'] == 'PENDING']
+            _committed = pd.to_numeric(_open['recommended_stake'], errors='coerce').fillna(0).sum()
+            effective_bankroll = max(0.0, BANKROLL - _committed)
+    except Exception:
+        pass
+
 print(f"\n=== TODAY'S EDGES ===")
-print(f"Bankroll: ${BANKROLL:,.0f} | Kelly: Half ({KELLY_FRACTION}x) | Edge threshold: 7%\n")
+print(f"Bankroll: ${BANKROLL:,.0f} | Effective: ${effective_bankroll:,.0f} | Kelly: ½ ({KELLY_FRACTION}x) | Cap: {MAX_BANKROLL_EXPOSURE:.0%}/bet | Edge threshold: 7%\n")
 
 edge_games = []
 no_edge_games = []
@@ -2319,14 +2348,15 @@ for game in upcoming:
 
     moneyline_edge = False
     ou_edge = False
+    kelly_amt = 0.0
     game_text = f"{away_name} @ {home_name} - {time_str}"
-    
+
     if home_edge > 0.07:
-        kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line)
+        kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line, bankroll=effective_bankroll)
         moneyline_text = (
             f"   💰 Moneyline: Bet {home_name} | Model: {home_win_pct:.1%} | "
             f"{best_home_book}: {home_market_line} | Edge: +{home_edge:.1%} | "
-            f"Kelly: {kelly_pct}% (${kelly_amt:.0f})"
+            f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
         )
         moneyline_edge = True
         bet_fg = home_fg
@@ -2334,11 +2364,11 @@ for game in upcoming:
         bet_line = home_market_line
         bet_edge = home_edge
     elif away_edge > 0.07:
-        kelly_pct, kelly_amt = kelly_bet_size(away_win_pct, away_market_line)
+        kelly_pct, kelly_amt = kelly_bet_size(away_win_pct, away_market_line, bankroll=effective_bankroll)
         moneyline_text = (
             f"   💰 Moneyline: Bet {away_name} | Model: {away_win_pct:.1%} | "
             f"{best_away_book}: {away_market_line} | Edge: +{away_edge:.1%} | "
-            f"Kelly: {kelly_pct}% (${kelly_amt:.0f})"
+            f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
         )
         moneyline_edge = True
         bet_fg = away_fg
@@ -2348,6 +2378,9 @@ for game in upcoming:
     else:
         moneyline_text = f"   ➖ Moneyline: No edge found"
 
+    ml_stake = kelly_amt  # 0.0 when no edge
+
+    ou_stake = 0.0
     if total_data:
         book_total = total_data['total']
         ou_diff    = avg_total - book_total
@@ -2360,20 +2393,22 @@ for game in upcoming:
         under_prob = 1.0 - over_prob
 
         if OU_BETTING_ENABLED and ou_diff > 1.5:
-            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(over_prob, total_data['over_price'])
+            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(over_prob, total_data['over_price'], bankroll=effective_bankroll)
+            ou_stake = kelly_ou_amt
             ou_text = (
                 f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | "
                 f"{total_data['book']}: {book_total} (Over {total_data['over_price']}) | "
-                f"Edge: +{ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.0f})"
+                f"Edge: +{ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.2f})"
             )
             ou_edge = True
 
         elif OU_BETTING_ENABLED and ou_diff < -1.5:
-            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(under_prob, total_data['under_price'])
+            kelly_ou_pct, kelly_ou_amt = kelly_bet_size(under_prob, total_data['under_price'], bankroll=effective_bankroll)
+            ou_stake = kelly_ou_amt
             ou_text = (
                 f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | "
                 f"{total_data['book']}: {book_total} (Under {total_data['under_price']}) | "
-                f"Edge: {ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.0f})"
+                f"Edge: {ou_diff:.1f} runs | Kelly: {kelly_ou_pct}% (${kelly_ou_amt:.2f})"
             )
             ou_edge = True
 
@@ -2424,6 +2459,7 @@ for game in upcoming:
         'home_platoon_factor': str(home_pf) if home_pf is not None else '',
         'away_platoon_factor': str(away_pf) if away_pf is not None else '',
         'platoon_confirmed':  'Yes' if platoon_data else 'No',
+        'recommended_stake':  ml_stake,
     })
 
     # Log O/U for all games
@@ -2457,6 +2493,7 @@ for game in upcoming:
             'home_platoon_factor': str(home_pf) if home_pf is not None else '',
             'away_platoon_factor': str(away_pf) if away_pf is not None else '',
             'platoon_confirmed':  'Yes' if platoon_data else 'No',
+            'recommended_stake':  ou_stake,
         })
     else:
         todays_predictions.append({
@@ -2476,6 +2513,7 @@ for game in upcoming:
             'home_platoon_factor': str(home_pf) if home_pf is not None else '',
             'away_platoon_factor': str(away_pf) if away_pf is not None else '',
             'platoon_confirmed':  'Yes' if platoon_data else 'No',
+            'recommended_stake':  0.0,
         })
 
     if moneyline_edge or ou_edge:
