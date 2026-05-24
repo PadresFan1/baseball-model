@@ -1,0 +1,42 @@
+================================================================================
+CLAUDE CODE SPECIFICATION: PREDICTIONS LOG ARCHIVE AND CLEAN GOOGLE SHEETS RESET
+================================================================================
+
+1. LOCAL FILE ARCHIVING LOGIC
+--------------------------------------------------------------------------------
+Before our new dual-strategy production model runs and outputs its daily dashboard, 
+we want to archive our existing historical prediction data to start fresh.
+
+Please add a script function called `archive_existing_prediction_logs()` that:
+1. Detects if our existing `predictions_log.csv` and `predictions_log.xlsx` files exist.
+2. If they do, generate a timestamp suffix based on today's date (e.g., '_archived_20260523').
+3. Move and rename those files to a local backup subfolder, such as `predictions_log_archived_20260523.csv`.
+4. Create a clean, blank new instance of `predictions_log.csv` and `predictions_log.xlsx` containing only our updated headers, including a new column for 'model_strategy' ('SNIPER' vs 'ENFORCER').
+
+2. GOOGLE SHEETS "VALUE-ONLY" CLEAR PIPELINE
+--------------------------------------------------------------------------------
+To completely empty the Google Sheet without altering or deleting our custom background 
+colors, borders, data validation dropdowns, or conditional formatting rules, DO NOT 
+delete the sheet or delete row ranges. 
+
+Instead, modify the gspread / Google Sheets API upload block to execute a clear on 
+the cell values only. 
+
+Inside the Google Sheets synchronization function:
+1. Access the target worksheet object.
+2. Calculate the total bounding range of your existing table data (e.g., if you have headers in row 1, target rows 2 through the end of the sheet, such as range "A2:Z2000").
+3. Call `worksheet.batch_clear(["A2:Z2000"])` or `worksheet.clear()` if formatting is confirmed to stay, but specifically target cell values. 
+   *(Note: gspread's `.clear()` method by default triggers the Google API values.clear endpoint, which leaves formatting rules intact, but targeting `A2:Z2000` is safest to preserve headers in Row 1).*
+4. Once the range is cleared of values, resume the standard upload sequence, appending rows starting directly at row 2.
+
+3. EXECUTION FLOW SEQUENCE
+--------------------------------------------------------------------------------
+Ensure this workflow executes sequentially when the production pipeline is booted up:
+[Run daily script] 
+   -> Step 1: Run local file archiving (moves old CSV/XLSX to backups).
+   -> Step 2: Query Google Sheets and batch_clear row cells from Row 2 downwards (wiping old data, keeping formatting).
+   -> Step 3: Run the Dual Model Inference engine to pull today's lineups and lines.
+   -> Step 4: Simultaneously write fresh daily bets to local logs and append them directly to the pristine Google Sheet.
+
+Please implement this cleanup feature and run a quick 1-game test to verify that the sheet is wiped clean and that your conditional formatting rules are still active on the spreadsheet dashboard.
+================================================================================

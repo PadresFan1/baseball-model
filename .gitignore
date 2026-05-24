@@ -31,6 +31,8 @@ historical_data/evaluation_*.csv
 # Temp output files
 logs/bt_out.txt
 logs/bt_err.txt
+logs/model_out.txt
+logs/model_err.txt
 
 # Python
 __pycache__/

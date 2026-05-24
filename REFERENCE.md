@@ -8,19 +8,27 @@
 # Daily predictions (run at 9am, 12pm, 4pm)
 python model.py
 
-# Backtest parameter search
+# Backtest — set RUN_MODE in backtest.py before running
 python backtest.py
 
-# Rebuild player→team mapping (only when adding new RP data)
-python build_player_map.py
+# Round 9 player-level pipeline (first run only — pulls lineups ~2-3hrs)
+# Set RUN_MODE = 'player_level_meta' then:
+python backtest.py
+
+# Download player-level Statcast CSVs (run once, ~15 min)
+python fetch_player_data.py --test   # verify column names first
+python fetch_player_data.py          # full 2021-2025 pull (15 files)
+
+# Dual strategy sim on team-level features (fast, no data build)
+# Set RUN_MODE = 'dual_strategy' then:
+python backtest.py
 
 # Fetch remaining 2025 odds (Aug 17–Oct 1) from SportsGameOdds API
 python fetch_2025_odds.py --test   # verify one event first
 python fetch_2025_odds.py          # full pull (~608 events)
 
-# Evaluate all backtest runs without running new trials
-# Set N_RUNS = 0 in backtest.py, then:
-python backtest.py
+# Rebuild player→team mapping (only when adding new RP data)
+python build_player_map.py
 ```
 
 ---
@@ -30,14 +38,23 @@ python backtest.py
 ```
 baseball-model/
 ├── model.py                    # Live daily prediction model
-├── backtest.py                 # Parameter optimization via random search
+├── backtest.py                 # Backtest + meta model + player-level pipeline
+├── fetch_player_data.py        # Downloads individual player Statcast CSVs from Savant
 ├── build_player_map.py         # Builds player ID → team mapping from MLB API
 ├── fetch_2025_odds.py          # Pulls 2025 odds from SportsGameOdds API
 │
-├── statcast/
+├── player_data/                # Round 9 player-level Statcast (NEW)
+│   ├── batters_vs_L_YYYY.csv   # Per-batter per-game stats vs LHP (2021-2025)
+│   ├── batters_vs_R_YYYY.csv   # Per-batter per-game stats vs RHP (2021-2025)
+│   └── starters_YYYY.csv       # Per-starter per-game stats, PA >= 12 (2021-2025)
+│   # Columns: player_id, player_name, game_date, game_pk, pa, woba, xwoba,
+│   #          so, bb, hrs, k_percent, bb_percent, obp, hardhit_percent,
+│   #          swing_miss_percent, pitcher_run_value_per_100
+│
+├── Statcast/
 │   ├── batters_YYYY.csv        # Team-level batter statcast by game (2021-2025)
 │   └── pitchers_YYYY.csv       # Team-level pitcher statcast by game (2021-2025)
-│   # Columns: player_name(team), game_date, babip, xwoba, barrels_per_pa_percent, pa
+│   # Columns: player_name(team abbrev), game_date, babip, xwoba, pa, ...
 │
 ├── rp/
 │   └── *.csv                   # Relief pitcher statcast by division/year (80,312 rows)
@@ -51,18 +68,22 @@ baseball-model/
 │
 ├── historical_data/
 │   ├── historical_game_logs.json    # MLB API game logs 2021-2025 (cached, incremental)
+│   ├── game_lineups.json            # Box score batting orders + starter IDs (NEW Round 9)
+│   │                                # {season: {game_pk: {home_lineup, away_lineup,
+│   │                                #   home/away_starter_id/hand/ip}}}
+│   ├── pitcher_hand_cache.json      # {player_id: 'L'/'R'} from MLB People API (NEW)
 │   ├── player_team_map.json         # {season: {player_id: fg_abbrev}} for 2021-2025
-│   ├── statcast_cache.json          # Preprocessed statcast data (delete to rebuild w/ 2025)
+│   ├── statcast_cache.json          # Preprocessed team-level statcast (delete to rebuild)
 │   ├── bullpen_cache.json           # Preprocessed bullpen data (aggregated to team-game)
 │   ├── mlb_odds_dataset.json        # Historical odds 2021–Aug 16, 2025
 │   ├── odds_2025_supplement.csv     # Aug 17–Oct 1, 2025 odds (from SportsGameOdds)
 │   ├── search_*_r{N}.csv            # Backtest run results (one per run, round tagged)
 │   └── evaluation_*.csv             # Combined evaluation files
 │
-├── offense_YYYY.csv            # FanGraphs team offense stats
-├── pitching_YYYY.csv           # FanGraphs team pitching stats
-├── predictions_log.csv         # Daily predictions log (all runs)
-├── predictions_log.xlsx        # Color-coded Excel
+├── predictions/
+│   ├── predictions_log.csv     # Daily predictions log (all runs) — 35 cols incl. model_strategy
+│   ├── predictions_log.xlsx    # Color-coded Excel
+│   └── archive/                # One-time migration backups (predictions_log_archived_YYYYMMDD.*)
 ├── splits_cache.json           # Platoon split data cache (6hr TTL)
 ├── email_last_sent.txt         # Timestamp of last email (2hr throttle — delete to force)
 └── .env                        # Credentials — NEVER commit
@@ -207,28 +228,64 @@ Analysis appears in accuracy report after 20+ settled confirmed-lineup ML bets.
 
 ### Prediction Log Schema
 ```
-date, game_time, home_team, away_team, bet_type,
+date, game_time, game_num, home_team, away_team, bet_type, model_strategy,
 run1_bet_team, run1_model_pct, run1_book_line, run1_edge,
 run2_bet_team, run2_model_pct, run2_book_line, run2_edge, run2_change,
 run3_bet_team, run3_model_pct, run3_book_line, run3_edge, run3_change,
 final_run, final_bet_team, final_model_pct, final_book_line, final_edge,
 raw_model_pct, home_platoon_factor, away_platoon_factor, platoon_confirmed,
-actual_home_score, actual_away_score, winner, result
+actual_home_score, actual_away_score, winner, result, ou_direction
 ```
+35 columns total. `model_strategy` is the 7th column (after `bet_type`).
 
 Key fields:
+- `model_strategy`: 'SNIPER' for ML bets, '' for O/U. Will be 'SNIPER'/'ENFORCER' once dual-strategy is live.
 - `game_time`: "HH:MM" 24-hour MST — determines which run is "final"
 - `run2_change / run3_change`: EDGE GAINED / EDGE LOST / PICK CHANGED / —
 - `final_run`: last run BEFORE game start (not last logged run)
 - `result`: evaluated against final_bet_team only (last pre-game prediction)
 - `actual_home/away_score`: only populated for yesterday's rows (never today)
 - `book_line` for O/U: "8.5@-110" format (total@odds for ROI calculation)
+- `ou_direction`: HIGH/LOW/CLOSE + signed error once scores available
 - Sort: newest date first, chronological by game_time within each day
 
 ### Result System (Two-Pass)
 - Pass 1: Log today's predictions as PENDING (no score, no result)
 - Pass 2: Update yesterday's rows with actual results from get_yesterdays_results()
 - This prevents back-to-back games (same teams two days) from getting wrong results
+
+### Production Startup Sequence
+```
+Step 1  archive_existing_prediction_logs()
+          Detects old schema (no model_strategy col) → moves CSV/XLSX to
+          predictions/archive/predictions_log_archived_YYYYMMDD.*
+          Creates fresh blank files with 35-col headers. No-op if already migrated.
+
+Step 2  get_cached_odds() + full inference engine runs
+
+Step 3  log_predictions() → generate_excel_log() → update_google_sheets()
+          sheet.batch_clear(["A2:AJ2000"])   # values only, formatting intact
+          sheet.update("A1", [headers] + rows)
+          sheet.spreadsheet.batch_update(color_requests)
+```
+
+### archive_existing_prediction_logs()
+```python
+# Migration trigger: 'model_strategy' absent from CSV column headers
+# Archive destination: predictions/archive/predictions_log_archived_YYYYMMDD.*
+# Post-archive: creates blank CSV + XLSX with full 35-col header row
+# Idempotent: skips on every run after first migration
+```
+
+### update_google_sheets() — Value-Only Clear
+```python
+# OLD: sheet.clear()                      ← wiped all values from row 1 down
+# NEW: sheet.batch_clear(["A2:AJ2000"])   ← clears values rows 2-2000 only
+#   Preserves: Row 1 headers, cell borders, data validation dropdowns,
+#              conditional formatting rules (not touched by values endpoint)
+#   Range A2:AJ2000: 36 cols covers 35-col schema + 1 buffer col
+#   After clear: sheet.update("A1", [headers] + rows) rewrites everything
+```
 
 ---
 
@@ -375,18 +432,223 @@ Complete 2026 dataset available at end of season.
 
 ---
 
+## Financial Simulation
+
+### de_vig_probs(home_ml, away_ml)
+```python
+# Strips sportsbook overround so market probs sum to exactly 1.0.
+# FanDuel runs ~104–105% overround; raw implied probs inflate market estimates
+# by ~2–3%, which deflates calculated edge by the same amount.
+raw_h, raw_a = american_to_prob(home_ml), american_to_prob(away_ml)
+total = raw_h + raw_a
+return raw_h / total, raw_a / total
+# Used in: run_backtest_with_params() edge calc, walk_forward_financial_sim()
+# NOT used for payout math — books pay raw American odds.
+```
+
+### walk_forward_financial_sim(C, flat_bet, edge_min, all_feat=None)
+Same 4-fold expanding-window structure. Per fold:
+- Trains logistic regression on training years only
+- Generates out-of-sample `p_home` for test year
+- Edge = `model_prob − de_vigged_market_prob`
+- Bets any side where `edge > edge_min` (no upper cap)
+- Flat bet per game, payout via raw American odds
+
+Pass `all_feat` to reuse pre-collected features across threshold sweeps.
+
+### RUN_MODE = 'financial_sim'
+```python
+# Dispatcher collects features once, then sweeps thresholds:
+_feat_cache = collect_game_features_for_meta([2021, 2022, 2023, 2024, 2025])
+for _thresh in [...]:
+    walk_forward_financial_sim(C=1.0, flat_bet=20.0, edge_min=_thresh, all_feat=_feat_cache)
+```
+
+---
+
+## Market-Residual Meta Model (current architecture)
+
+### Feature Set — _META_FEATURES (5 features)
+```
+[0] logit_market_prob  — de-vigged FD home win prob, logit-transformed
+                         Clipped [0.001, 0.999] before logit.
+                         UNSCALED — col 0 passed raw through train and test.
+[1] d_woba             — home_woba_r − away_woba_r
+[2] d_xwoba_bat        — home_xwoba_bat_r − away_xwoba_bat_r
+[3] d_xfip             — home_xfip_r − away_xfip_r  (inverted)
+[4] d_xwoba_pit        — home_xwoba_pit_r − away_xwoba_pit_r  (inverted)
+```
+
+Standardization: **columns 1–4 only**, fit on training fold.
+Column 0 is left unscaled in both `walk_forward_meta_model` and
+`walk_forward_financial_sim`.
+
+`collect_game_features_for_meta()` now requires both `fd_home_ml` and
+`fd_away_ml` — games without odds are excluded (10,181 games, down from 10,846).
+
+### Key Findings
+
+Original meta model (no market logit, 4 features):
+- Win rate locked at ~40% regardless of edge threshold or regularization (C)
+- C=0.1 vs C=1.0: dropped only 29 bets across 4 years — feature gaps too
+  wide for regularization to meaningfully reduce volume
+- ROI improved at higher thresholds (>12% → +6.1%) but via underdog payout
+  structure, NOT improved win rate. Structural problem, not a filtering problem.
+
+Market-residual model (logit_market_prob added as feature 0):
+- Win rate immediately stabilized at ~49.7% — market anchor eliminates
+  underdog bias
+- Volume collapses fold-over-fold as training data grows: the regression
+  learns the market logit explains most variance and shrinks Statcast
+  residuals toward zero by folds 3–4
+- ~49.7% win rate is below the ~52.4% break-even for standard −110 juice
+- Root cause: team-level season-to-date Statcast metrics carry no residual
+  information beyond what the sportsbook has already priced in
+
+### Threshold Sweep Results (market-residual, C=1.0, flat $20)
+
+| Edge Filter | Bets | Win%  | Profit   | ROI    |
+|-------------|------|-------|----------|--------|
+| > 3%        | 1,575 | 49.8% | −$1,924 | −6.1%  |
+| > 4%        |   891 | 49.7% |   −$899 | −5.0%  |
+| > 5%        |   549 | 49.7% |   −$475 | −4.3%  |
+
+---
+
 ## Pending Items
 
-1. **Platoon split retrospective** (3 weeks): check if confirmed-lineup bets where
+1. **Round 9 financial sim results**: `player_level_meta` pipeline is built and running.
+   Evaluate Sniper vs Enforcer results once backtest completes. Key question: does
+   player-level + handedness-split + box score lineup carry residual signal vs market?
+
+2. **Platoon split retrospective** (3 weeks): check if confirmed-lineup bets where
    platoon boosted the model outperform those where it lowered the model.
    Accuracy report section activates automatically at 20+ confirmed-lineup settled bets.
-
-2. **Round 6 results**: evaluate ou_run_threshold findings, check if O/U adds
-   positive combined ROI, refine if needed and run round 7.
 
 3. **Full 2025 ML odds**: if The Odds API releases historical data or SportsGameOdds
    adds snapshot capability, fill Aug 17–Oct 1, 2025 ML gap.
 
-4. **Platoon splits in backtest**: not yet implemented. Current backtest uses team-level
-   stats only. Adding lineup-level platoon data would require confirmed lineups
-   historically, which is not available.
+4. **Weather / travel / rest factors**: not yet implemented. These are candidates
+   for residual signal the market may not fully price at line-posting time.
+
+5. **Exponential recency weighting**: within the rolling 100 PA window, weight
+   recent games more heavily. Currently all games in window are equal-weighted.
+
+---
+
+## Round 9 — Player-Level Feature System
+
+### Why team-level failed (root cause, Section 18)
+Team-level season-to-date Statcast metrics are too coarse and too public.
+Win rate locked at ~49.7% even with market logit anchor — below 52.4% break-even.
+The 4 features (wOBA, xwOBA bat/pit, xFIP) carry no residual info beyond the line.
+
+### Architecture change
+```
+BEFORE: team wOBA = cumulative season-to-date from MLB API game logs
+AFTER:  team wOBA = PA-weighted avg of each batter's rolling 100 PA vs L or R
+
+BEFORE: team xFIP = season-to-date across all team pitchers  
+AFTER:  xFIP = actual starting pitcher's rolling 100 BF stats
+```
+
+### aggregate_lineup_metric(player_stats_dict, lineup_list, lg_avg)
+```python
+PA_WEIGHTS = np.array([0.123, 0.120, 0.117, 0.114, 0.111, 0.108, 0.105, 0.102, 0.100])
+# Positional PA weights: leadoff ~123%, cleanup ~111%, 9-hole ~100%
+# player_stats_dict: {player_id: metric_value}  — e.g. rolling xwOBA vs RHP
+# lineup_list: [pid1..pid9] in batting order from box score
+# lg_avg: league-average fallback for rookies / missing players
+# Returns: np.dot(metrics, PA_WEIGHTS)
+```
+
+### Rolling cache construction
+```python
+# Batter cache: (player_id, hand, date) → {woba, xwoba, pa}
+# Minimum: 30 PA. Window: most recent 100 PA vs that pitcher hand type.
+# Built from player_data/batters_vs_L_YYYY.csv + batters_vs_R_YYYY.csv
+
+# Pitcher cache: (pitcher_id, date) → {xfip, xwoba_pit, pa}
+# Minimum: 20 BF. Window: most recent 100 BF.
+# IP source: game_lineups.json inningsPitched (exact, not estimated)
+# xFIP: (13*exp_HR + 3*(BB+HBP) - 2*K) / IP + cFIP
+#   exp_HR = lg_hr_fb_rate * (IP * 3 * 0.40)   [fly balls estimated from IP]
+# Built from player_data/starters_YYYY.csv
+
+# Both use prefix sums + binary search: O(log n) per target date lookup
+```
+
+### IP data pipeline
+```python
+# inningsPitched stored in:
+#   bs[side]['players']['ID{pid}']['stats']['pitching']['inningsPitched']
+# Returns string e.g. '6.1' (6⅓ IP), '5.2' (5⅔ IP)
+# ip_to_float('5.2') = 5.667  (exact — baseball notation where .1=1/3 not 0.1)
+# 'outs' field is NOT in the MLB API boxscore pitching stats block
+# _build_ip_lookup(): reads game_lineups.json → {(player_id, game_pk): ip_decimal}
+# load_player_pitcher_data() merges true IP via (player_id, game_pk) join
+```
+
+### Game lineup cache (game_lineups.json)
+```python
+# One-time pull: ~2-3 hours for 2021-2025 (~12,150 boxscore API calls)
+# Checkpoint saves every 200 games — resumes automatically on restart
+# Per-game entry:
+{
+  'date': 'YYYY-MM-DD',
+  'home_fg': 'NYY',  'away_fg': 'BOS',
+  'home_lineup': [pid1..pid9],   # battingOrder '100'..'900' = starters
+  'away_lineup': [pid1..pid9],
+  'home_starter_id': int, 'away_starter_id': int,
+  'home_starter_hand': 'R', 'away_starter_hand': 'L',
+  'home_starter_ip': '6.1', 'away_starter_ip': '5.0'  # from stats block
+}
+# Retry: 5x for schedule call, 3x for boxscore calls (503 transient errors)
+# game_type == 'R' filter applied to exclude spring training / playoffs
+```
+
+### fetch_player_data.py
+```bash
+python fetch_player_data.py --test     # prints all 78 column names, no files saved
+python fetch_player_data.py            # full pull 2021-2025 (15 files, ~15 min)
+python fetch_player_data.py --seasons 2024 2025   # specific seasons only
+```
+Key lessons:
+- Do NOT include `type=details` in params — returns 0 rows with `group_by=name-date`
+- Monthly date-range pagination required (Savant caps at 10,000 rows per request)
+- `ip` is NOT in the Savant grouped export — use game_lineups.json instead
+- `xwoba` column is present and correct (not the long-form estimated_ name)
+
+---
+
+## Dual Strategy Simulation
+
+### walk_forward_dual_strategy(all_feat, flat_bet=20.0)
+```python
+from sklearn.linear_model import LogisticRegression
+
+STRATEGIES = [
+    ('The Sniper',   C=1.0, edge_min=0.050),   # high-conviction, low volume
+    ('The Enforcer', C=5.0, edge_min=0.035),   # relaxed reg, higher volume
+]
+# Same 4-fold walk-forward structure (train [2021]→test 2022, etc.)
+# Same standardization: col 0 (market logit) unscaled, cols 1-4 scaled on train only
+# Both models trained per fold; output: per-fold rows + side-by-side summary table
+# predict_proba(X_te_s)[:, 1] = P(home win)
+# Edge = model_prob - de_vigged_market_prob
+```
+
+Replaces old threshold sweep `[0.03, 0.04, 0.05]` in `player_level_meta` mode.
+
+### RUN_MODE options (current)
+```
+'player_level_meta'  — full Round 9 pipeline (lineups → CSVs → caches → dual sim)
+'dual_strategy'      — dual sim only, uses team-level meta features (fast)
+'financial_sim'      — old threshold sweep on team-level features (C=1.0)
+'meta_model'         — Brier score calibration walk-forward (no ROI)
+'test_ip_cache'      — verify inningsPitched extraction, 10 sample games
+'train'              — ROI-optimized random search (round 8)
+'individual_metrics' — test each metric in isolation
+'walk_forward'       — 4-fold walk-forward with fresh param search per fold
+'calibration'        — Brier-score-optimized parameter search
+```

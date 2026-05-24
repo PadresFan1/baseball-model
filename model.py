@@ -114,6 +114,7 @@ from datetime import timezone, timedelta, datetime
 API_KEY  = os.getenv('API_KEY')
 BANKROLL = float(os.getenv('BANKROLL', '1000'))
 KELLY_FRACTION = 0.5   # half-Kelly reduces variance vs full Kelly
+OU_BETTING_ENABLED = False  # O/U shows negative ROI in backtesting — disabled until calibrated
 print(f"API Key loaded: {API_KEY is not None}")
 
 MST = timezone(timedelta(hours=-7))
@@ -241,12 +242,16 @@ def get_upcoming_games(odds_data):
 def get_todays_game_statuses():
     today = date.today().strftime('%Y-%m-%d')
     schedule = statsapi.schedule(date=today)
+    schedule = sorted(schedule, key=lambda g: g.get('game_datetime', ''))
     statuses = {}
+    pair_count = {}
     for game in schedule:
         home = game['home_name']
         away = game['away_name']
         if home in NAME_TO_FG and away in NAME_TO_FG:
-            key = f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"
+            base_key = f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"
+            pair_count[base_key] = pair_count.get(base_key, 0) + 1
+            key = base_key if pair_count[base_key] == 1 else f"{base_key}_G2"
             statuses[key] = {
                 'status': game['status'],
                 'home_score': game.get('home_score', '-'),
@@ -1038,27 +1043,35 @@ todays_predictions = []
 def get_yesterdays_results():
     yesterday = (date.today() - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
     schedule = statsapi.schedule(date=yesterday)
+    schedule = sorted(schedule, key=lambda g: g.get('game_datetime', ''))
     results = {}
+    postponed = set()
+    pair_count = {}
     for game in schedule:
+        home = game['home_name']
+        away = game['away_name']
+        if home not in NAME_TO_FG or away not in NAME_TO_FG:
+            continue
+        base_key = f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"
+        pair_count[base_key] = pair_count.get(base_key, 0) + 1
+        key = base_key if pair_count[base_key] == 1 else f"{base_key}_G2"
         if game['status'] == 'Final':
-            home = game['home_name']
-            away = game['away_name']
             home_score = game['home_score']
             away_score = game['away_score']
-            winner = home if home_score > away_score else away
-            if home in NAME_TO_FG and away in NAME_TO_FG:
-                results[f"{NAME_TO_FG[away]}_{NAME_TO_FG[home]}"] = {
-                    'home': NAME_TO_FG[home],
-                    'away': NAME_TO_FG[away],
-                    'home_score': home_score,
-                    'away_score': away_score,
-                    'winner': NAME_TO_FG[home] if home_score > away_score else NAME_TO_FG[away]
-                }
-    return results
+            results[key] = {
+                'home': NAME_TO_FG[home],
+                'away': NAME_TO_FG[away],
+                'home_score': home_score,
+                'away_score': away_score,
+                'winner': NAME_TO_FG[home] if home_score > away_score else NAME_TO_FG[away]
+            }
+        elif game['status'] in ('Postponed', 'Cancelled'):
+            postponed.add(key)
+    return results, postponed
 
-yesterdays_results = get_yesterdays_results()
+yesterdays_results, yesterdays_postponed = get_yesterdays_results()
 
-_NO_BET_VALS = {'No Bet', 'No Edge', 'No Line', 'nan', 'None', ''}
+_NO_BET_VALS = {'No Bet', 'No Edge', 'No Line', 'nan', 'None', '', 'N/A', 'CANCELLED'}
 
 def _is_active_bet(val):
     return pd.notna(val) and str(val) not in _NO_BET_VALS
@@ -1084,8 +1097,11 @@ def get_final_run(game_time_str, row):
             return run
     return cutoff
 
-def log_predictions(predictions, results):
+def log_predictions(predictions, results, postponed=None, statuses=None, active_game_keys=None):
     log_file = 'predictions/predictions_log.csv'
+
+    def _game_num_str(val):
+        return '1' if (val is None or pd.isna(val) or str(val) in ('', 'nan', 'None')) else str(val)
 
     from datetime import datetime
     hour = datetime.now().hour
@@ -1097,7 +1113,7 @@ def log_predictions(predictions, results):
         return
 
     columns = [
-        'date', 'game_time', 'home_team', 'away_team', 'bet_type',
+        'date', 'game_time', 'game_num', 'home_team', 'away_team', 'bet_type', 'model_strategy',
         'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
         'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
@@ -1112,6 +1128,16 @@ def log_predictions(predictions, results):
         for col in columns:
             if col not in df.columns:
                 df[col] = None
+        # Normalize date column — old rows used M/D/YYYY, new rows use YYYY-MM-DD
+        # Mixed formats break string sorting (e.g. "5/22/2026" > "2026-05-23")
+        def _norm_date(d):
+            if pd.isna(d) or str(d) in ('', 'nan', 'None'):
+                return d
+            try:
+                return pd.to_datetime(str(d)).strftime('%Y-%m-%d')
+            except Exception:
+                return d
+        df['date'] = df['date'].apply(_norm_date)
 
         has_scores = (
             df['actual_home_score'].notna() &
@@ -1119,6 +1145,10 @@ def log_predictions(predictions, results):
             df['actual_away_score'].notna() &
             ~df['actual_away_score'].isin(['', 'nan', 'None'])
         )
+
+        # Retroactive fix: game_num NaN for rows created before column existed → default to 1
+        gnum_missing = df['game_num'].isna() | df['game_num'].isin(['', 'nan', 'None'])
+        df.loc[gnum_missing, 'game_num'] = '1'
 
         # Retroactive fix: ML No Bet rows with scores stuck at PENDING → N/A
         ml_nobet_mask = (
@@ -1195,21 +1225,31 @@ def log_predictions(predictions, results):
         away_fg   = pred['away_fg']
         bet_type  = pred['bet_type']
         game_time = pred.get('game_time', '')
+        game_num  = str(pred.get('game_num', 1) or 1)
+
+        gn_col = df['game_num'].astype(str)
+        if game_num == '1':
+            game_num_mask = gn_col.isin(['1']) | df['game_num'].isna() | gn_col.isin(['None', ''])
+        else:
+            game_num_mask = gn_col == game_num
 
         mask = (
             (df['date']      == game_date) &
             (df['home_team'] == home_fg)   &
             (df['away_team'] == away_fg)   &
-            (df['bet_type']  == bet_type)
+            (df['bet_type']  == bet_type)  &
+            game_num_mask
         )
 
         if df[mask].empty:
             new_row = {col: None for col in columns}
-            new_row['date']      = game_date
-            new_row['game_time'] = game_time
-            new_row['home_team'] = home_fg
-            new_row['away_team'] = away_fg
-            new_row['bet_type']  = bet_type
+            new_row['date']           = game_date
+            new_row['game_time']      = game_time
+            new_row['game_num']       = game_num
+            new_row['home_team']      = home_fg
+            new_row['away_team']      = away_fg
+            new_row['bet_type']       = bet_type
+            new_row['model_strategy'] = pred.get('model_strategy', 'SNIPER')
             new_row[f'run{run_num}_bet_team']  = pred['bet_team']
             new_row[f'run{run_num}_model_pct'] = pred['model_pct']
             new_row[f'run{run_num}_book_line'] = pred['book_line']
@@ -1228,10 +1268,13 @@ def log_predictions(predictions, results):
             df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
         else:
             idx = df[mask].index[0]
-            # Backfill game_time if missing (rows created before column existed)
+            # Backfill game_time and game_num if missing (rows created before columns existed)
             existing_gt = df.at[idx, 'game_time']
             if not existing_gt or str(existing_gt) in ('', 'nan', 'None'):
                 df.at[idx, 'game_time'] = game_time
+            existing_gn = df.at[idx, 'game_num']
+            if pd.isna(existing_gn) or str(existing_gn) in ('', 'nan', 'None'):
+                df.at[idx, 'game_num'] = game_num
             if run_num > 1:
                 prev_bet = df.at[idx, f'run{run_num - 1}_bet_team']
                 df.at[idx, f'run{run_num}_change'] = compute_run_change(prev_bet, pred['bet_team'])
@@ -1258,8 +1301,12 @@ def log_predictions(predictions, results):
     # the same two teams playing back-to-back days would inherit yesterday's result.
     for idx in df[df['date'] == yesterday_str].index:
         row      = df.loc[idx]
-        game_key = f"{row['away_team']}_{row['home_team']}"
+        base_key = f"{row['away_team']}_{row['home_team']}"
+        game_num = _game_num_str(row.get('game_num'))
+        game_key = base_key if game_num == '1' else f"{base_key}_G2"
         if game_key not in results:
+            if postponed and game_key in postponed:
+                df.at[idx, 'result'] = 'VOID'
             continue
         r = results[game_key]
         df.at[idx, 'actual_home_score'] = str(r['home_score'])
@@ -1289,6 +1336,24 @@ def log_predictions(predictions, results):
     df.loc[today_mask, 'actual_away_score'] = None
     df.loc[today_mask, 'winner']            = None
     df.loc[today_mask, 'ou_direction']      = None
+
+    # Mark cancelled/postponed today rows — zero out bet info so they don't look active
+    # Triggers if MLB API says Postponed/Cancelled OR game no longer appears in odds feed
+    for idx in df[today_mask].index:
+        row      = df.loc[idx]
+        base_key = f"{row['away_team']}_{row['home_team']}"
+        game_num = _game_num_str(row.get('game_num'))
+        mlb_key  = base_key if game_num == '1' else f"{base_key}_G2"
+        mlb_status    = (statuses or {}).get(mlb_key, {}).get('status', '')
+        in_odds       = (active_game_keys is None) or (mlb_key in active_game_keys)
+        live_or_done  = mlb_status in ('Final', 'In Progress', 'Warmup', 'Pre-Game', 'Game Over', 'Completed Early')
+        if not live_or_done and (mlb_status in ('Postponed', 'Cancelled') or not in_odds):
+            df.at[idx, 'result'] = 'CANCELLED'
+            for run in [1, 2, 3]:
+                df.at[idx, f'run{run}_bet_team'] = 'CANCELLED'
+                df.at[idx, f'run{run}_edge']     = 'CANCELLED'
+            df.at[idx, 'final_bet_team'] = 'CANCELLED'
+            df.at[idx, 'final_edge']     = 'CANCELLED'
 
     df = df.reindex(columns=columns)
     df = df.sort_values(['date', 'game_time'], ascending=[False, True], na_position='last').reset_index(drop=True)
@@ -1428,6 +1493,70 @@ def generate_excel_log(df):
         wb.save(excel_file)
     except Exception as e:
         print(f"Excel generation failed: {e}")
+
+def archive_existing_prediction_logs():
+    """
+    One-time migration: archive predictions_log CSV/XLSX if they pre-date the
+    dual-strategy schema (detected by absence of 'model_strategy' column).
+    Moves files to predictions/archive/ with a date-stamped name, then creates
+    fresh blank files containing the updated headers.
+    Safe to call on every startup — skips if already migrated.
+    """
+    import shutil
+
+    csv_file  = 'predictions/predictions_log.csv'
+    xlsx_file = 'predictions/predictions_log.xlsx'
+    archive_dir = 'predictions/archive'
+
+    # Nothing to archive if neither file exists
+    if not os.path.exists(csv_file) and not os.path.exists(xlsx_file):
+        return
+
+    # Already migrated — skip
+    if os.path.exists(csv_file):
+        try:
+            peek = pd.read_csv(csv_file, nrows=1, dtype=str)
+            if 'model_strategy' in peek.columns:
+                return
+        except Exception:
+            pass  # unreadable file → archive it
+
+    os.makedirs(archive_dir, exist_ok=True)
+    suffix = f"_archived_{date.today().strftime('%Y%m%d')}"
+
+    if os.path.exists(csv_file):
+        dest = os.path.join(archive_dir, f'predictions_log{suffix}.csv')
+        shutil.move(csv_file, dest)
+        print(f"[Archive] {csv_file} → {dest}")
+
+    if os.path.exists(xlsx_file):
+        dest = os.path.join(archive_dir, f'predictions_log{suffix}.xlsx')
+        shutil.move(xlsx_file, dest)
+        print(f"[Archive] {xlsx_file} → {dest}")
+
+    new_columns = [
+        'date', 'game_time', 'game_num', 'home_team', 'away_team', 'bet_type', 'model_strategy',
+        'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
+        'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
+        'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
+        'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
+        'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
+        'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
+    ]
+
+    pd.DataFrame(columns=new_columns).to_csv(csv_file, index=False)
+    print(f"[Archive] Created fresh {csv_file} with updated headers")
+
+    try:
+        import openpyxl
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.append(new_columns)
+        wb.save(xlsx_file)
+        print(f"[Archive] Created fresh {xlsx_file} with updated headers")
+    except Exception as e:
+        print(f"[Archive] Fresh XLSX creation failed: {e}")
+
 
 def calculate_rolling_lambda(team,rolling):
     if team not in rolling:
@@ -1643,28 +1772,78 @@ def update_google_sheets(df):
     try:
         import gspread
         from google.oauth2.service_account import Credentials
-        
+
         creds_path = os.getenv('GOOGLE_CREDENTIALS_PATH', 'cache/google_credentials.json')
-        
         scopes = [
             'https://www.googleapis.com/auth/spreadsheets',
             'https://www.googleapis.com/auth/drive'
         ]
-        
         creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
         client = gspread.authorize(creds)
-        
         sheet = client.open('Baseball Model Predictions').sheet1
-        
-        sheet.clear()
+
+        # Clear cell values only from row 2 downward — preserves Row 1 headers,
+        # custom background colors, borders, data validation dropdowns, and
+        # conditional formatting rules (values.clear does not touch formatting).
+        sheet.batch_clear(["A2:AJ2000"])
 
         headers = df.columns.tolist()
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
-        sheet.update([headers] + rows)
-        
-        sys.stdout._real.write("Google Sheets updated successfully\n")
+        # Write headers to row 1 (in case schema changed) + data from row 2 onward
+        sheet.update(range_name='A1', values=[headers] + rows)
+
+        # Apply alternating row colors by date and game — no formula column needed
+        sheet_id  = sheet.id
+        n_cols    = len(df.columns)
+        WHITE     = {'red': 1.0, 'green': 1.0, 'blue': 1.0}
+
+        # Two date colors alternating — blue one day, green the next, repeat
+        DATE_COLORS = [
+            ({'red': 0.812, 'green': 0.886, 'blue': 0.953}, WHITE),  # light blue / no color
+            ({'red': 0.812, 'green': 0.953, 'blue': 0.816}, WHITE),  # light green / no color
+        ]
+
+        # Build date order (DataFrame is newest-first)
+        date_order = {}
+        for d in df['date']:
+            if d not in date_order:
+                date_order[d] = len(date_order)
+
+        row_within_date = {}
+        color_requests  = [{
+            'repeatCell': {
+                'range': {'sheetId': sheet_id, 'startRowIndex': 0,
+                          'endRowIndex': len(df) + 2, 'startColumnIndex': 0,
+                          'endColumnIndex': n_cols},
+                'cell': {'userEnteredFormat': {'backgroundColor': WHITE}},
+                'fields': 'userEnteredFormat.backgroundColor',
+            }
+        }]
+
+        for sheet_row, (_, row) in enumerate(df.iterrows(), start=2):
+            date_val = str(row.get('date', ''))
+            row_within_date[date_val] = row_within_date.get(date_val, 0) + 1
+            date_idx = date_order.get(date_val, 0)
+            row_idx  = row_within_date[date_val]
+            color    = DATE_COLORS[date_idx % len(DATE_COLORS)][(row_idx - 1) % 2]
+
+            color_requests.append({
+                'repeatCell': {
+                    'range': {'sheetId': sheet_id,
+                              'startRowIndex': sheet_row - 1, 'endRowIndex': sheet_row,
+                              'startColumnIndex': 0, 'endColumnIndex': n_cols},
+                    'cell': {'userEnteredFormat': {'backgroundColor': color}},
+                    'fields': 'userEnteredFormat.backgroundColor',
+                }
+            })
+
+        sheet.spreadsheet.batch_update({'requests': color_requests})
+
+        print("Google Sheets updated successfully")
     except Exception as e:
+        import traceback
         print(f"Google Sheets update failed: {e}")
+        traceback.print_exc()
 
 def _roi_for_bets(bets_df):
     profit = 0
@@ -1839,6 +2018,7 @@ def print_accuracy_report():
     bets     = analysis[analysis['bet_team'].apply(_is_active_bet)]
     settled  = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
     pending  = bets[bets['result'] == 'PENDING']
+    voided   = bets[bets['result'] == 'VOID']
 
     # Split at the model v2 launch date
     pre  = settled[settled['date'] <  MODEL_V2_START]
@@ -1847,6 +2027,9 @@ def print_accuracy_report():
     post_pending = pending[pending['date'] >= MODEL_V2_START]
 
     print("\n=== ACCURACY REPORT ===\n")
+
+    if len(voided) > 0:
+        print(f"  ({len(voided)} voided — postponed/cancelled games excluded from all stats)\n")
 
     print(f"── Before {MODEL_V2_START} (original model) ─────────────────")
     _print_period_stats(pre, len(pre_pending), show_roi=False)
@@ -1951,6 +2134,9 @@ def print_accuracy_report():
                     print(f"    {lbl:5s}: {w}W - {l}L  ({wr:.0%})")
     print()
 
+# ── Step 1: Archive old prediction logs if they pre-date the dual-strategy schema ──
+archive_existing_prediction_logs()
+
 odds_data = get_cached_odds()
 
 upcoming=get_upcoming_games(odds_data)
@@ -2004,13 +2190,9 @@ skipped_games = []
 
 # Game Loop
 upcoming = sorted(upcoming, key=lambda x: x['commence_time'])
-seen_games = set()
+pair_count      = {}
+active_game_keys = set()  # all games visible in today's odds feed
 for game in upcoming:
-    game_key = f"{game['home_team']}_{game['away_team']}"
-    if game_key in seen_games:
-        continue
-    seen_games.add(game_key)
-
     home_name = game['home_team']
     away_name = game['away_team']
 
@@ -2019,6 +2201,17 @@ for game in upcoming:
 
     home_fg = NAME_TO_FG[home_name]
     away_fg = NAME_TO_FG[away_name]
+
+    base_mlb_key = f"{away_fg}_{home_fg}"
+    pair_count[base_mlb_key] = pair_count.get(base_mlb_key, 0) + 1
+    game_num = pair_count[base_mlb_key]
+    mlb_key  = base_mlb_key if game_num == 1 else f"{base_mlb_key}_G2"
+    active_game_keys.add(mlb_key)
+
+    mlb_status = game_statuses.get(mlb_key, {}).get('status', '')
+    if mlb_status in ('Postponed', 'Cancelled'):
+        print(f"  {away_fg} @ {home_fg} — {mlb_status}, skipping")
+        continue
 
     if home_fg not in rolling or away_fg not in rolling:
         continue
@@ -2054,7 +2247,8 @@ for game in upcoming:
     away_market_prob = american_to_prob(away_market_line)
 
     game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(MST)
-    time_str = game_time.strftime('%a %b %d - %I:%M %p MST')
+    dh_label = f' (Game {game_num})' if game_num > 1 else ''
+    time_str = game_time.strftime('%a %b %d - %I:%M %p MST') + dh_label
 
     home_starter = todays_starters.get(home_fg)
     away_starter = todays_starters.get(away_fg)
@@ -2165,7 +2359,7 @@ for game in upcoming:
         over_prob  = 0.5 * (1 - math.erf(z / math.sqrt(2)))
         under_prob = 1.0 - over_prob
 
-        if ou_diff > 1.5:
+        if OU_BETTING_ENABLED and ou_diff > 1.5:
             kelly_ou_pct, kelly_ou_amt = kelly_bet_size(over_prob, total_data['over_price'])
             ou_text = (
                 f"   📊 Over/Under: OVER | Model: {avg_total:.1f} | "
@@ -2174,7 +2368,7 @@ for game in upcoming:
             )
             ou_edge = True
 
-        elif ou_diff < -1.5:
+        elif OU_BETTING_ENABLED and ou_diff < -1.5:
             kelly_ou_pct, kelly_ou_amt = kelly_bet_size(under_prob, total_data['under_price'])
             ou_text = (
                 f"   📊 Over/Under: UNDER | Model: {avg_total:.1f} | "
@@ -2216,10 +2410,12 @@ for game in upcoming:
     todays_predictions.append({
         'date':               first_game_date,
         'game_time':          game_time_24h,
+        'game_num':           game_num,
         'run_time':           run_time,
         'home_fg':            home_fg,
         'away_fg':            away_fg,
         'bet_type':           'Moneyline',
+        'model_strategy':     'SNIPER',
         'bet_team':           ml_bet_team,
         'model_pct':          ml_model_pct,
         'raw_model_pct':      raw_ml_pct,
@@ -2247,10 +2443,12 @@ for game in upcoming:
         todays_predictions.append({
             'date':               first_game_date,
             'game_time':          game_time_24h,
+            'game_num':           game_num,
             'run_time':           run_time,
             'home_fg':            home_fg,
             'away_fg':            away_fg,
             'bet_type':           'Over/Under',
+            'model_strategy':     '',
             'bet_team':           ou_bet_team,
             'model_pct':          f"{avg_total:.1f}",
             'raw_model_pct':      raw_ou_total,
@@ -2264,10 +2462,12 @@ for game in upcoming:
         todays_predictions.append({
             'date':               first_game_date,
             'game_time':          game_time_24h,
+            'game_num':           game_num,
             'run_time':           run_time,
             'home_fg':            home_fg,
             'away_fg':            away_fg,
             'bet_type':           'Over/Under',
+            'model_strategy':     '',
             'bet_team':           'No Bet',
             'model_pct':          f"{avg_total:.1f}",
             'raw_model_pct':      f"{raw_result[2]:.1f}",
@@ -2321,7 +2521,7 @@ if completed_games:
 
 todays_starters = get_todays_starters()
 
-log_predictions(todays_predictions, yesterdays_results)
+log_predictions(todays_predictions, yesterdays_results, yesterdays_postponed, game_statuses, active_game_keys)
 
 # Capture email body before accuracy report runs
 from datetime import datetime as _dt

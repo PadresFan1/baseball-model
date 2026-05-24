@@ -15,7 +15,8 @@
       "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
       "Bash(python -c \"import pandas\")",
       "Bash(where python *)",
-      "Bash(py -0)"
+      "Bash(py -0)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('backtest.py'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")"
     ]
   }
 }
