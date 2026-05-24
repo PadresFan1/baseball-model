@@ -1,29 +1,41 @@
 # Baseball Model — Project Log
 
 *Living document. Update after every meaningful session.*
-*For technical specs (formulas, file structure, API details, full schema), see [REFERENCE.md](memory/REFERENCE.md).*
+*For technical specs (formulas, file structure, API details, full schema), see [REFERENCE.md](REFERENCE.md).*
 
 ---
 
-## Current State — as of 2026-05-23
+## Current State — as of 2026-05-24 (updated)
 
-**Live model** (`model.py`) runs at 9am, 12pm, 4pm MST via Windows Task Scheduler.
+**Live model** (`model.py`) runs **hourly** via Windows Task Scheduler (updated from 9am/12pm/4pm).
 
 - Poisson simulation (5,000 runs/game) → win probability
 - Features: rolling 7/15-day runs scored/allowed, wOBA, xwOBA, BABIP (offense) + FIP, xFIP, K%, BB% (pitching) — season-to-date from MLB Stats API + Savant
 - Park factors applied to lambda
 - Injury adjustments (14-day tapered IL window, MLB transactions endpoint)
 - Platoon splits when lineups confirmed (vs LHP / vs RHP per batter)
+- **Lineup confirmation gate**: games without confirmed lineups are skipped entirely — no model run, no row logged, no wager. Printed under `=== LINEUPS PENDING ===` in terminal.
 - Edge threshold: **7%** probability vs de-vigged market line
 - Staking: **dynamic 1/2 Kelly** via `calculate_kelly_stake()` — upgraded 2026-05-23 from flat $20
   - 15% bankroll cap per bet (`MAX_BANKROLL_EXPOSURE`)
   - Effective bankroll = total bankroll minus sum of all open/PENDING bet stakes
   - `recommended_stake` logged as a column in predictions CSV/XLSX/Sheets
-- **O/U betting OFF** (`OU_BETTING_ENABLED = False`) — backtest proved anti-predictive at every threshold
+- **O/U betting OFF** (`OU_BETTING_ENABLED = False`) — confirmed anti-predictive at team level AND player level
+- **O/U terminal/email output OFF (2026-05-24)**: O/U lines removed from game output and accuracy report. Model projected total (`avg_total`) still shown inline via `proj_text` (e.g., `Model total: 8.7`). O/U rows still logged to CSV/XLSX/Sheets for retrospective analysis.
+- **Accuracy tracker reset to 2026-05-24**: `MODEL_V2_START = '2026-05-24'`. The pre-overhaul record is no longer shown. Single section: `── Record (since 2026-05-24)`.
+- **Platoon analysis NOT printed**: platoon factors calculated and logged (CSV/Sheets), but platoon analysis section removed from accuracy report output entirely.
+- **Run Total Accuracy section** replaces O/U direction analysis in accuracy report: shows games tracked, avg error, HIGH/LOW/CLOSE breakdown — no O/U betting framing.
 - Predictions logged: 36-col CSV + color-coded XLSX + Google Sheets
-- Email report after each run (2hr throttle), includes accuracy report
+- Email report sent on **every run** (2hr throttle removed)
+- **Inter-run change detection (2026-05-24)**: each email flags per-game changes vs the prior run's logged recommendation
+  - 🔄 `PICK CHANGED: A → B` — same game, different team
+  - 🆕 `NEW EDGE: A` — no prior edge, now has one
+  - ⚠️ `EDGE LOST: A` — had an edge, no longer does
+  - Summary line at top of email: `📋 Changes from prior run: X pick changes | X new edges | X edges lost`
+  - Silent on first run of the day (no prior data to compare against)
+  - Change detection runs after `ml_bet_team` is assigned — critical ordering; running it before caused stale prior-game value to bleed in
 
-**Backtest** (`backtest.py`): Round 9 in progress — rebuilding features using individual player-level rolling 100 PA stats split by pitcher handedness.
+**Backtest** (`backtest.py`): Round 9 complete. Player-level dual-strategy sim run. O/U player-level test run and definitively ruled out.
 
 ---
 
@@ -32,7 +44,7 @@
 ### Production model (model.py)
 - [x] Poisson model with rolling 7/15-day windows and 5,000 simulations
 - [x] Starter RA9 blended with team bullpen (55/45 weight, 15 IP minimum, 7.00 RA9 cap)
-- [x] The Odds API integration with 2.5hr cache
+- [x] The Odds API integration with 1hr cache
 - [x] 7% edge threshold detection
 - [x] Kelly Criterion staking (half-Kelly, 15% bankroll cap, BANKROLL from .env)
 - [x] **Dynamic 1/2 Kelly engine** (2026-05-23): `calculate_kelly_stake()` with American→decimal odds conversion, effective bankroll, `recommended_stake` logged per prediction
@@ -43,10 +55,12 @@
 - [x] Google Sheets integration — value-only wipe preserving formatting
 - [x] Excel output with WIN/LOSS color rows
 - [x] Email reports with accuracy section (2hr throttle)
-- [x] Accuracy report: pre/post v2 split, edge tiers, platoon analysis, O/U direction tracking
-- [x] O/U tracking (direction + error vs book total) even with betting disabled
+- [x] Accuracy report: single section from 2026-05-24 onward, edge tiers, Run Total Accuracy section
+- [x] O/U rows still logged to CSV/XLSX/Sheets (direction + error vs book total) — not shown in terminal/email
+- [x] Platoon factors logged silently — platoon analysis removed from all printed output
 - [x] Schema migration system (`archive_existing_prediction_logs()`) — one-time on startup
 - [x] Windows Task Scheduler automation
+- [x] **Inter-run change detection (2026-05-24)**: per-game flags + email summary line for pick changes, new edges, and lost edges across hourly runs
 
 ### Backtest (backtest.py)
 - [x] Random search parameter optimization (7,000+ trials, rounds 1-8)
@@ -59,6 +73,7 @@
 - [x] Dual-strategy framework: Sniper (C=1.0, edge>5%) + Enforcer (C=5.0, edge>3.5%)
 - [x] Player-level data pipeline: 15 Statcast CSVs, game lineup cache, batter + pitcher rolling caches
 - [x] O/U tracking and analysis across all backtest modes
+- [x] **O/U player-level test** (2026-05-24): `collect_ou_features_player_level()` + `walk_forward_ou_strategy()` — sum-based features, pushes excluded, de-vigged juice edge — definitively ruled out
 
 ---
 
@@ -78,6 +93,11 @@
 | Sheets wipe erased formatting | `sheet.clear()` wiped everything including conditional formatting | Switched to `sheet.batch_clear(["A2:AK2000"])` — values only |
 | Back-to-back games wrong results | Same teams playing two days in a row would inherit yesterday's result | Two-pass system: Pass 1 = today PENDING, Pass 2 = yesterday's rows only |
 | Old schema incompatible | Adding `model_strategy` column broke existing log files | `archive_existing_prediction_logs()` one-time migration on startup |
+| `print_accuracy_report()` KeyError 'bet_team' | CSV had only a header row (no data); `pd.DataFrame([])` produces no columns | Added `if not rows: return` guard before DataFrame creation |
+| Migration missed `recommended_stake` | `archive_existing_prediction_logs()` returned early if `model_strategy` present, even when `recommended_stake` was absent | Migration now requires both columns before skipping |
+| `Pandas4Warning` on boolean mask | `df['bet_type'] == 'Moneyline'` returns `BooleanDtype` (pandas 2.x StringDtype), `apply(_is_active_bet)` returns object dtype — `&` between them warns | Added `.astype(bool)` to `apply()` result; `has_scores` now uses `.fillna(False).astype(bool)` |
+| `TypeError` on `recommended_stake` assignment | CSV loaded with `dtype=str` → every column is string-typed; assigning float `11.52` to `recommended_stake` raises `TypeError` in pandas 2.x | Wrapped assignment in `str()`: `df.at[idx, 'recommended_stake'] = str(pred['recommended_stake'])` |
+| Change detection used stale `ml_bet_team` | Change detection block placed before `ml_bet_team` assignment — read leftover value from previous loop iteration, producing bogus `PICK CHANGED: ATL → No Bet` on a live ATL bet | Moved block to immediately after `ml_bet_team` is set |
 
 ### backtest.py
 | Bug | Fix |
@@ -90,12 +110,15 @@
 | KeyError `'w_barrel_bat'` — removed from param space but still in formula | Fixed |
 | `type=details` in Savant API params returning 0 rows | Removed — incompatible with `group_by=name-date` |
 | Overfitting — all prior rounds trained and evaluated on same 2021-2024 data | Rebuilt with proper holdout split; then moved to player-level feature architecture |
+| sklearn `FutureWarning` on `penalty='l2'` | `penalty` param deprecated in sklearn 1.8 (L2 is still default) | Removed `penalty='l2'` from both `LogisticRegression` calls |
 
 ---
 
 ## Key Decisions & Why
 
-**O/U disabled:** Win rate *decreases* as threshold increases (48.4% at 1.0-run → 42.2% at 3.0-run). The model's run estimates are less accurate than the book's total for O/U purposes. The book total is more efficiently priced than expected. O/U predictions still tracked for retrospective analysis.
+**Terminal/email output cleaned up (2026-05-24):** O/U betting lines removed from game output and accuracy report — O/U is anti-predictive so the betting framing adds noise. Model projected total still shown inline (`Model total: X.X` in `proj_text`). O/U rows kept in predictions log for retrospective total accuracy analysis. Accuracy tracker reset to 2026-05-24 (`MODEL_V2_START`); the pre-overhaul record is irrelevant to current model performance. Platoon analysis section removed from accuracy report output (factors still calculated and logged).
+
+**O/U definitively closed (2026-05-24):** Tested at both team level and player level. Team-level: win rate decreases as threshold increases (48.4% → 42.2%). Player-level (rolling 100 PA vs pitcher hand, actual starter 100 BF xFIP, sum features): Precise -0.3% ROI, Aggressive -0.9% ROI across 2022-2025. 2023 collapsed both strategies (-11.9% / -8.6%) — same year-specific overfitting pattern as moneyline. The book's total is more efficiently priced than any of our feature sets can overcome. O/U direction still tracked in predictions log for retrospective analysis, but no path to profitability identified.
 
 **No PA cap on injury adjustments (hitters):** Elite hitters naturally sit at ~12-15% of team PA. An artificial cap would understate players like Judge. Pitchers kept at 25% IP cap — starters only pitch every 5th day.
 
@@ -104,6 +127,10 @@
 **Platoon results not displayed in terminal:** Tracked silently for 3-week retrospective. Accuracy report activates at 20+ confirmed-lineup settled bets.
 
 **1/2 Kelly over flat $20 (2026-05-23):** Flat bets don't scale with bankroll or edge strength. Half-Kelly with 15% hard cap sizes proportionally — bigger stakes on high-edge bets, preserves capital on borderline ones. Effective bankroll prevents over-committing on simultaneous games.
+
+**Hourly runs + lineup gate (2026-05-23):** Switched from 3 fixed daily runs to hourly Task Scheduler trigger. Safe because the lineup confirmation gate skips any game whose batting order isn't officially posted — no placeholder-lineup bets, no double-logging. The `run_num` 3-window map (`<11h` / `<15h` / else) naturally collapses multiple hourly writes to the same slot, so the schema stays intact.
+
+**Email throttle removed (2026-05-23):** With hourly runs the 2hr throttle was redundant and blocked reports on confirmed-lineup games. Emails now send on every run.
 
 **Team-level stats failed (root cause):** Season-to-date Statcast metrics are too coarse and too public. The market has already priced them. Even with a de-vigged market logit as an anchor, win rate locks at ~49.7% — below the 52.4% break-even for -110 juice. Volume collapsed fold-over-fold as the regression learned the market explains all variance. Led to Round 9 player-level rebuild.
 
@@ -127,32 +154,29 @@
 | 8 | Holdout split introduced (train=[2021,22] only) | 2025 holdout: **-1.9% ROI, p=1.0** — confirmed R5 +16% was overfitting |
 | Meta model | Logistic regression over 4 validated metrics | Brier 0.2449 on 2025 holdout — directionally useful, not profitable |
 | Market-residual | Added de-vigged market logit as anchor feature | Win rate 40% → 49.7%, but still below 52.4% break-even |
-| 9 (active) | Player-level: rolling 100 PA per batter split by pitcher hand, actual starter rolling 100 BF | Pipeline built; dual-strategy sim pending |
+| 9 | Player-level: rolling 100 PA per batter split by pitcher hand, actual starter rolling 100 BF | Dual-strategy sim complete — results pending write-up |
+| O/U player-level | Same pipeline with sum features (home+away), P(over) logistic regression | Precise: -0.3% ROI (1,842 bets). Aggressive: -0.9% ROI (2,852 bets). 2023 catastrophic for both. **O/U closed.** |
 
 **4 validated metrics with genuine out-of-sample signal:** wOBA, xwOBA_bat, xFIP, xwOBA_pit
 
 ---
 
-## Round 9 Status
+## Round 9 Status — COMPLETE
 
 **Goal:** Player-level features — individual batter rolling 100 PA (vs LHP vs RHP) + actual starter rolling 100 BF xFIP — to carry residual signal the market hasn't priced.
 
-**Done:**
+**All done:**
 - [x] 15 Statcast CSVs downloaded to `player_data/`
 - [x] Game lineup cache built for 2021-2025 (`game_lineups.json`, ~12,150 boxscore API calls)
 - [x] Pitcher hand cache (`pitcher_hand_cache.json`)
 - [x] Batter rolling cache: 1,457,524 entries across 1,812 (hand, date) pairs
-- [x] Pitcher rolling cache: NaN IP bug fixed; was building at session end
+- [x] Pitcher rolling cache built successfully
+- [x] `walk_forward_dual_strategy()` run on player-level features (9,562 games with O/U line; ~8,200 with ML odds)
+- [x] O/U player-level test run (`RUN_MODE = 'player_level_ou'`) — ruled out
 
-**Still needed:**
-- [ ] Confirm pitcher cache built successfully
-- [ ] Run `walk_forward_dual_strategy()` on player-level features
-- [ ] Evaluate: does Sniper or Enforcer generate edge vs the market-residual team-level model?
+**Dual-strategy ML results:** pending detailed write-up (run completed, numbers not yet recorded here).
 
-```
-# To run:
-python backtest.py   # RUN_MODE = 'player_level_meta' in backtest.py
-```
+**O/U player-level results:** Precise -0.3% ROI / Aggressive -0.9% ROI — not profitable. Closed.
 
 ---
 
@@ -168,10 +192,9 @@ python backtest.py   # RUN_MODE = 'player_level_meta' in backtest.py
 
 ## Next Steps (Priority Order)
 
-1. **Finish Round 9** — confirm pitcher cache, run dual-strategy sim, evaluate player-level results
+1. **Record Round 9 dual-strategy ML results** — run completed, add numbers to Backtest History
 2. **Platoon retrospective** — let confirmed-lineup bets accumulate to 20+
 3. **Kelly performance review** — once ~50 settled bets with `recommended_stake` logged
-4. **O/U re-examination** — only if Round 9 shows a genuine edge path (team totals, negative-binomial)
 
 ---
 
@@ -180,7 +203,5 @@ python backtest.py   # RUN_MODE = 'player_level_meta' in backtest.py
 - **Weather/wind** — not yet priced at line-posting time; would need an API
 - **Travel/rest disadvantage** — back-to-back road games, cross-timezone series
 - **Exponential recency weighting** — within rolling window, weight recent games more heavily (currently equal-weighted)
-- **Negative Binomial for O/U** — handles run-scoring variance better than Poisson
-- **Team totals** — home vs away separately instead of game total; may be less efficient market
 - **Preseason/April cold start** — use ZiPS/Steamer projections as starting lambda, blend to actuals through April
 - **Playoff mode** — different bullpen weights, small sample, aces on short rest; needs separate model architecture

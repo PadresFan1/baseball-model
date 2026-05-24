@@ -2188,7 +2188,7 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
         print(f"  {'-'*56}")
 
         model = LogisticRegression(
-            C=C, penalty='l2', solver='lbfgs',
+            C=C, solver='lbfgs',
             max_iter=1000, fit_intercept=True,
         )
 
@@ -3070,6 +3070,338 @@ def collect_game_features_player_level(seasons, game_lineup_cache,
     return pd.DataFrame(records)
 
 
+# ── O/U feature set (sums, not differences — both sides contribute to total runs) ──
+_OU_FEATURES = ['fd_total', 'sum_woba_r', 'sum_xwoba_bat_r', 'sum_xfip_r', 'sum_xwoba_pit_r']
+
+
+def collect_ou_features_player_level(seasons, game_lineup_cache,
+                                     batter_cache, lg_batter_avg,
+                                     pitcher_cache, lg_pitcher_avg):
+    """
+    Build per-game O/U feature vectors using player-level rolling stats.
+
+    Mirrors collect_game_features_player_level but records SUMS (home + away)
+    instead of differences, since both offenses and both pitchers determine total runs.
+
+    Features:
+      fd_total       — book's O/U line (raw anchor, analogous to logit_market_prob)
+      sum_woba_r     — (home_woba_r + away_woba_r) — total offensive quality
+      sum_xwoba_bat_r — (home_xwoba_bat_r + away_xwoba_bat_r)
+      sum_xfip_r     — (home_xfip_r + away_xfip_r) — total pitching quality (inverted)
+      sum_xwoba_pit_r — (home_xwoba_pit_r + away_xwoba_pit_r)
+
+    Target:
+      y_ou = 1 if actual_total > fd_total else 0
+      Rows where actual_total == fd_total (push) are excluded entirely.
+    """
+    lineup_by_teams = {}
+    for season_cache in game_lineup_cache.values():
+        for game_pk_str, gdata in season_cache.items():
+            key = (gdata['date'], gdata['home_fg'], gdata['away_fg'])
+            lineup_by_teams.setdefault(key, []).append(gdata)
+
+    records = []
+    missing_lineup = missing_starter = missing_lg = missing_total = skipped_push = 0
+
+    for season in seasons:
+        season_str  = str(season)
+        season_odds = odds_df[odds_df['date'].str.startswith(season_str)]
+
+        for _, game in season_odds.iterrows():
+            date      = game['date']
+            home_team = normalize_team(game['home_team'])
+            away_team = normalize_team(game['away_team'])
+
+            if home_team not in TEAM_MAP or away_team not in TEAM_MAP:
+                continue
+
+            home_score = game.get('home_score')
+            away_score = game.get('away_score')
+            if pd.isna(home_score) or pd.isna(away_score):
+                continue
+            actual_total = float(home_score) + float(away_score)
+
+            fd_total = game.get('fd_total')
+            if pd.isna(fd_total):
+                missing_total += 1
+                continue
+            fd_total = float(fd_total)
+
+            # Exclude pushes from training and evaluation
+            if actual_total == fd_total:
+                skipped_push += 1
+                continue
+
+            fd_over_odds  = game.get('fd_over_odds')
+            fd_under_odds = game.get('fd_under_odds')
+
+            # ── Lineup lookup ──────────────────────────────────────────────
+            gdata_list = lineup_by_teams.get((date, home_team, away_team))
+            if not gdata_list:
+                missing_lineup += 1
+                continue
+            gdata = gdata_list[0]
+
+            home_lineup     = [int(p) for p in gdata['home_lineup']]
+            away_lineup     = [int(p) for p in gdata['away_lineup']]
+            home_starter_id = int(gdata['home_starter_id'])
+            away_starter_id = int(gdata['away_starter_id'])
+            hand_vs_home    = gdata['away_starter_hand']
+            hand_vs_away    = gdata['home_starter_hand']
+
+            # ── Starter stats lookup ───────────────────────────────────────
+            home_pit = pitcher_cache.get((home_starter_id, date))
+            away_pit = pitcher_cache.get((away_starter_id, date))
+            if home_pit is None or away_pit is None:
+                missing_starter += 1
+                continue
+
+            # ── League averages ────────────────────────────────────────────
+            lg_bat_h = lg_batter_avg.get((hand_vs_home, date))
+            lg_bat_a = lg_batter_avg.get((hand_vs_away, date))
+            lg_pit   = lg_pitcher_avg.get(date)
+            if lg_bat_h is None or lg_bat_a is None or lg_pit is None:
+                missing_lg += 1
+                continue
+
+            # ── Batter stats dicts ─────────────────────────────────────────
+            home_woba_dict  = {pid: batter_cache.get((pid, hand_vs_home, date), {}).get('woba')
+                               for pid in home_lineup}
+            home_xwoba_dict = {pid: batter_cache.get((pid, hand_vs_home, date), {}).get('xwoba')
+                               for pid in home_lineup}
+            away_woba_dict  = {pid: batter_cache.get((pid, hand_vs_away, date), {}).get('woba')
+                               for pid in away_lineup}
+            away_xwoba_dict = {pid: batter_cache.get((pid, hand_vs_away, date), {}).get('xwoba')
+                               for pid in away_lineup}
+
+            home_woba_dict  = {k: v for k, v in home_woba_dict.items()  if v is not None}
+            home_xwoba_dict = {k: v for k, v in home_xwoba_dict.items() if v is not None}
+            away_woba_dict  = {k: v for k, v in away_woba_dict.items()  if v is not None}
+            away_xwoba_dict = {k: v for k, v in away_xwoba_dict.items() if v is not None}
+
+            # ── Aggregate across batting order ─────────────────────────────
+            home_woba      = aggregate_lineup_metric(home_woba_dict,  home_lineup, lg_bat_h['woba'])
+            home_xwoba_bat = aggregate_lineup_metric(home_xwoba_dict, home_lineup, lg_bat_h['xwoba'])
+            away_woba      = aggregate_lineup_metric(away_woba_dict,  away_lineup, lg_bat_a['woba'])
+            away_xwoba_bat = aggregate_lineup_metric(away_xwoba_dict, away_lineup, lg_bat_a['xwoba'])
+
+            # ── Normalize by league average ────────────────────────────────
+            lg_woba_h  = lg_bat_h['woba']  or 0.320
+            lg_xwoba_h = lg_bat_h['xwoba'] or 0.315
+            lg_woba_a  = lg_bat_a['woba']  or 0.320
+            lg_xwoba_a = lg_bat_a['xwoba'] or 0.315
+
+            home_woba_r      = home_woba      / lg_woba_h  if lg_woba_h  > 0 else 1.0
+            away_woba_r      = away_woba      / lg_woba_a  if lg_woba_a  > 0 else 1.0
+            home_xwoba_bat_r = home_xwoba_bat / lg_xwoba_h if lg_xwoba_h > 0 else 1.0
+            away_xwoba_bat_r = away_xwoba_bat / lg_xwoba_a if lg_xwoba_a > 0 else 1.0
+
+            # ── Pitcher ratings (inverted — lower xFIP = better) ───────────
+            lg_xfip      = lg_pit['xfip']
+            lg_xwoba_pit = lg_pit['xwoba_pit']
+
+            home_xfip_r      = lg_xfip      / home_pit['xfip']      if home_pit['xfip']      > 0 else 1.0
+            away_xfip_r      = lg_xfip      / away_pit['xfip']      if away_pit['xfip']      > 0 else 1.0
+            home_xwoba_pit_r = lg_xwoba_pit / home_pit['xwoba_pit'] if home_pit['xwoba_pit'] > 0 else 1.0
+            away_xwoba_pit_r = lg_xwoba_pit / away_pit['xwoba_pit'] if away_pit['xwoba_pit'] > 0 else 1.0
+
+            records.append({
+                'date':           date,
+                'season':         season,
+                'home_team':      home_team,
+                'away_team':      away_team,
+                'fd_total':       fd_total,
+                'fd_over_odds':   fd_over_odds  if not pd.isna(fd_over_odds)  else None,
+                'fd_under_odds':  fd_under_odds if not pd.isna(fd_under_odds) else None,
+                'sum_woba_r':     home_woba_r      + away_woba_r,
+                'sum_xwoba_bat_r': home_xwoba_bat_r + away_xwoba_bat_r,
+                'sum_xfip_r':     home_xfip_r      + away_xfip_r,
+                'sum_xwoba_pit_r': home_xwoba_pit_r + away_xwoba_pit_r,
+                'y_ou':           1 if actual_total > fd_total else 0,
+                'actual_total':   actual_total,
+            })
+
+    print(f"\n  O/U player-level features: {len(records):,} games")
+    print(f"  Skipped — no O/U line: {missing_total:,} | no lineup: {missing_lineup:,} | "
+          f"no starter: {missing_starter:,} | no lg avg: {missing_lg:,} | push: {skipped_push:,}")
+    return pd.DataFrame(records)
+
+
+def walk_forward_ou_strategy(all_ou_feat, flat_bet=20.0):
+    """
+    Walk-forward O/U financial simulation using player-level features.
+
+    Mirrors walk_forward_dual_strategy but predicts P(over) instead of P(home win).
+
+    Feature col 0 = fd_total (book's O/U line, unscaled anchor).
+    Feature cols 1-4 = sum_woba_r, sum_xwoba_bat_r, sum_xfip_r, sum_xwoba_pit_r
+                       (standardized on training fold only).
+
+    Edge = model P(over) vs de-vigged market over probability from juice.
+    When juice not available, falls back to 0.50 market prior.
+    Pushes are excluded from training and evaluation.
+
+    Two strategies:
+      Precise   : C=1.0, edge > 5.0%
+      Aggressive: C=5.0, edge > 3.5%
+    """
+    try:
+        from sklearn.linear_model import LogisticRegression
+    except ImportError:
+        print("  ERROR: scikit-learn not installed. Run: pip install scikit-learn")
+        return {}
+
+    STRATEGIES = [
+        ('Precise',    1.0, 0.050),
+        ('Aggressive', 5.0, 0.035),
+    ]
+
+    FOLDS = [
+        ([2021],                   2022),
+        ([2021, 2022],             2023),
+        ([2021, 2022, 2023],       2024),
+        ([2021, 2022, 2023, 2024], 2025),
+    ]
+    flat_bet = float(flat_bet)
+
+    totals = {
+        name: {'bets': 0, 'wins': 0, 'wagered': 0.0, 'profit': 0.0, 'rows': []}
+        for name, _, _ in STRATEGIES
+    }
+
+    for strat_name, C, edge_min in STRATEGIES:
+        print(f"\n{'='*70}")
+        print(f"  O/U STRATEGY: {strat_name}   |   C={C}   |   edge > {edge_min:.1%}   |   flat ${flat_bet:.0f}/game")
+        print(f"{'='*70}")
+        print(f"  {'Fold':<5} {'Year':<5} {'Games':>7} {'Bets':>5} {'W':>4} {'L':>4} {'Win%':>6} {'Profit':>10} {'ROI':>8}")
+        print(f"  {'-'*56}")
+
+        model = LogisticRegression(
+            C=C, solver='lbfgs',
+            max_iter=1000, fit_intercept=True,
+        )
+
+        for fold_idx, (train_years, test_year) in enumerate(FOLDS, 1):
+            train_df = all_ou_feat[all_ou_feat['season'].isin(train_years)].reset_index(drop=True)
+            test_df  = all_ou_feat[all_ou_feat['season'] == test_year].reset_index(drop=True)
+            if len(train_df) < 100 or len(test_df) < 50:
+                continue
+
+            X_tr = train_df[_OU_FEATURES].values.astype(float)
+            y_tr = train_df['y_ou'].values.astype(int)
+            X_te = test_df[_OU_FEATURES].values.astype(float)
+
+            # Col 0 = fd_total (unscaled anchor — preserves linear relationship to run total)
+            # Cols 1-4 = Statcast sums (standardized on training fold; no test leakage)
+            mu  = X_tr[:, 1:].mean(axis=0)
+            sig = X_tr[:, 1:].std(axis=0) + 1e-8
+            X_tr_s = np.column_stack([X_tr[:, 0], (X_tr[:, 1:] - mu) / sig])
+            X_te_s = np.column_stack([X_te[:, 0], (X_te[:, 1:] - mu) / sig])
+
+            model.fit(X_tr_s, y_tr)
+            p_over_arr = model.predict_proba(X_te_s)[:, 1]
+
+            wins = losses = n_games = 0
+            profit = 0.0
+
+            for i, row in test_df.iterrows():
+                n_games += 1
+                p_over = float(p_over_arr[i])
+
+                # De-vig market over probability from juice; fall back to 0.50
+                raw_over  = row.get('fd_over_odds')
+                raw_under = row.get('fd_under_odds')
+                if raw_over is not None and raw_under is not None:
+                    imp_over  = (100 / (100 + raw_over)  if raw_over  > 0 else abs(raw_over)  / (abs(raw_over)  + 100))
+                    imp_under = (100 / (100 + raw_under) if raw_under > 0 else abs(raw_under) / (abs(raw_under) + 100))
+                    mkt_over  = imp_over / (imp_over + imp_under)
+                else:
+                    mkt_over = 0.50
+
+                over_edge  =      p_over  - mkt_over
+                under_edge = (1 - p_over) - (1 - mkt_over)
+
+                bet_side = bet_odds = None
+                if over_edge > edge_min:
+                    bet_side = 'over'
+                    bet_odds = raw_over
+                elif under_edge > edge_min:
+                    bet_side = 'under'
+                    bet_odds = raw_under
+
+                if bet_side is None:
+                    continue
+
+                actual_total = float(row['actual_total'])
+                fd_total     = float(row['fd_total'])
+                won = (bet_side == 'over'  and actual_total > fd_total) or \
+                      (bet_side == 'under' and actual_total < fd_total)
+                push = actual_total == fd_total
+
+                if push:
+                    continue  # already excluded from dataset but guard anyway
+
+                if won:
+                    wins += 1
+                    if bet_odds is not None:
+                        o = float(bet_odds)
+                        profit += flat_bet * o / 100 if o > 0 else flat_bet * 100 / abs(o)
+                    else:
+                        profit += flat_bet * 100 / 110  # assume -110 when no juice
+                else:
+                    losses += 1
+                    profit -= flat_bet
+
+            n_bets  = wins + losses
+            wagered = n_bets * flat_bet
+            roi     = profit / wagered * 100 if wagered > 0 else 0.0
+            win_pct = wins / n_bets if n_bets > 0 else 0.0
+
+            print(f"  {fold_idx:<5} {test_year:<5} {n_games:>7} {n_bets:>5} {wins:>4} {losses:>4} "
+                  f"{win_pct:>6.1%} ${profit:>+8.2f} {roi:>+7.1f}%")
+
+            acc = totals[strat_name]
+            acc['bets']    += n_bets
+            acc['wins']    += wins
+            acc['wagered'] += wagered
+            acc['profit']  += profit
+            acc['rows'].append({
+                'fold': fold_idx, 'year': test_year, 'n_bets': n_bets,
+                'wins': wins, 'losses': losses,
+                'profit': round(profit, 2), 'roi': round(roi, 2),
+            })
+
+        acc = totals[strat_name]
+        if acc['wagered'] > 0:
+            tot_roi  = acc['profit'] / acc['wagered'] * 100
+            tot_wpct = acc['wins'] / acc['bets'] if acc['bets'] > 0 else 0.0
+            n_folds  = len(acc['rows'])
+            print(f"  {'-'*56}")
+            print(f"  {'TOTAL':<5} {'22-25':<5} {'':>7} {acc['bets']:>5} {acc['wins']:>4} "
+                  f"{acc['bets'] - acc['wins']:>4} {tot_wpct:>6.1%} "
+                  f"${acc['profit']:>+8.2f} {tot_roi:>+7.1f}%")
+            print(f"  Avg bets/year: {acc['bets'] / n_folds:.0f}   "
+                  f"Total wagered: ${acc['wagered']:,.0f}   "
+                  f"Total profit: ${acc['profit']:>+,.2f}")
+
+    print(f"\n{'='*70}")
+    print(f"  O/U STRATEGY SUMMARY   |   flat ${flat_bet:.0f}/game   |   2022-2025")
+    print(f"{'='*70}")
+    print(f"  {'Strategy':<18} {'C':>5}  {'Edge':>7}  {'Bets':>5}  {'Win%':>6}  {'4yr ROI':>8}  {'$/yr avg':>9}")
+    print(f"  {'-'*64}")
+    for strat_name, C, edge_min in STRATEGIES:
+        acc = totals[strat_name]
+        if acc['wagered'] > 0:
+            roi       = acc['profit'] / acc['wagered'] * 100
+            wpct      = acc['wins'] / acc['bets'] if acc['bets'] > 0 else 0.0
+            profit_yr = acc['profit'] / len(acc['rows']) if acc['rows'] else 0
+            print(f"  {strat_name:<18} {C:>5.1f}  >{edge_min:>5.1%}  {acc['bets']:>5}  "
+                  f"{wpct:>6.1%}  {roi:>+7.1f}%  ${profit_yr:>+8.2f}")
+    print()
+
+    return totals
+
+
 def test_ip_cache(season=2024, n_games=10):
     """
     Verify that pull_historical_lineups correctly extracts inningsPitched and
@@ -3156,9 +3488,10 @@ def test_ip_cache(season=2024, n_games=10):
 # 'meta_model'         — logistic regression over 4 validated metrics, walk-forward
 # 'financial_sim'      — flat-bet ROI simulation using meta model fold probabilities
 # 'player_level_meta'  — player-level features (box score lineups + 100-PA rolling)
+# 'player_level_ou'    — same data pipeline but O/U prediction (sum features, P(over))
 # 'dual_strategy'      — Sniper + Enforcer sim on pre-built features (skips data build)
 # 'test_ip_cache'      — verify inningsPitched/outs extraction from box scores (quick)
-RUN_MODE    = 'player_level_meta'
+RUN_MODE    = 'player_level_ou'
 N_RUNS      = 10
 _PARAM_ROUND = 8  # must match PARAM_ROUND inside random_search
 
@@ -3215,6 +3548,36 @@ try:
         _ds_feat = collect_game_features_for_meta([2021, 2022, 2023, 2024, 2025])
         print(f"  {len(_ds_feat)} games collected\n")
         walk_forward_dual_strategy(_ds_feat, flat_bet=20.0)
+
+    elif RUN_MODE == 'player_level_ou':
+        _ou_seasons = [2021, 2022, 2023, 2024, 2025]
+
+        print("Step 1/5 — Loading historical box score lineups...")
+        _lineup_cache = pull_historical_lineups(_ou_seasons)
+
+        print("\nStep 2/5 — Loading individual batter data...")
+        _batter_data = load_player_batter_data(_ou_seasons)
+
+        print("\nStep 3/5 — Loading individual starter data...")
+        _pitcher_data = load_player_pitcher_data(_ou_seasons)
+
+        print("\nStep 4/5 — Building rolling caches (100 PA windows)...")
+        _batter_cache, _lg_bat_avg = build_batter_rolling_cache(_batter_data)
+        _fip_consts = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                       for s in _ou_seasons}
+        _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(_pitcher_data, _fip_consts)
+
+        print("\nStep 5/5 — Collecting player-level O/U features...")
+        _ou_feat = collect_ou_features_player_level(
+            _ou_seasons,
+            _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+        )
+
+        if _ou_feat.empty:
+            print("No O/U features collected — check player_data/ CSVs and fd_total coverage.")
+        else:
+            print(f"\nRunning O/U walk-forward strategy simulation...")
+            walk_forward_ou_strategy(_ou_feat, flat_bet=20.0)
 
     elif RUN_MODE == 'test_ip_cache':
         test_ip_cache(season=2024, n_games=10)

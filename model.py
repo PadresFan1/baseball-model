@@ -224,7 +224,7 @@ def get_cached_odds():
         modified_time = os.path.getmtime(cache_file)
         from datetime import datetime
         age_hours = (datetime.now().timestamp() - modified_time) / 3600
-        if age_hours < 2.5:
+        if age_hours < 1.0:
             print ("Loading odds from cache. . .")
             with open(cache_file,'r') as f:
                 return json.load(f)
@@ -1156,7 +1156,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             ~df['actual_home_score'].isin(['', 'nan', 'None']) &
             df['actual_away_score'].notna() &
             ~df['actual_away_score'].isin(['', 'nan', 'None'])
-        )
+        ).fillna(False).astype(bool)
 
         # Retroactive fix: game_num NaN for rows created before column existed → default to 1
         gnum_missing = df['game_num'].isna() | df['game_num'].isin(['', 'nan', 'None'])
@@ -1165,7 +1165,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         # Retroactive fix: ML No Bet rows with scores stuck at PENDING → N/A
         ml_nobet_mask = (
             (df['bet_type'] == 'Moneyline') &
-            ~df['final_bet_team'].apply(_is_active_bet) &
+            ~df['final_bet_team'].apply(_is_active_bet).astype(bool) &
             (df['result'].isin(['PENDING', '']) | df['result'].isna()) &
             has_scores
         )
@@ -1302,7 +1302,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             if pred.get('platoon_confirmed') == 'Yes':
                 df.at[idx, 'platoon_confirmed'] = 'Yes'
             if pred.get('recommended_stake') is not None:
-                df.at[idx, 'recommended_stake'] = pred['recommended_stake']
+                df.at[idx, 'recommended_stake'] = str(pred['recommended_stake'])
             gt = df.at[idx, 'game_time'] or game_time
             final_run = get_final_run(gt, df.loc[idx])
             df.at[idx, 'final_run']       = str(final_run)
@@ -1531,7 +1531,7 @@ def archive_existing_prediction_logs():
     if os.path.exists(csv_file):
         try:
             peek = pd.read_csv(csv_file, nrows=1, dtype=str)
-            if 'model_strategy' in peek.columns:
+            if 'model_strategy' in peek.columns and 'recommended_stake' in peek.columns:
                 return
         except Exception:
             pass  # unreadable file → archive it
@@ -1900,18 +1900,6 @@ def send_email_report(body, run_label):
         print("Email not configured — skipping.")
         return
 
-    # Throttle: skip if an email was sent within the last 2 hours
-    stamp_file = 'cache/email_last_sent.txt'
-    if os.path.exists(stamp_file):
-        try:
-            last_sent  = float(open(stamp_file).read().strip())
-            hours_ago  = (datetime.now().timestamp() - last_sent) / 3600
-            if hours_ago < 2:
-                print(f"Email skipped — last sent {hours_ago:.1f}h ago (2h throttle)")
-                return
-        except Exception:
-            pass
-
     try:
         subject = f"Baseball Model - {date.today().strftime('%#m/%#d')}"
         msg = MIMEMultipart()
@@ -1924,13 +1912,11 @@ def send_email_report(body, run_label):
             server.login(sender, password)
             server.sendmail(sender, recipient, msg.as_string())
 
-        with open(stamp_file, 'w') as f:
-            f.write(str(datetime.now().timestamp()))
         print(f"Email sent to {recipient}")
     except Exception as e:
         print(f"Email failed: {e}")
 
-MODEL_V2_START = '2026-05-21'   # date all major changes went live
+MODEL_V2_START = '2026-05-24'   # date all major changes went live
 
 def _edge_tier(e):
     try:
@@ -1965,8 +1951,7 @@ def _print_period_stats(settled, pending_count, show_roi=True):
     print()
 
     for bet_type, label, tiers, tier_fn in [
-        ('Moneyline',  'Moneyline ', ['7-10%', '10-15%', '15%+'],                      _edge_tier),
-        ('Over/Under', 'Over/Under', ['1.5-2.5 runs', '2.5-3.5 runs', '3.5+ runs'],   _ou_edge_tier),
+        ('Moneyline',  'Moneyline ', ['7-10%', '10-15%', '15%+'], _edge_tier),
     ]:
         sub = settled[settled['bet_type'] == bet_type]
         if sub.empty:
@@ -2030,72 +2015,28 @@ def print_accuracy_report():
             'raw_model_pct':    row.get('raw_model_pct', ''),
         })
 
+    if not rows:
+        print("\n=== ACCURACY REPORT ===\n  No predictions logged yet.\n")
+        return
+
     analysis = pd.DataFrame(rows)
     bets     = analysis[analysis['bet_team'].apply(_is_active_bet)]
     settled  = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
     pending  = bets[bets['result'] == 'PENDING']
     voided   = bets[bets['result'] == 'VOID']
 
-    # Split at the model v2 launch date
-    pre  = settled[settled['date'] <  MODEL_V2_START]
-    post = settled[settled['date'] >= MODEL_V2_START]
-    pre_pending  = pending[pending['date'] <  MODEL_V2_START]
-    post_pending = pending[pending['date'] >= MODEL_V2_START]
+    current         = settled[settled['date'] >= MODEL_V2_START]
+    current_pending = pending[pending['date'] >= MODEL_V2_START]
 
     print("\n=== ACCURACY REPORT ===\n")
 
     if len(voided) > 0:
         print(f"  ({len(voided)} voided — postponed/cancelled games excluded from all stats)\n")
 
-    print(f"── Before {MODEL_V2_START} (original model) ─────────────────")
-    _print_period_stats(pre, len(pre_pending), show_roi=False)
-    print()
-    print(f"── From {MODEL_V2_START} onward (optimized model) ──────────")
-    _print_period_stats(post, len(post_pending), show_roi=True)
+    print(f"── Record (since {MODEL_V2_START}) ─────────────────────────")
+    _print_period_stats(current, len(current_pending), show_roi=True)
 
-    # ── Platoon split analysis — v2 data only, moneyline, min 20 settled ─────
-    def to_pct(v):
-        try: return float(str(v).replace('%', ''))
-        except: return None
-
-    def wl(sub):
-        w  = (sub['result'] == 'WIN').sum()
-        l  = (sub['result'] == 'LOSS').sum()
-        wr = w / (w + l) if (w + l) > 0 else 0
-        return w, l, wr
-
-    plat = post[post['bet_type'] == 'Moneyline'].copy()
-    confirmed   = plat[plat['platoon_confirmed'] == 'Yes']
-    unconfirmed = plat[plat['platoon_confirmed'] != 'Yes']
-
-    MIN_SAMPLE = 20
-    print()
-    if len(confirmed) >= MIN_SAMPLE:
-        print("── Platoon analysis (v2 moneyline bets) ────────────────")
-        cw, cl, cwr = wl(confirmed)
-        uw, ul, uwr = wl(unconfirmed) if len(unconfirmed) > 0 else (0, 0, 0)
-        print(f"  Lineup confirmed    (n={len(confirmed):3d}): {cw}W - {cl}L  |  {cwr:.1%}")
-        if len(unconfirmed) > 0:
-            print(f"  Lineup unconfirmed  (n={len(unconfirmed):3d}): {uw}W - {ul}L  |  {uwr:.1%}")
-
-        confirmed['_fp'] = confirmed['final_model_pct'].apply(to_pct)
-        confirmed['_rp'] = confirmed['raw_model_pct'].apply(to_pct)
-        boosted = confirmed[confirmed['_fp'] > confirmed['_rp']]
-        lowered = confirmed[confirmed['_fp'] < confirmed['_rp']]
-        neutral = confirmed[confirmed['_fp'] == confirmed['_rp']]
-
-        print()
-        for label, sub in [('Platoon boosted', boosted), ('Platoon lowered', lowered), ('Platoon neutral', neutral)]:
-            if len(sub) > 0:
-                sw, sl, swr = wl(sub)
-                print(f"  {label:16s}: (n={len(sub):3d}) {sw}W - {sl}L  |  {swr:.1%}")
-
-        if len(confirmed) < 50:
-            print(f"\n  (sample building — revisit at 50+ bets, currently {len(confirmed)})")
-    else:
-        print(f"── Platoon analysis: {len(confirmed)}/{MIN_SAMPLE} confirmed-lineup bets needed (v2 only)")
-
-    # ── O/U direction analysis — all O/U rows with a direction value ───────────
+    # ── Run total accuracy — model projection vs actual runs ──────────────────
     ou_all = analysis[analysis['bet_type'] == 'Over/Under'].copy()
     ou_with_dir = ou_all[ou_all['ou_direction'].apply(
         lambda x: bool(x) and str(x) not in ('', 'nan', 'None')
@@ -2103,7 +2044,7 @@ def print_accuracy_report():
 
     if len(ou_with_dir) >= 5:
         print()
-        print("── O/U projection accuracy (all games) ─────────────────")
+        print("── Run total accuracy (model projection vs actual) ──────")
 
         def parse_dir(d):
             try:
@@ -2134,20 +2075,6 @@ def print_accuracy_report():
             print(f"  >> Model is systematically HIGH by {avg_err:+.2f} runs on average")
         elif avg_err < -0.5:
             print(f"  >> Model is systematically LOW by {avg_err:+.2f} runs on average")
-
-        # Bet rows: direction vs result
-        ou_bets = ou_with_dir[ou_with_dir['bet_team'].apply(_is_active_bet)]
-        ou_settled = ou_bets[ou_bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
-        if len(ou_settled) >= 3:
-            print()
-            print(f"  Bet results by direction (n={len(ou_settled)}):")
-            for lbl in ['HIGH', 'LOW', 'CLOSE']:
-                sub = ou_settled[ou_settled['ou_direction'].str.startswith(lbl)]
-                if len(sub) > 0:
-                    w = (sub['result'] == 'WIN').sum()
-                    l = (sub['result'] == 'LOSS').sum()
-                    wr = w / (w + l) if (w + l) > 0 else 0
-                    print(f"    {lbl:5s}: {w}W - {l}L  ({wr:.0%})")
     print()
 
 # ── Step 1: Archive old prediction logs if they pre-date the dual-strategy schema ──
@@ -2216,6 +2143,34 @@ print(f"Bankroll: ${BANKROLL:,.0f} | Effective: ${effective_bankroll:,.0f} | Kel
 edge_games = []
 no_edge_games = []
 skipped_games = []
+pending_lineup_games = []
+
+# Load today's prior predictions for change detection (run N-1 vs current run)
+prior_picks_today = {}  # {(home_fg, away_fg, game_num_str): last_bet_team}
+_prior_log = 'predictions/predictions_log.csv'
+if os.path.exists(_prior_log):
+    try:
+        _prior_df = pd.read_csv(_prior_log, dtype=str)
+        _today_ml = _prior_df[
+            (_prior_df['date'] == first_game_date) &
+            (_prior_df['bet_type'] == 'Moneyline')
+        ]
+        for _, _row in _today_ml.iterrows():
+            _gn = str(_row.get('game_num', '1') or '1')
+            if _gn in ('', 'nan', 'None'):
+                _gn = '1'
+            _key = (_row['home_team'], _row['away_team'], _gn)
+            for _r in [3, 2, 1]:
+                _bt = _row.get(f'run{_r}_bet_team')
+                if pd.notna(_bt) and str(_bt) not in ('', 'nan', 'None'):
+                    prior_picks_today[_key] = str(_bt)
+                    break
+    except Exception:
+        pass
+
+n_pick_changed = 0
+n_new_edge     = 0
+n_edge_lost    = 0
 
 # Game Loop
 upcoming = sorted(upcoming, key=lambda x: x['commence_time'])
@@ -2318,6 +2273,18 @@ for game in upcoming:
             platoon_text = "\n   📐 Platoon — Lineup not yet confirmed"
     else:
         platoon_text = "\n   📐 Platoon — Lineup not yet confirmed"
+
+    # Lineup confirmation gate — skip unconfirmed games for safe hourly runs
+    _lineup_confirmed = (
+        game_key_plat in lineups and
+        bool(lineups[game_key_plat].get('home_lineup')) and
+        bool(lineups[game_key_plat].get('away_lineup'))
+    )
+    if not _lineup_confirmed:
+        pending_lineup_games.append(
+            f"[INFO] {away_name} @ {home_name} ({time_str}) — lineups pending, skipping evaluation"
+        )
+        continue
 
     # Always compute raw (no platoon) result for tracking purposes
     raw_result = calculate_matchup(home_fg, away_fg, 2026, rolling=rolling, starters=todays_starters,
@@ -2431,6 +2398,21 @@ for game in upcoming:
         ml_book_line = str(home_market_line if home_win_pct > away_win_pct else away_market_line)
         ml_edge = 'No Edge'
 
+    # Detect changes from the most recent prior run logged today (ml_bet_team must be set first)
+    change_text = ""
+    _prior_bet = prior_picks_today.get((home_fg, away_fg, str(game_num)))
+    if _prior_bet is not None:
+        _prev_active = _is_active_bet(_prior_bet)
+        if _prev_active and moneyline_edge and _prior_bet != ml_bet_team:
+            n_pick_changed += 1
+            change_text = f"\n   🔄 PICK CHANGED: {_prior_bet} → {ml_bet_team}"
+        elif _prev_active and not moneyline_edge:
+            n_edge_lost += 1
+            change_text = f"\n   ⚠️  EDGE LOST: Previously bet {_prior_bet}"
+        elif not _prev_active and moneyline_edge:
+            n_new_edge += 1
+            change_text = f"\n   🆕 NEW EDGE: {ml_bet_team} (not flagged in prior run)"
+
     game_time_24h = game_time.strftime('%H:%M')
 
     home_pf = round(platoon_data[0], 4) if platoon_data else None
@@ -2518,10 +2500,18 @@ for game in upcoming:
 
     if moneyline_edge or ou_edge:
         edge_games.append({
-            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}{injury_text}"
+            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}"
         })
     else:
-        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}\n{ou_text}{warning}{injury_text}")
+        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}")
+
+# Print change summary (only on runs 2+ when prior data exists)
+_change_parts = []
+if n_pick_changed: _change_parts.append(f"{n_pick_changed} pick change{'s' if n_pick_changed > 1 else ''}")
+if n_new_edge:     _change_parts.append(f"{n_new_edge} new edge{'s' if n_new_edge > 1 else ''}")
+if n_edge_lost:    _change_parts.append(f"{n_edge_lost} edge{'s' if n_edge_lost > 1 else ''} lost")
+if _change_parts:
+    print(f"📋 Changes from prior run: {' | '.join(_change_parts)}\n")
 
 # Print edges
 if edge_games:
@@ -2544,6 +2534,13 @@ if skipped_games:
     for game in skipped_games:
         print(game)
         print()
+
+# Print pending lineup games
+if pending_lineup_games:
+    print("=== LINEUPS PENDING ===\n")
+    for msg in pending_lineup_games:
+        print(msg)
+    print()
 
 if in_progress_games:
     print("\n=== IN PROGRESS ===\n")
