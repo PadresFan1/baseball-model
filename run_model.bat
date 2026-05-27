@@ -1,3 +1,2 @@
 @echo off
-cd C:\Users\super\baseball-model
-python model.py >> logs\model_out.txt 2>> logs\model_err.txt
+C:\Python314\python.exe C:\Users\super\baseball-model\model.py >> C:\Users\super\baseball-model\logs\model_out.txt 2>> C:\Users\super\baseball-model\logs\model_err.txt

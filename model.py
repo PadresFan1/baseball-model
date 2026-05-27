@@ -118,7 +118,8 @@ MAX_BANKROLL_EXPOSURE = 0.15  # hard cap per bet regardless of Kelly edge
 OU_BETTING_ENABLED = False    # O/U shows negative ROI in backtesting — disabled until calibrated
 print(f"API Key loaded: {API_KEY is not None}")
 
-MST = timezone(timedelta(hours=-7))
+from zoneinfo import ZoneInfo as _ZoneInfo
+MT = _ZoneInfo('America/Denver')  # handles MST/MDT automatically
 
 # Starter/bullpen split
 STARTER_INNINGS = 5
@@ -147,6 +148,140 @@ PITCHING_WEIGHTS = {
 }
 
 NUM_SIMULATIONS = 5000
+
+# ── Log5 inference layer ──────────────────────────────────────────────────────
+import pickle as _pickle
+
+_LOG5_PA_WEIGHTS = np.array([0.123, 0.120, 0.117, 0.114, 0.111, 0.108, 0.105, 0.102, 0.100])
+_LOG5_FEATURES   = ['logit_market_prob', 'd_log5_woba', 'd_log5_xwoba', 'd_xfip']
+
+def _log5_matchup(B, P, L):
+    B = float(np.clip(B, 0.001, 0.999))
+    P = float(np.clip(P, 0.001, 0.999))
+    L = float(np.clip(L, 0.001, 0.999))
+    num = (B * P) / L
+    den = num + ((1.0 - B) * (1.0 - P)) / (1.0 - L)
+    return num / den if den > 0 else L
+
+def _aggregate_log5(matchup_dict, lineup, fallback):
+    slots   = lineup[:9]
+    metrics = np.array([matchup_dict.get(pid, fallback) for pid in slots], dtype=float)
+    if len(metrics) < 9:
+        metrics = np.pad(metrics, (0, 9 - len(metrics)), constant_values=fallback)
+    return float(np.dot(metrics, _LOG5_PA_WEIGHTS))
+
+def load_log5_assets():
+    """Load trained regression model and player snapshot from disk. Returns (bundle, snapshot) or (None, None)."""
+    try:
+        with open('models/log5_regression.pkl', 'rb') as f:
+            bundle = _pickle.load(f)
+        with open('historical_data/player_snapshot.json', 'r') as f:
+            snapshot = json.load(f)
+        as_of = snapshot.get('as_of', 'unknown')
+        n_bat = snapshot.get('n_batters', 0)
+        n_pit = snapshot.get('n_pitchers', 0)
+        print(f"[Log5] Model loaded (C={bundle['C']}, trained on {bundle['n_train']:,} games)")
+        print(f"[Log5] Player snapshot: {n_bat:,} batters, {n_pit:,} pitchers, as_of {as_of}")
+        return bundle, snapshot
+    except FileNotFoundError:
+        print("[Log5] Production assets not found — run backtest.py with RUN_MODE='build_production_model' first. Falling back to Poisson.")
+        return None, None
+    except Exception as e:
+        print(f"[Log5] Failed to load assets: {e}. Falling back to Poisson.")
+        return None, None
+
+def compute_log5_win_prob(home_lineup, away_lineup,
+                          home_pitcher_id, away_pitcher_id,
+                          home_pitcher_hand, away_pitcher_hand,
+                          home_ml, away_ml,
+                          log5_bundle, player_snapshot):
+    """
+    Compute P(home win) from the Log5 logistic regression for one game.
+    Returns (home_prob, away_prob) or None if data is insufficient.
+
+    home/away_pitcher_hand: 'L' or 'R' — the hand the opposing lineup faces.
+    """
+    try:
+        batters   = player_snapshot['batters']
+        pitchers  = player_snapshot['pitchers']
+        lg        = player_snapshot['lg_avgs']
+
+        # League averages as fallbacks
+        lg_woba_h  = lg.get(away_pitcher_hand, {}).get('woba',  0.320)
+        lg_xwoba_h = lg.get(away_pitcher_hand, {}).get('xwoba', 0.315)
+        lg_woba_a  = lg.get(home_pitcher_hand, {}).get('woba',  0.320)
+        lg_xwoba_a = lg.get(home_pitcher_hand, {}).get('xwoba', 0.315)
+        lg_xfip    = lg.get('pit', {}).get('xfip',      4.10)
+        lg_xwoba_p = lg.get('pit', {}).get('xwoba_pit', 0.315)
+
+        # Pitcher xwOBA allowed (P in Log5 formula)
+        away_pit  = pitchers.get(str(away_pitcher_id), {})
+        home_pit  = pitchers.get(str(home_pitcher_id), {})
+        away_xwoba_pit = away_pit.get('xwoba_pit') or lg_xwoba_p
+        home_xwoba_pit = home_pit.get('xwoba_pit') or lg_xwoba_p
+        away_xfip = away_pit.get('xfip') or lg_xfip
+        home_xfip = home_pit.get('xfip') or lg_xfip
+
+        # Home offense vs away pitcher hand
+        h_log5_woba  = {}
+        h_log5_xwoba = {}
+        for pid in home_lineup:
+            entry = batters.get(str(pid), {}).get(away_pitcher_hand, {})
+            bw  = entry.get('woba')
+            bxw = entry.get('xwoba')
+            if bw  is not None: h_log5_woba[pid]  = _log5_matchup(bw,  away_xwoba_pit, lg_woba_h)
+            if bxw is not None: h_log5_xwoba[pid] = _log5_matchup(bxw, away_xwoba_pit, lg_xwoba_h)
+
+        # Away offense vs home pitcher hand
+        a_log5_woba  = {}
+        a_log5_xwoba = {}
+        for pid in away_lineup:
+            entry = batters.get(str(pid), {}).get(home_pitcher_hand, {})
+            bw  = entry.get('woba')
+            bxw = entry.get('xwoba')
+            if bw  is not None: a_log5_woba[pid]  = _log5_matchup(bw,  home_xwoba_pit, lg_woba_a)
+            if bxw is not None: a_log5_xwoba[pid] = _log5_matchup(bxw, home_xwoba_pit, lg_xwoba_a)
+
+        # Fallbacks for missing batters
+        h_fb_woba  = _log5_matchup(lg_woba_h,  away_xwoba_pit, lg_woba_h)
+        h_fb_xwoba = _log5_matchup(lg_xwoba_h, away_xwoba_pit, lg_xwoba_h)
+        a_fb_woba  = _log5_matchup(lg_woba_a,  home_xwoba_pit, lg_woba_a)
+        a_fb_xwoba = _log5_matchup(lg_xwoba_a, home_xwoba_pit, lg_xwoba_a)
+
+        home_log5_woba  = _aggregate_log5(h_log5_woba,  home_lineup, h_fb_woba)
+        home_log5_xwoba = _aggregate_log5(h_log5_xwoba, home_lineup, h_fb_xwoba)
+        away_log5_woba  = _aggregate_log5(a_log5_woba,  away_lineup, a_fb_woba)
+        away_log5_xwoba = _aggregate_log5(a_log5_xwoba, away_lineup, a_fb_xwoba)
+
+        home_xfip_r = lg_xfip / home_xfip if home_xfip > 0 else 1.0
+        away_xfip_r = lg_xfip / away_xfip if away_xfip > 0 else 1.0
+
+        # Market logit anchor
+        raw_h = (100 / (home_ml + 100)) if home_ml > 0 else (abs(home_ml) / (abs(home_ml) + 100))
+        raw_a = (100 / (away_ml + 100)) if away_ml > 0 else (abs(away_ml) / (abs(away_ml) + 100))
+        total = raw_h + raw_a
+        p_home_dv = float(np.clip(raw_h / total, 0.001, 0.999))
+        logit_mp  = float(np.log(p_home_dv / (1.0 - p_home_dv)))
+
+        features = np.array([[
+            logit_mp,
+            home_log5_woba  - away_log5_woba,
+            home_log5_xwoba - away_log5_xwoba,
+            home_xfip_r     - away_xfip_r,
+        ]], dtype=float)
+
+        # Apply saved scaler (col 0 unscaled, cols 1+ standardized)
+        mu  = np.array(log5_bundle['mu'])
+        sig = np.array(log5_bundle['sig'])
+        X_s = np.column_stack([features[:, 0], (features[:, 1:] - mu) / sig])
+
+        home_prob = float(log5_bundle['model'].predict_proba(X_s)[0, 1])
+        return home_prob, 1.0 - home_prob
+
+    except Exception as e:
+        return None
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 def load_constants(year=2026):
     woba_fip = pd.read_csv('constants/woba_fip_constants.csv')
@@ -241,11 +376,11 @@ def get_cached_odds():
 
 def get_upcoming_games(odds_data):
     now = datetime.now(timezone.utc)
-    today_mst = now.astimezone(MST).date()
+    today_mst = now.astimezone(MT).date()
     upcoming = []
     for game in odds_data:
         game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-        game_time_mst = game_time.astimezone(MST)
+        game_time_mst = game_time.astimezone(MT)
         if game_time > now and game_time_mst.date() == today_mst:
             upcoming.append(game)
     return upcoming
@@ -1361,7 +1496,10 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         mlb_key  = base_key if game_num == '1' else f"{base_key}_G2"
         mlb_status    = (statuses or {}).get(mlb_key, {}).get('status', '')
         in_odds       = (active_game_keys is None) or (mlb_key in active_game_keys)
-        live_or_done  = mlb_status in ('Final', 'In Progress', 'Warmup', 'Pre-Game', 'Game Over', 'Completed Early')
+        live_or_done  = (mlb_status in ('Final', 'In Progress', 'Warmup', 'Pre-Game',
+                                         'Game Over', 'Completed Early')
+                         or mlb_status.startswith('Delayed')
+                         or mlb_status.startswith('Suspended'))
         if not live_or_done and (mlb_status in ('Postponed', 'Cancelled') or not in_odds):
             df.at[idx, 'result'] = 'CANCELLED'
             for run in [1, 2, 3]:
@@ -1855,7 +1993,7 @@ def update_google_sheets(df):
 
         sheet.spreadsheet.batch_update({'requests': color_requests})
 
-        print("Google Sheets updated successfully")
+        _tee._real.write("Google Sheets updated successfully\n")
     except Exception as e:
         import traceback
         print(f"Google Sheets update failed: {e}")
@@ -1891,6 +2029,7 @@ def send_email_report(body, run_label):
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
+    import html as _html
 
     sender    = os.getenv('EMAIL_SENDER')
     password  = os.getenv('EMAIL_APP_PASSWORD')
@@ -1902,11 +2041,51 @@ def send_email_report(body, run_label):
 
     try:
         subject = f"Baseball Model - {date.today().strftime('%#m/%#d')}"
-        msg = MIMEMultipart()
+
+        escaped = _html.escape(body)
+        html_body = f"""\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {{ margin: 0; padding: 0; background: #ffffff; }}
+  .wrap {{ max-width: 900px; margin: 0 auto; padding: 12px; }}
+  pre {{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-x: auto;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 0;
+  }}
+  @media only screen and (max-width: 600px) {{
+    .wrap {{ padding: 6px; }}
+    pre {{
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }}
+  }}
+</style>
+</head>
+<body>
+<div class="wrap"><pre>{escaped}</pre></div>
+</body>
+</html>"""
+
+        msg = MIMEMultipart('alternative')
         msg['From']    = f'Betting Model <{sender}>'
         msg['To']      = recipient
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+        msg.attach(MIMEText(body,      'plain', 'utf-8'))
+        msg.attach(MIMEText(html_body, 'html',  'utf-8'))
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
             server.login(sender, password)
@@ -2091,6 +2270,8 @@ completed_games = []
 
 team_ids = get_all_team_ids()
 
+_log5_bundle, _player_snapshot = load_log5_assets()
+
 from datetime import date
 first_game_date = date.today().strftime('%Y-%m-%d')
 cached_stats = get_cached_stats(team_ids, game_date=first_game_date)
@@ -2138,12 +2319,12 @@ if os.path.exists(_eff_log):
         pass
 
 print(f"\n=== TODAY'S EDGES ===")
-print(f"Bankroll: ${BANKROLL:,.0f} | Effective: ${effective_bankroll:,.0f} | Kelly: ½ ({KELLY_FRACTION}x) | Cap: {MAX_BANKROLL_EXPOSURE:.0%}/bet | Edge threshold: 7%\n")
+print(f"Bankroll: ${BANKROLL:,.0f} | Effective: ${effective_bankroll:,.0f} | Kelly: ½ ({KELLY_FRACTION}x) | Cap: {MAX_BANKROLL_EXPOSURE:.0%}/bet | Sniper >4.5% / Enforcer >4.0%\n")
 
 edge_games = []
 no_edge_games = []
 skipped_games = []
-pending_lineup_games = []
+pre_lineup_games = []
 
 # Load today's prior predictions for change detection (run N-1 vs current run)
 prior_picks_today = {}  # {(home_fg, away_fg, game_num_str): last_bet_team}
@@ -2230,9 +2411,10 @@ for game in upcoming:
     home_market_prob = american_to_prob(home_market_line)
     away_market_prob = american_to_prob(away_market_line)
 
-    game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(MST)
+    game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(MT)
     dh_label = f' (Game {game_num})' if game_num > 1 else ''
-    time_str = game_time.strftime('%a %b %d - %I:%M %p MST') + dh_label
+    tz_label = 'MDT' if game_time.dst() else 'MST'
+    time_str = game_time.strftime(f'%a %b %d - %I:%M %p {tz_label}') + dh_label
 
     home_starter = todays_starters.get(home_fg)
     away_starter = todays_starters.get(away_fg)
@@ -2274,17 +2456,13 @@ for game in upcoming:
     else:
         platoon_text = "\n   📐 Platoon — Lineup not yet confirmed"
 
-    # Lineup confirmation gate — skip unconfirmed games for safe hourly runs
+    # Determine whether this game has confirmed lineups
     _lineup_confirmed = (
         game_key_plat in lineups and
         bool(lineups[game_key_plat].get('home_lineup')) and
         bool(lineups[game_key_plat].get('away_lineup'))
     )
-    if not _lineup_confirmed:
-        pending_lineup_games.append(
-            f"[INFO] {away_name} @ {home_name} ({time_str}) — lineups pending, skipping evaluation"
-        )
-        continue
+    _pre_lineup = not _lineup_confirmed
 
     # Always compute raw (no platoon) result for tracking purposes
     raw_result = calculate_matchup(home_fg, away_fg, 2026, rolling=rolling, starters=todays_starters,
@@ -2301,6 +2479,22 @@ for game in upcoming:
     home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda = result
     total_data = get_total_line(game)
 
+    # Use Log5 regression for win probability when lineup is confirmed and assets are loaded
+    if _log5_bundle and _player_snapshot and not _pre_lineup:
+        gd = lineups.get(game_key_plat, {})
+        _h_pid = gd.get('home_pitcher_id')
+        _a_pid = gd.get('away_pitcher_id')
+        _h_hand = (platoon_splits.get(f"pit_{_h_pid}") or {}).get('hand', 'R')
+        _a_hand = (platoon_splits.get(f"pit_{_a_pid}") or {}).get('hand', 'R')
+        _log5_result = compute_log5_win_prob(
+            gd.get('home_lineup', []), gd.get('away_lineup', []),
+            _h_pid, _a_pid, _h_hand, _a_hand,
+            home_market_line, away_market_line,
+            _log5_bundle, _player_snapshot,
+        )
+        if _log5_result is not None:
+            home_win_pct, away_win_pct = _log5_result
+
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
 
@@ -2316,30 +2510,42 @@ for game in upcoming:
     moneyline_edge = False
     ou_edge = False
     kelly_amt = 0.0
+    _ml_tier  = ''
     game_text = f"{away_name} @ {home_name} - {time_str}"
 
-    if home_edge > 0.07:
+    # Tiered edge thresholds — pick the stronger side first
+    _SNIPER_MIN   = 0.045
+    _ENFORCER_MIN = 0.040
+    _best_is_home = home_edge >= away_edge
+    _best_edge    = home_edge if _best_is_home else away_edge
+
+    if _best_edge > _SNIPER_MIN:
+        _ml_tier = 'SNIPER'
+    elif _best_edge > _ENFORCER_MIN:
+        _ml_tier = 'ENFORCER'
+
+    if _ml_tier and _best_is_home:
         kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line, bankroll=effective_bankroll)
         moneyline_text = (
-            f"   💰 Moneyline: Bet {home_name} | Model: {home_win_pct:.1%} | "
+            f"   [ACTION: {_ml_tier} BET] 💰 Bet {home_name} | Model: {home_win_pct:.1%} | "
             f"{best_home_book}: {home_market_line} | Edge: +{home_edge:.1%} | "
             f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
         )
         moneyline_edge = True
-        bet_fg = home_fg
-        bet_pct = home_win_pct
+        bet_fg   = home_fg
+        bet_pct  = home_win_pct
         bet_line = home_market_line
         bet_edge = home_edge
-    elif away_edge > 0.07:
+    elif _ml_tier:
         kelly_pct, kelly_amt = kelly_bet_size(away_win_pct, away_market_line, bankroll=effective_bankroll)
         moneyline_text = (
-            f"   💰 Moneyline: Bet {away_name} | Model: {away_win_pct:.1%} | "
+            f"   [ACTION: {_ml_tier} BET] 💰 Bet {away_name} | Model: {away_win_pct:.1%} | "
             f"{best_away_book}: {away_market_line} | Edge: +{away_edge:.1%} | "
             f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
         )
         moneyline_edge = True
-        bet_fg = away_fg
-        bet_pct = away_win_pct
+        bet_fg   = away_fg
+        bet_pct  = away_win_pct
         bet_line = away_market_line
         bet_edge = away_edge
     else:
@@ -2432,7 +2638,7 @@ for game in upcoming:
         'home_fg':            home_fg,
         'away_fg':            away_fg,
         'bet_type':           'Moneyline',
-        'model_strategy':     'SNIPER',
+        'model_strategy':     _ml_tier,
         'bet_team':           ml_bet_team,
         'model_pct':          ml_model_pct,
         'raw_model_pct':      raw_ml_pct,
@@ -2498,7 +2704,12 @@ for game in upcoming:
             'recommended_stake':  0.0,
         })
 
-    if moneyline_edge or ou_edge:
+    if _pre_lineup:
+        _pre_icon = "✅" if moneyline_edge else "➖"
+        pre_lineup_games.append(
+            f"{_pre_icon} {game_text}  [PRE-LINEUP ESTIMATE]\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}"
+        )
+    elif moneyline_edge or ou_edge:
         edge_games.append({
             'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}"
         })
@@ -2535,12 +2746,12 @@ if skipped_games:
         print(game)
         print()
 
-# Print pending lineup games
-if pending_lineup_games:
-    print("=== LINEUPS PENDING ===\n")
-    for msg in pending_lineup_games:
+# Print pre-lineup estimates (no platoon adjustment applied)
+if pre_lineup_games:
+    print("=== PRE-LINEUP ESTIMATES (no platoon) ===\n")
+    for msg in pre_lineup_games:
         print(msg)
-    print()
+        print()
 
 if in_progress_games:
     print("\n=== IN PROGRESS ===\n")
@@ -2564,4 +2775,24 @@ _hour = _dt.now().hour
 _run_label = '9am' if _hour < 11 else ('12pm' if _hour < 15 else '4pm')
 print_accuracy_report()
 _email_body = _tee.getvalue()
-send_email_report(_email_body, _run_label)
+
+# Only send email if at least one game starts within the next 3 hours
+_now_utc = _dt.now(timezone.utc)
+_email_window_hours = 3
+_has_game_soon = any(
+    (_dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) - _now_utc).total_seconds()
+    <= _email_window_hours * 3600
+    for g in upcoming
+)
+if _has_game_soon:
+    send_email_report(_email_body, _run_label)
+else:
+    _next_times = sorted(
+        _dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+        for g in upcoming
+    )
+    if _next_times:
+        _hrs_until = (_next_times[0] - _now_utc).total_seconds() / 3600
+        print(f"[Email skipped] No games within {_email_window_hours}h. Next game in {_hrs_until:.1f}h.")
+    else:
+        print(f"[Email skipped] No upcoming games today.")

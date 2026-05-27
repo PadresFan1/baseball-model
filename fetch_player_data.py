@@ -73,7 +73,7 @@ _HEADERS = {
 # Season calendar: (start_month, end_month) inclusive
 _SEASON_MONTHS = {
     2021: (4, 10), 2022: (4, 10), 2023: (3, 10),
-    2024: (3, 9),  2025: (3, 9),
+    2024: (3, 9),  2025: (3, 9),  2026: (3, 5),
 }
 
 _REQUEST_DELAY = 2.5   # seconds between requests (polite rate-limiting)

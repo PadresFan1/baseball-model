@@ -1020,6 +1020,26 @@ if os.path.exists(_supp):
     odds_df  = pd.concat([odds_df, _supp_df], ignore_index=True).sort_values('date').reset_index(drop=True)
     print(f"Merged 2025 supplement: {len(_supp_df)} additional games")
 
+# Merge 2026 odds — prefer odds_2026_complete.csv (manual/full dataset) over
+# odds_2026.csv (sparse SportsGameOdds API fetch). Complete file takes priority.
+_complete26 = 'historical_data/odds_2026_complete.csv'
+_sparse26   = 'historical_data/odds_2026.csv'
+_src26      = None
+if os.path.exists(_complete26):
+    _df26_tmp = pd.read_csv(_complete26)
+    if len(_df26_tmp) > 0:
+        _src26 = (_complete26, _df26_tmp)
+if _src26 is None and os.path.exists(_sparse26):
+    _df26_tmp = pd.read_csv(_sparse26)
+    if len(_df26_tmp) > 0:
+        _src26 = (_sparse26, _df26_tmp)
+if _src26 is not None:
+    _src26_path, _df26 = _src26
+    odds_df = pd.concat([odds_df, _df26], ignore_index=True).sort_values('date').reset_index(drop=True)
+    _n26    = len(_df26)
+    _n26_ml = int(_df26[['fd_home_ml', 'fd_away_ml']].notna().all(axis=1).sum()) if 'fd_home_ml' in _df26.columns else 0
+    print(f"Merged 2026 odds: {_n26} games ({_n26_ml} with ML odds) [{os.path.basename(_src26_path)}]")
+
 # Load historical game logs
 with open('historical_data/historical_game_logs.json', 'r') as f:
     game_logs = json.load(f)
@@ -1808,6 +1828,7 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
 # Feature 0: de-vigged market logit (unscaled anchor).
 # Features 1–4: league-normalized Statcast difference metrics (standardized).
 _META_FEATURES = ['logit_market_prob', 'd_woba', 'd_xwoba_bat', 'd_xfip', 'd_xwoba_pit']
+_LOG5_FEATURES = ['logit_market_prob', 'd_log5_woba', 'd_log5_xwoba', 'd_xfip']
 
 
 def _sigmoid(z):
@@ -2135,7 +2156,7 @@ def walk_forward_financial_sim(C=1.0, flat_bet=20.0, edge_min=0.07, all_feat=Non
     return year_rows
 
 
-def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
+def walk_forward_dual_strategy(all_feat, flat_bet=20.0, features=None):
     """
     Walk-forward financial simulation running two betting strategies in parallel.
     Both strategies are trained on identical folds with identical standardization;
@@ -2144,9 +2165,12 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
     Strategy A — The Sniper    : C=1.0, edge > 5.0%  (high-conviction, lower volume)
     Strategy B — The Enforcer  : C=5.0, edge > 3.5%  (relaxed reg, higher volume)
 
+    features: list of column names to use (defaults to _META_FEATURES).
+              Pass _LOG5_FEATURES to run the Log5 variant.
+
     Uses scikit-learn LogisticRegression (L2 penalty, lbfgs solver) instead of
     the custom numpy Adam optimizer.  Column 0 (market logit) is left unscaled;
-    columns 1-4 (Statcast diffs) are standardized on training data only.
+    remaining columns are standardized on training data only.
 
     Folds:
       Fold 1: train [2021]             -> test 2022
@@ -2154,6 +2178,8 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
       Fold 3: train [2021, 2022, 2023] -> test 2024
       Fold 4: train [2021-2024]        -> test 2025
     """
+    if features is None:
+        features = _META_FEATURES
     try:
         from sklearn.linear_model import LogisticRegression
     except ImportError:
@@ -2161,8 +2187,8 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
         return {}
 
     STRATEGIES = [
-        ('The Sniper',   1.0, 0.050),
-        ('The Enforcer', 5.0, 0.035),
+        ('The Sniper',   3.5, 0.045),
+        ('The Enforcer', 3.5, 0.040),
     ]
 
     FOLDS = [
@@ -2179,10 +2205,13 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
         for name, _, _ in STRATEGIES
     }
 
+    feat_label = 'Log5' if features == _LOG5_FEATURES else 'Meta'
+    print(f"  Features: {features}")
+
     # ── One block of output per strategy ──────────────────────────────────────
     for strat_name, C, edge_min in STRATEGIES:
         print(f"\n{'='*70}")
-        print(f"  STRATEGY: {strat_name}   |   C={C}   |   edge > {edge_min:.1%}   |   flat ${flat_bet:.0f}/game")
+        print(f"  STRATEGY: {strat_name}  [{feat_label}]  |   C={C}   |   edge > {edge_min:.1%}   |   flat ${flat_bet:.0f}/game")
         print(f"{'='*70}")
         print(f"  {'Fold':<5} {'Year':<5} {'Odds':>7} {'Bets':>5} {'W':>4} {'L':>4} {'Win%':>6} {'Profit':>10} {'ROI':>8}")
         print(f"  {'-'*56}")
@@ -2198,12 +2227,12 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0):
             if len(train_df) < 100 or len(test_df) < 50:
                 continue
 
-            X_tr = train_df[_META_FEATURES].values.astype(float)
+            X_tr = train_df[features].values.astype(float)
             y_tr = train_df['y'].values.astype(int)
-            X_te = test_df[_META_FEATURES].values.astype(float)
+            X_te = test_df[features].values.astype(float)
 
             # Col 0 = market logit (unscaled — preserves linear relationship to outcome logit)
-            # Cols 1-4 = Statcast diffs (standardized on training fold; no test leakage)
+            # Cols 1+ = metric diffs (standardized on training fold; no test leakage)
             mu  = X_tr[:, 1:].mean(axis=0)
             sig = X_tr[:, 1:].std(axis=0) + 1e-8
             X_tr_s = np.column_stack([X_tr[:, 0], (X_tr[:, 1:] - mu) / sig])
@@ -2354,6 +2383,23 @@ def aggregate_lineup_metric(player_stats_dict, lineup_list, lg_avg):
     return float(np.dot(metrics, PA_WEIGHTS))
 
 
+def log5_matchup(B, P, L):
+    """
+    Log5 / Odds Ratio matchup probability.
+    B = batter skill (e.g. rolling wOBA vs pitcher hand)
+    P = pitcher skill (e.g. rolling xwOBA allowed)
+    L = league average baseline (same metric as B)
+    Returns projected matchup outcome in the same units as B.
+    Inputs clipped to (0.001, 0.999) to avoid division by zero.
+    """
+    B = float(np.clip(B, 0.001, 0.999))
+    P = float(np.clip(P, 0.001, 0.999))
+    L = float(np.clip(L, 0.001, 0.999))
+    num = (B * P) / L
+    den = num + ((1.0 - B) * (1.0 - P)) / (1.0 - L)
+    return num / den if den > 0 else L
+
+
 # ── Reverse map: MLB team ID → FanGraphs abbreviation ────────────────────────
 _MLB_ID_TO_FG = {v: k for k, v in TEAM_MAP.items()}
 
@@ -2382,14 +2428,41 @@ def pull_historical_lineups(seasons, cache_path='historical_data/game_lineups.js
     """
     import time as _time
 
+    import datetime as _dt_module
+
     cache = {}
     if os.path.exists(cache_path):
         print("Loading game lineup cache from disk...")
         with open(cache_path) as f:
             cache = json.load(f)
 
-    missing_seasons = [s for s in seasons if str(s) not in cache]
-    if not missing_seasons:
+    _current_year = _dt_module.date.today().year
+    _yesterday    = (_dt_module.date.today() - _dt_module.timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # Build work list: (season, start_date, is_incremental)
+    # Historical seasons (not current year): full pull if missing, skip if present.
+    # Current year: full pull if missing, incremental update if partial.
+    work = []
+    for s in seasons:
+        s_str = str(s)
+        if s_str not in cache:
+            work.append((s, f'{s}-03-01', False))   # full pull
+        elif s == _current_year:
+            # Find the most recent game date already cached
+            season_games = cache[s_str]
+            if season_games:
+                last_cached = max(v['date'] for v in season_games.values())
+                resume_from = (_dt_module.datetime.strptime(last_cached, '%Y-%m-%d')
+                               + _dt_module.timedelta(days=1)).strftime('%Y-%m-%d')
+                if resume_from <= _yesterday:
+                    work.append((s, resume_from, True))   # incremental
+                    print(f"  {s}: resuming from {resume_from} (last cached: {last_cached})")
+                else:
+                    print(f"  {s}: already up to date (last cached: {last_cached})")
+            else:
+                work.append((s, f'{s}-03-01', False))
+
+    if not work:
         print(f"Lineup cache complete for {seasons}.")
         return cache
 
@@ -2418,18 +2491,24 @@ def pull_historical_lineups(seasons, cache_path='historical_data/game_lineups.js
         with open(_hand_path, 'w') as f:
             json.dump({str(k): v for k, v in hand_cache.items()}, f)
 
-    for season in missing_seasons:
-        print(f"\nPulling {season} box score lineups from MLB API...")
+    for season, start_date, is_incremental in work:
+        label = f"{season} (incremental from {start_date})" if is_incremental else str(season)
+        print(f"\nPulling {label} box score lineups from MLB API...")
         t0 = _time.time()
-        season_cache = {}
+
+        # Incremental: start from existing games; full: start fresh
+        season_cache = dict(cache.get(str(season), {})) if is_incremental else {}
+
+        # For current year use yesterday as end date; historical seasons use Nov 1
+        end_date = _yesterday if season == _current_year else f'{season}-11-01'
 
         # Retry up to 5 times — MLB API occasionally returns 503 on large date ranges
         schedule = None
         for _attempt in range(5):
             try:
                 schedule = statsapi.schedule(
-                    start_date=f'{season}-03-01',
-                    end_date=f'{season}-11-01',
+                    start_date=start_date,
+                    end_date=end_date,
                     sportId=1,
                 )
                 break
@@ -2657,7 +2736,7 @@ def load_player_pitcher_data(seasons):
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
-def build_batter_rolling_cache(batter_data_by_hand):
+def build_batter_rolling_cache(batter_data_by_hand, extra_target_dates=None):
     """
     For each player and each pitcher-hand split, compute rolling _ROLLING_PA_WIN PA
     stats at every target date in odds_df using O(log n) prefix-sum lookups.
@@ -2666,6 +2745,8 @@ def build_batter_rolling_cache(batter_data_by_hand):
     ----------
     batter_data_by_hand : {'L': DataFrame, 'R': DataFrame}
         Output of load_player_batter_data().
+    extra_target_dates : list of 'YYYY-MM-DD' strings, optional
+        Additional dates beyond odds_df (e.g. today's date for production snapshot).
 
     Returns
     -------
@@ -2674,8 +2755,8 @@ def build_batter_rolling_cache(batter_data_by_hand):
     """
     import bisect
 
-    # All target dates across all seasons in odds_df
-    target_dates = sorted(set(odds_df['date'].tolist()))
+    # All target dates across all seasons in odds_df, plus any extras
+    target_dates = sorted(set(odds_df['date'].tolist()) | set(extra_target_dates or []))
 
     batter_cache = {}
 
@@ -2762,7 +2843,7 @@ def build_batter_rolling_cache(batter_data_by_hand):
     return batter_cache, lg_batter_avg
 
 
-def build_pitcher_rolling_cache(pitcher_df, fip_const_by_season):
+def build_pitcher_rolling_cache(pitcher_df, fip_const_by_season, extra_target_dates=None):
     """
     For each starting pitcher, compute rolling _ROLLING_PA_WIN BF stats at every
     target date in odds_df.  Computes xFIP from rolling K/BB/HR/FB/IP components
@@ -2772,6 +2853,8 @@ def build_pitcher_rolling_cache(pitcher_df, fip_const_by_season):
     ----------
     pitcher_df         : DataFrame from load_player_pitcher_data()
     fip_const_by_season: {season (int): cFIP (float)}
+    extra_target_dates : list of 'YYYY-MM-DD' strings, optional
+        Additional dates beyond odds_df (e.g. today's date for production snapshot).
 
     Returns
     -------
@@ -2781,7 +2864,7 @@ def build_pitcher_rolling_cache(pitcher_df, fip_const_by_season):
     if pitcher_df.empty:
         return {}, {}
 
-    target_dates = sorted(set(odds_df['date'].tolist()))
+    target_dates = sorted(set(odds_df['date'].tolist()) | set(extra_target_dates or []))
 
     # League HR/FB rate per date — computed from all starters in the data set
     all_events = []
@@ -3068,6 +3151,261 @@ def collect_game_features_player_level(seasons, game_lineup_cache,
     print(f"\n  Player-level features: {len(records):,} games")
     print(f"  Skipped — no lineup: {missing_lineup:,} | no starter stats: {missing_starter:,} | no lg avg: {missing_lg:,}")
     return pd.DataFrame(records)
+
+
+def collect_game_features_log5(seasons, game_lineup_cache,
+                               batter_cache, lg_batter_avg,
+                               pitcher_cache, lg_pitcher_avg):
+    """
+    Log5 variant of collect_game_features_player_level.
+
+    Instead of normalizing batter stats by league average and taking a
+    difference, applies the Log5 / Odds Ratio formula to each individual
+    batter-pitcher matchup before aggregating across the lineup.
+
+    For each batter i facing pitcher P:
+      log5_woba_i  = log5_matchup(batter_woba_i,  pitcher_xwoba_pit, lg_woba)
+      log5_xwoba_i = log5_matchup(batter_xwoba_i, pitcher_xwoba_pit, lg_xwoba)
+
+    These are PA-weighted across the 9-man lineup → one score per team.
+    Feature set (_LOG5_FEATURES):
+      logit_market_prob, d_log5_woba, d_log5_xwoba, d_xfip
+    Pitcher xwOBA is already baked into the Log5 calc, so d_xwoba_pit is
+    dropped. d_xfip is kept as independent expected-outcome pitcher signal.
+    """
+    lineup_by_teams = {}
+    for season_cache in game_lineup_cache.values():
+        for game_pk_str, gdata in season_cache.items():
+            key = (gdata['date'], gdata['home_fg'], gdata['away_fg'])
+            lineup_by_teams.setdefault(key, []).append(gdata)
+
+    records = []
+    missing_lineup = missing_starter = missing_lg = 0
+
+    for season in seasons:
+        season_str  = str(season)
+        season_odds = odds_df[odds_df['date'].str.startswith(season_str)]
+
+        for _, game in season_odds.iterrows():
+            date      = game['date']
+            home_team = normalize_team(game['home_team'])
+            away_team = normalize_team(game['away_team'])
+
+            if home_team not in TEAM_MAP or away_team not in TEAM_MAP:
+                continue
+
+            home_score = game.get('home_score')
+            away_score = game.get('away_score')
+            if pd.isna(home_score) or pd.isna(away_score):
+                continue
+
+            fd_home_ml = game.get('fd_home_ml')
+            fd_away_ml = game.get('fd_away_ml')
+            if pd.isna(fd_home_ml) or pd.isna(fd_away_ml):
+                continue
+            fd_home_ml = float(fd_home_ml)
+            fd_away_ml = float(fd_away_ml)
+            if fd_home_ml == 0 or fd_away_ml == 0:
+                continue
+
+            gdata_list = lineup_by_teams.get((date, home_team, away_team))
+            if not gdata_list:
+                missing_lineup += 1
+                continue
+            gdata = gdata_list[0]
+
+            home_lineup     = [int(p) for p in gdata['home_lineup']]
+            away_lineup     = [int(p) for p in gdata['away_lineup']]
+            home_starter_id = int(gdata['home_starter_id'])
+            away_starter_id = int(gdata['away_starter_id'])
+            hand_vs_home    = gdata['away_starter_hand']
+            hand_vs_away    = gdata['home_starter_hand']
+
+            home_pit = pitcher_cache.get((home_starter_id, date))
+            away_pit = pitcher_cache.get((away_starter_id, date))
+            if home_pit is None or away_pit is None:
+                missing_starter += 1
+                continue
+
+            lg_bat_h = lg_batter_avg.get((hand_vs_home, date))
+            lg_bat_a = lg_batter_avg.get((hand_vs_away, date))
+            lg_pit   = lg_pitcher_avg.get(date)
+            if lg_bat_h is None or lg_bat_a is None or lg_pit is None:
+                missing_lg += 1
+                continue
+
+            # Pitcher xwOBA allowed — used as P in Log5 for opposing batters
+            away_pit_xwoba = away_pit.get('xwoba_pit') or lg_pit['xwoba_pit']
+            home_pit_xwoba = home_pit.get('xwoba_pit') or lg_pit['xwoba_pit']
+
+            lg_woba_h  = lg_bat_h['woba']  or 0.320
+            lg_xwoba_h = lg_bat_h['xwoba'] or 0.315
+            lg_woba_a  = lg_bat_a['woba']  or 0.320
+            lg_xwoba_a = lg_bat_a['xwoba'] or 0.315
+
+            # ── Home offense vs away pitcher (Log5 per batter) ─────────────
+            home_log5_woba_dict  = {}
+            home_log5_xwoba_dict = {}
+            for pid in home_lineup:
+                entry = batter_cache.get((pid, hand_vs_home, date), {})
+                b_woba  = entry.get('woba')
+                b_xwoba = entry.get('xwoba')
+                if b_woba is not None:
+                    home_log5_woba_dict[pid]  = log5_matchup(b_woba,  away_pit_xwoba, lg_woba_h)
+                if b_xwoba is not None:
+                    home_log5_xwoba_dict[pid] = log5_matchup(b_xwoba, away_pit_xwoba, lg_xwoba_h)
+
+            # ── Away offense vs home pitcher (Log5 per batter) ─────────────
+            away_log5_woba_dict  = {}
+            away_log5_xwoba_dict = {}
+            for pid in away_lineup:
+                entry = batter_cache.get((pid, hand_vs_away, date), {})
+                b_woba  = entry.get('woba')
+                b_xwoba = entry.get('xwoba')
+                if b_woba is not None:
+                    away_log5_woba_dict[pid]  = log5_matchup(b_woba,  home_pit_xwoba, lg_woba_a)
+                if b_xwoba is not None:
+                    away_log5_xwoba_dict[pid] = log5_matchup(b_xwoba, home_pit_xwoba, lg_xwoba_a)
+
+            # Fallback for missing batters: Log5 of a league-average batter vs pitcher
+            home_lg_log5_woba  = log5_matchup(lg_woba_h,  away_pit_xwoba, lg_woba_h)
+            home_lg_log5_xwoba = log5_matchup(lg_xwoba_h, away_pit_xwoba, lg_xwoba_h)
+            away_lg_log5_woba  = log5_matchup(lg_woba_a,  home_pit_xwoba, lg_woba_a)
+            away_lg_log5_xwoba = log5_matchup(lg_xwoba_a, home_pit_xwoba, lg_xwoba_a)
+
+            home_log5_woba  = aggregate_lineup_metric(home_log5_woba_dict,  home_lineup, home_lg_log5_woba)
+            home_log5_xwoba = aggregate_lineup_metric(home_log5_xwoba_dict, home_lineup, home_lg_log5_xwoba)
+            away_log5_woba  = aggregate_lineup_metric(away_log5_woba_dict,  away_lineup, away_lg_log5_woba)
+            away_log5_xwoba = aggregate_lineup_metric(away_log5_xwoba_dict, away_lineup, away_lg_log5_xwoba)
+
+            # ── xFIP difference (independent pitcher signal) ───────────────
+            lg_xfip     = lg_pit['xfip']
+            home_xfip_r = lg_xfip / home_pit['xfip'] if home_pit['xfip'] > 0 else 1.0
+            away_xfip_r = lg_xfip / away_pit['xfip'] if away_pit['xfip'] > 0 else 1.0
+
+            # ── Market logit anchor ────────────────────────────────────────
+            p_home_dv, _ = de_vig_probs(fd_home_ml, fd_away_ml)
+            p_clipped    = float(np.clip(p_home_dv, 0.001, 0.999))
+            logit_mp     = float(np.log(p_clipped / (1.0 - p_clipped)))
+
+            records.append({
+                'date':              date,
+                'season':            season,
+                'home_team':         home_team,
+                'away_team':         away_team,
+                'logit_market_prob': logit_mp,
+                'd_log5_woba':       home_log5_woba  - away_log5_woba,
+                'd_log5_xwoba':      home_log5_xwoba - away_log5_xwoba,
+                'd_xfip':            home_xfip_r     - away_xfip_r,
+                'y':                 1 if home_score > away_score else 0,
+                'fd_home_ml':        fd_home_ml,
+                'fd_away_ml':        fd_away_ml,
+            })
+
+    print(f"\n  Log5 features: {len(records):,} games")
+    print(f"  Skipped — no lineup: {missing_lineup:,} | no starter stats: {missing_starter:,} | no lg avg: {missing_lg:,}")
+    return pd.DataFrame(records)
+
+
+def save_production_assets(batter_cache, pitcher_cache,
+                           lg_batter_avg, lg_pitcher_avg, log5_feat_df):
+    """
+    Trains the production logistic regression (C=3.5) on all available Log5
+    features and extracts a per-player rolling stats snapshot for daily
+    inference in model.py.
+
+    Writes:
+      models/log5_regression.pkl            — model + scaler params
+      historical_data/player_snapshot.json  — per-player rolling stats + lg avgs
+    """
+    import pickle
+    from sklearn.linear_model import LogisticRegression
+
+    os.makedirs('models', exist_ok=True)
+
+    if log5_feat_df.empty:
+        print("  ERROR: No Log5 features available — cannot train production model.")
+        return
+
+    # ── Train on all available data ───────────────────────────────────────────
+    X = log5_feat_df[_LOG5_FEATURES].values.astype(float)
+    y = log5_feat_df['y'].values.astype(int)
+    mu  = X[:, 1:].mean(axis=0)
+    sig = X[:, 1:].std(axis=0) + 1e-8
+    X_s = np.column_stack([X[:, 0], (X[:, 1:] - mu) / sig])
+
+    model = LogisticRegression(C=3.5, solver='lbfgs', max_iter=1000, fit_intercept=True)
+    model.fit(X_s, y)
+
+    pkl_path = 'models/log5_regression.pkl'
+    with open(pkl_path, 'wb') as f:
+        pickle.dump({'model': model, 'mu': mu.tolist(), 'sig': sig.tolist(),
+                     'features': _LOG5_FEATURES, 'n_train': len(y), 'C': 3.5}, f)
+    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5)")
+
+    # ── Extract player snapshot ───────────────────────────────────────────────
+    # Batter: most recent rolling stats per (player_id, hand)
+    latest_batter = {}
+    for (pid, hand, date), stats in batter_cache.items():
+        key = (pid, hand)
+        if key not in latest_batter or date > latest_batter[key][0]:
+            latest_batter[key] = (date, stats)
+
+    batter_snap = {}
+    for (pid, hand), (_, stats) in latest_batter.items():
+        pid_s = str(pid)
+        if pid_s not in batter_snap:
+            batter_snap[pid_s] = {}
+        batter_snap[pid_s][hand] = {
+            'woba':  round(stats['woba'],  4) if stats.get('woba')  else None,
+            'xwoba': round(stats['xwoba'], 4) if stats.get('xwoba') else None,
+        }
+
+    # Pitcher: most recent rolling stats per player_id
+    latest_pitcher = {}
+    for (pid, date), stats in pitcher_cache.items():
+        if pid not in latest_pitcher or date > latest_pitcher[pid][0]:
+            latest_pitcher[pid] = (date, stats)
+
+    pitcher_snap = {}
+    for pid, (_, stats) in latest_pitcher.items():
+        pitcher_snap[str(pid)] = {
+            'xfip':      round(stats['xfip'],      4) if stats.get('xfip')      else None,
+            'xwoba_pit': round(stats['xwoba_pit'], 4) if stats.get('xwoba_pit') else None,
+        }
+
+    # League averages: most recent date for each hand / pitcher
+    lg_avgs = {'L': {}, 'R': {}, 'pit': {}}
+    latest_lg_bat = {}
+    for (hand, date), avgs in lg_batter_avg.items():
+        if hand not in latest_lg_bat or date > latest_lg_bat[hand][0]:
+            latest_lg_bat[hand] = (date, avgs)
+    for hand, (_, avgs) in latest_lg_bat.items():
+        lg_avgs[hand] = {'woba': round(avgs['woba'], 4), 'xwoba': round(avgs['xwoba'], 4)}
+
+    if lg_pitcher_avg:
+        latest_pit_date = max(lg_pitcher_avg.keys())
+        pit_avgs = lg_pitcher_avg[latest_pit_date]
+        lg_avgs['pit'] = {
+            'xfip':      round(pit_avgs['xfip'],      4),
+            'xwoba_pit': round(pit_avgs['xwoba_pit'], 4),
+        }
+
+    as_of = max(d for d, _ in latest_batter.values()) if latest_batter else 'unknown'
+    snapshot = {
+        'batters':   batter_snap,
+        'pitchers':  pitcher_snap,
+        'lg_avgs':   lg_avgs,
+        'as_of':     as_of,
+        'n_batters': len(batter_snap),
+        'n_pitchers': len(pitcher_snap),
+    }
+
+    snap_path = 'historical_data/player_snapshot.json'
+    with open(snap_path, 'w') as f:
+        json.dump(snapshot, f)
+    print(f"  Snapshot saved → {snap_path}  "
+          f"({len(batter_snap):,} batters, {len(pitcher_snap):,} pitchers, as_of {as_of})")
 
 
 # ── O/U feature set (sums, not differences — both sides contribute to total runs) ──
@@ -3402,6 +3740,291 @@ def walk_forward_ou_strategy(all_ou_feat, flat_bet=20.0):
     return totals
 
 
+def _kelly_stake_bt(bankroll, american_odds, model_prob,
+                    fraction=0.5, max_exposure=0.15):
+    """Half-Kelly stake for backtest simulation. Mirrors model.py logic."""
+    if american_odds > 0:
+        decimal_odds = 1.0 + american_odds / 100.0
+    else:
+        decimal_odds = 1.0 + 100.0 / abs(american_odds)
+    b = decimal_odds - 1.0
+    if b <= 0:
+        return 0.0
+    full_kelly = (b * model_prob - (1.0 - model_prob)) / b
+    frac = fraction * full_kelly
+    if frac <= 0:
+        return 0.0
+    return round(bankroll * min(frac, max_exposure), 2)
+
+
+def eval_2026_validation(feat_df, p_home_arr,
+                         starting_bankroll=1000.0,
+                         kelly_fraction=0.5, max_exposure=0.15,
+                         title=None, model_desc=None):
+    """
+    Apply C=3.5 model probabilities to a test set and report
+    Sniper / Enforcer metrics with Kelly staking. Used for both
+    2025_holdout (train 2021-2024, test 2025) and 2026_validation.
+    """
+    STRATEGIES = [
+        ('The Sniper',   0.045),
+        ('The Enforcer', 0.040),
+    ]
+
+    n_games = len(feat_df)
+    date_min = feat_df['date'].min() if n_games else '-'
+    date_max = feat_df['date'].max() if n_games else '-'
+
+    _title     = title      or 'OUT-OF-SAMPLE VALIDATION'
+    _model_desc = model_desc or 'LogisticRegression C=3.5 trained on 2021-2025'
+
+    print(f"\n{'='*80}")
+    print(f"  {_title}")
+    print(f"  {n_games} games evaluated  |  {date_min} -> {date_max}")
+    print(f"  Model: {_model_desc}")
+    print(f"  Staking: ½ Kelly | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}")
+    print(f"{'='*80}")
+
+    for name, edge_min in STRATEGIES:
+        bankroll     = starting_bankroll
+        bets         = []
+
+        for i in range(n_games):
+            row        = feat_df.iloc[i]
+            fd_home_ml = float(row['fd_home_ml'])
+            fd_away_ml = float(row['fd_away_ml'])
+            home_prob  = float(p_home_arr[i])
+            away_prob  = 1.0 - home_prob
+            home_mkt, away_mkt = de_vig_probs(fd_home_ml, fd_away_ml)
+            home_edge  = home_prob - home_mkt
+            away_edge  = away_prob - away_mkt
+            y_actual   = int(row['y'])
+
+            bet_ml = bet_prob = None
+            bet_won = None
+            if home_edge > edge_min:
+                bet_ml, bet_prob, bet_won = fd_home_ml, home_prob, (y_actual == 1)
+            elif away_edge > edge_min:
+                bet_ml, bet_prob, bet_won = fd_away_ml, away_prob, (y_actual == 0)
+
+            if bet_ml is None:
+                continue
+
+            stake = _kelly_stake_bt(bankroll, bet_ml, bet_prob, kelly_fraction, max_exposure)
+            if stake <= 0:
+                continue
+
+            if bet_won:
+                net = stake * (bet_ml / 100.0) if bet_ml > 0 else stake * (100.0 / abs(bet_ml))
+                bankroll += net
+            else:
+                net = -stake
+                bankroll -= stake
+                if bankroll <= 0:
+                    bankroll = 1.0
+
+            bets.append({
+                'date': row['date'], 'won': bet_won,
+                'stake': stake, 'net': net, 'ml': bet_ml,
+                'edge': max(home_edge, away_edge),
+            })
+
+        n = len(bets)
+        print(f"\n  ── {name}  (edge > {edge_min*100:.1f}%) ──────────────────────────────────────")
+        if n == 0:
+            print(f"     No bets placed — no games cleared the {edge_min*100:.1f}% edge threshold.")
+            continue
+
+        wins          = sum(1 for b in bets if b['won'])
+        total_wagered = sum(b['stake'] for b in bets)
+        total_profit  = sum(b['net'] for b in bets)
+        win_rate      = wins / n * 100
+        roi           = total_profit / total_wagered * 100 if total_wagered > 0 else 0.0
+        closing_br    = starting_bankroll + total_profit
+        avg_edge      = sum(b['edge'] for b in bets) / n * 100
+
+        # Earliest and latest bet dates
+        dates_bet = sorted(set(b['date'] for b in bets))
+
+        print(f"     Games evaluated   : {n_games}")
+        print(f"     Bets placed       : {n}  ({n / len(dates_bet):.1f}/day avg over {len(dates_bet)} bet-days)")
+        print(f"     Wins / Losses     : {wins} / {n - wins}")
+        print(f"     Win Rate          : {win_rate:.1f}%")
+        print(f"     Avg Edge          : {avg_edge:.2f}%")
+        print(f"     Total Wagered     : ${total_wagered:,.2f}")
+        print(f"     Total Profit      : ${total_profit:+,.2f}")
+        print(f"     ROI               : {roi:+.2f}%")
+        print(f"     Starting Bankroll : ${starting_bankroll:,.2f}")
+        print(f"     Closing Bankroll  : ${closing_br:,.2f}  ({closing_br/starting_bankroll*100-100:+.1f}%)")
+
+        # Date-range breakdown (monthly)
+        months = sorted(set(b['date'][:7] for b in bets))
+        if len(months) > 1:
+            print(f"\n     Monthly breakdown:")
+            for mo in months:
+                mo_bets = [b for b in bets if b['date'].startswith(mo)]
+                mo_wins = sum(1 for b in mo_bets if b['won'])
+                mo_wag  = sum(b['stake'] for b in mo_bets)
+                mo_pnl  = sum(b['net'] for b in mo_bets)
+                mo_roi  = mo_pnl / mo_wag * 100 if mo_wag > 0 else 0.0
+                print(f"       {mo}  {len(mo_bets):>3} bets  {mo_wins}/{len(mo_bets)} W  "
+                      f"${mo_pnl:+,.2f}  ROI {mo_roi:+.1f}%")
+
+    print()
+
+
+def walk_forward_log5_sweep(all_feat, C_values, edge_values,
+                            starting_bankroll=1000.0,
+                            kelly_fraction=0.5, max_exposure=0.15,
+                            features=None):
+    """
+    Parametric grid search over (C, edge_min) combinations using Log5 features
+    and half-Kelly staking. Trains once per (C, fold), sweeps edge thresholds
+    over the cached probabilities. Prints a sorted Markdown table.
+
+    Bankroll carries continuously across all 4 folds per (C, edge) trial,
+    matching production behavior. ROI = total_profit / total_wagered.
+    """
+    try:
+        from sklearn.linear_model import LogisticRegression
+    except ImportError:
+        print("  ERROR: scikit-learn not installed.")
+        return []
+
+    if features is None:
+        features = _LOG5_FEATURES
+
+    FOLDS = [
+        ([2021],                   2022),
+        ([2021, 2022],             2023),
+        ([2021, 2022, 2023],       2024),
+        ([2021, 2022, 2023, 2024], 2025),
+    ]
+
+    n_combos = len(C_values) * len(edge_values)
+    print(f"\n  {n_combos} combinations  ({len(C_values)} C values × {len(edge_values)} edge thresholds)")
+    print(f"  Features: {features}")
+    print(f"  Staking:  ½ Kelly ({kelly_fraction}x) | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}\n")
+
+    # ── Train one model per (C, fold) and cache probabilities ─────────────────
+    # Structure: fold_cache[C] = list of (test_df, p_home_arr) per fold
+    fold_cache = {}
+    for C in C_values:
+        fold_cache[C] = []
+        model = LogisticRegression(C=C, solver='lbfgs', max_iter=1000, fit_intercept=True)
+        for train_years, test_year in FOLDS:
+            train_df = all_feat[all_feat['season'].isin(train_years)].reset_index(drop=True)
+            test_df  = all_feat[all_feat['season'] == test_year].reset_index(drop=True)
+            if len(train_df) < 100 or len(test_df) < 50:
+                fold_cache[C].append(None)
+                continue
+            X_tr = train_df[features].values.astype(float)
+            y_tr = train_df['y'].values.astype(int)
+            X_te = test_df[features].values.astype(float)
+            mu   = X_tr[:, 1:].mean(axis=0)
+            sig  = X_tr[:, 1:].std(axis=0) + 1e-8
+            X_tr_s = np.column_stack([X_tr[:, 0], (X_tr[:, 1:] - mu) / sig])
+            X_te_s = np.column_stack([X_te[:, 0], (X_te[:, 1:] - mu) / sig])
+            model.fit(X_tr_s, y_tr)
+            fold_cache[C].append((test_df.reset_index(drop=True), model.predict_proba(X_te_s)[:, 1]))
+
+    # ── Sweep edge thresholds over cached probs ────────────────────────────────
+    results = []
+    for C in C_values:
+        for edge_min in edge_values:
+            bankroll     = starting_bankroll
+            total_bets   = 0
+            total_wins   = 0
+            total_wagered = 0.0
+            total_profit  = 0.0
+
+            for fold_data in fold_cache[C]:
+                if fold_data is None:
+                    continue
+                test_df, p_home_arr = fold_data
+
+                for i in range(len(test_df)):
+                    row = test_df.iloc[i]
+                    fd_home_ml = row.get('fd_home_ml')
+                    fd_away_ml = row.get('fd_away_ml')
+                    if pd.isna(fd_home_ml) or pd.isna(fd_away_ml):
+                        continue
+                    fd_home_ml = float(fd_home_ml)
+                    fd_away_ml = float(fd_away_ml)
+                    if fd_home_ml == 0 or fd_away_ml == 0:
+                        continue
+
+                    home_prob = float(p_home_arr[i])
+                    away_prob = 1.0 - home_prob
+                    home_mkt, away_mkt = de_vig_probs(fd_home_ml, fd_away_ml)
+                    home_edge = home_prob - home_mkt
+                    away_edge = away_prob - away_mkt
+                    y_actual  = int(row['y'])
+
+                    bet_ml = bet_prob = None
+                    bet_won = None
+                    if home_edge > edge_min:
+                        bet_ml, bet_prob, bet_won = fd_home_ml, home_prob, (y_actual == 1)
+                    elif away_edge > edge_min:
+                        bet_ml, bet_prob, bet_won = fd_away_ml, away_prob, (y_actual == 0)
+
+                    if bet_ml is None:
+                        continue
+
+                    stake = _kelly_stake_bt(bankroll, bet_ml, bet_prob,
+                                            kelly_fraction, max_exposure)
+                    if stake <= 0:
+                        continue
+
+                    total_bets    += 1
+                    total_wagered += stake
+                    if bet_won:
+                        total_wins += 1
+                        net = stake * (bet_ml / 100.0) if bet_ml > 0 else stake * (100.0 / abs(bet_ml))
+                        total_profit += net
+                        bankroll     += net
+                    else:
+                        total_profit -= stake
+                        bankroll     -= stake
+                        if bankroll <= 0:
+                            bankroll = 1.0  # prevent zero/negative spiral
+
+            roi      = total_profit / total_wagered * 100 if total_wagered > 0 else 0.0
+            win_rate = total_wins   / total_bets         * 100 if total_bets > 0 else 0.0
+            results.append({
+                'C':           C,
+                'edge_pct':    edge_min * 100,
+                'bets':        total_bets,
+                'avg_bets_yr': total_bets / len(FOLDS),
+                'win_rate':    win_rate,
+                'roi':         roi,
+                'profit':      total_profit,
+            })
+
+    # ── Sort by ROI descending, print Markdown table ───────────────────────────
+    results.sort(key=lambda x: x['roi'], reverse=True)
+
+    col_w = [20, 17, 24, 15, 14, 19, 18]
+    h = (f"| {'Regularization (C)':^{col_w[0]}} | {'Edge Cutoff (%)':^{col_w[1]}} | "
+         f"{'Total Bets (2022-25)':^{col_w[2]}} | {'Avg Bets/Year':^{col_w[3]}} | "
+         f"{'Win Rate (%)':^{col_w[4]}} | {'Simulated ROI (%)':^{col_w[5]}} | "
+         f"{'Total Profit ($)':^{col_w[6]}} |")
+    sep = '|' + '|'.join('-' * (w + 2) for w in col_w) + '|'
+    print(f"\n{'='*115}")
+    print(f"  LOG5 PARAMETER SWEEP — sorted by ROI")
+    print(f"{'='*115}")
+    print(h)
+    print(sep)
+    for r in results:
+        print(f"| {r['C']:^{col_w[0]}.1f} | {r['edge_pct']:^{col_w[1]}.1f} | "
+              f"{r['bets']:^{col_w[2]}} | {r['avg_bets_yr']:^{col_w[3]}.1f} | "
+              f"{r['win_rate']:^{col_w[4]}.1f} | {r['roi']:^{col_w[5]}.2f} | "
+              f"{r['profit']:^{col_w[6]}.2f} |")
+    print()
+
+    return results
+
+
 def test_ip_cache(season=2024, n_games=10):
     """
     Verify that pull_historical_lineups correctly extracts inningsPitched and
@@ -3488,10 +4111,15 @@ def test_ip_cache(season=2024, n_games=10):
 # 'meta_model'         — logistic regression over 4 validated metrics, walk-forward
 # 'financial_sim'      — flat-bet ROI simulation using meta model fold probabilities
 # 'player_level_meta'  — player-level features (box score lineups + 100-PA rolling)
-# 'player_level_ou'    — same data pipeline but O/U prediction (sum features, P(over))
+# 'player_level_log5'  — same pipeline but Log5 matchup formula instead of ratio diff
+# 'log5_sweep'             — parametric grid search over C × edge_min with Kelly staking
+# 'build_production_model' — train & save log5_regression.pkl + player_snapshot.json
+# '2026_validation'        — apply saved C=3.5 model to 2026 games (true out-of-sample)
+# '2025_holdout'           — isolate 2025 fold (train 2021-2024, test 2025) at C=3.5
+# 'player_level_ou'        — same data pipeline but O/U prediction (sum features, P(over))
 # 'dual_strategy'      — Sniper + Enforcer sim on pre-built features (skips data build)
 # 'test_ip_cache'      — verify inningsPitched/outs extraction from box scores (quick)
-RUN_MODE    = 'player_level_ou'
+RUN_MODE    = '2026_validation'
 N_RUNS      = 10
 _PARAM_ROUND = 8  # must match PARAM_ROUND inside random_search
 
@@ -3614,6 +4242,262 @@ try:
 
             print(f"\nStep 5c — Dual strategy financial simulation...")
             walk_forward_dual_strategy(_pl_feat, flat_bet=20.0)
+
+    elif RUN_MODE == 'player_level_log5':
+        _pl_seasons = [2021, 2022, 2023, 2024, 2025]
+
+        print("Step 1/5 — Loading historical box score lineups...")
+        _lineup_cache = pull_historical_lineups(_pl_seasons)
+
+        print("\nStep 2/5 — Loading individual batter data...")
+        _batter_data = load_player_batter_data(_pl_seasons)
+
+        print("\nStep 3/5 — Loading individual starter data...")
+        _pitcher_data = load_player_pitcher_data(_pl_seasons)
+
+        print("\nStep 4/5 — Building rolling caches (100 PA windows)...")
+        _batter_cache, _lg_bat_avg = build_batter_rolling_cache(_batter_data)
+        _fip_consts = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                       for s in _pl_seasons}
+        _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(_pitcher_data, _fip_consts)
+
+        print("\nStep 5/5 — Collecting Log5 game features...")
+        _log5_feat = collect_game_features_log5(
+            _pl_seasons,
+            _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+        )
+
+        if _log5_feat.empty:
+            print("No features collected — check that player_data/ CSVs exist.")
+        else:
+            print(f"\nDual strategy financial simulation (Log5)...")
+            walk_forward_dual_strategy(_log5_feat, flat_bet=20.0, features=_LOG5_FEATURES)
+
+    elif RUN_MODE == 'build_production_model':
+        import datetime as _dt
+        _today         = _dt.date.today().strftime('%Y-%m-%d')
+        _hist_seasons  = [2021, 2022, 2023, 2024, 2025]
+        _all_seasons   = _hist_seasons + [2026]  # include 2026 if CSVs exist
+
+        print("Step 1/5 — Loading historical box score lineups...")
+        _lineup_cache = pull_historical_lineups(_hist_seasons)
+
+        print("\nStep 2/5 — Loading individual batter data (2021-2026)...")
+        _batter_data = load_player_batter_data(_all_seasons)
+
+        print("\nStep 3/5 — Loading individual starter data (2021-2026)...")
+        _pitcher_data = load_player_pitcher_data(_all_seasons)
+
+        print(f"\nStep 4/5 — Building rolling caches (100 PA windows, extra date: {_today})...")
+        _batter_cache, _lg_bat_avg = build_batter_rolling_cache(
+            _batter_data, extra_target_dates=[_today]
+        )
+        _fip_consts = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                       for s in _hist_seasons}
+        _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(
+            _pitcher_data, _fip_consts, extra_target_dates=[_today]
+        )
+
+        print("\nStep 5/5 — Collecting Log5 features and saving production assets...")
+        _log5_feat = collect_game_features_log5(
+            _hist_seasons,   # train on 2021-2025 only (2026 has no completed-game labels)
+            _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+        )
+        save_production_assets(
+            _batter_cache, _pitcher_cache, _lg_bat_avg, _lg_pit_avg, _log5_feat
+        )
+
+    elif RUN_MODE == '2026_validation':
+        import pickle as _pickle
+
+        _v26_all_seasons  = [2021, 2022, 2023, 2024, 2025, 2026]
+
+        # ------------------------------------------------------------------
+        # Pre-flight: verify odds_2026_complete.csv is populated with ML odds
+        # ------------------------------------------------------------------
+        _complete26_path = 'historical_data/odds_2026_complete.csv'
+        _v26_df = odds_df[odds_df['date'].str.startswith('2026')].copy()
+        _n26_total = len(_v26_df)
+        _n26_ml    = int(_v26_df[['fd_home_ml', 'fd_away_ml']].notna().all(axis=1).sum()) \
+                     if 'fd_home_ml' in _v26_df.columns else 0
+
+        if _n26_ml == 0:
+            print("\nERROR: No 2026 games with ML odds found in odds_df.")
+            print(f"       Data source: {_complete26_path}")
+            print()
+            print("  Option A — Download SBR Excel or another source:")
+            print("       python misc_py/download_sbr_2026.py")
+            print()
+            print("  Option B — Paste data manually into the CSV:")
+            print("       python misc_py/download_sbr_2026.py --schema")
+            print("       (prints exact column format and example rows)")
+            print()
+            print("  Option C — Validate an existing CSV you already edited:")
+            print("       python misc_py/download_sbr_2026.py --validate")
+        else:
+            print(f"\n2026 OUT-OF-SAMPLE VALIDATION")
+            print(f"  Source      : {_complete26_path}")
+            print(f"  Total rows  : {_n26_total} games in odds_df")
+            print(f"  With ML odds: {_n26_ml}  (these are evaluated below)")
+            print(f"  Saved model : models/log5_regression.pkl  (C=3.5, trained 2021-2025)")
+
+            # Normalize team names through ODDS_TO_FG just like the main odds_df pipeline
+            # so any abbreviation variants in the complete CSV resolve correctly.
+            # (collect_game_features_log5 calls normalize_team() internally, so this is
+            #  already handled — but print a diagnostic count for transparency.)
+            _unknown_teams = set()
+            for _, _row in _v26_df.iterrows():
+                for _col in ['home_team', 'away_team']:
+                    _t = normalize_team(str(_row.get(_col, '')))
+                    if _t not in TEAM_MAP:
+                        _unknown_teams.add(_row.get(_col, ''))
+            if _unknown_teams:
+                print(f"\n  WARNING: {len(_unknown_teams)} unrecognized team name(s) in 2026 odds data:")
+                print(f"    {sorted(_unknown_teams)}")
+                print("  Run: python misc_py/download_sbr_2026.py --validate  to normalize.")
+
+            print("\nStep 1/5 — Loading box score lineups (2021-2026)...")
+            _lineup_cache = pull_historical_lineups(_v26_all_seasons)
+
+            print("\nStep 2/5 — Loading individual batter data (2021-2026)...")
+            _batter_data = load_player_batter_data(_v26_all_seasons)
+
+            print("\nStep 3/5 — Loading individual starter data (2021-2026)...")
+            _pitcher_data = load_player_pitcher_data(_v26_all_seasons)
+
+            print("\nStep 4/5 — Building rolling caches (2021-2026, 100 PA windows)...")
+            _batter_cache, _lg_bat_avg = build_batter_rolling_cache(_batter_data)
+            _fip_consts = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                           for s in _v26_all_seasons}
+            _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(_pitcher_data, _fip_consts)
+
+            print("\nStep 5/5 — Collecting Log5 features for 2026 games...")
+            _log5_2026 = collect_game_features_log5(
+                [2026], _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg
+            )
+
+            if _log5_2026.empty:
+                print("\nNo 2026 features collected — verify:")
+                print(f"  1. {_complete26_path} has rows with fd_home_ml + fd_away_ml populated")
+                print("  2. historical_data/game_lineups.json has the '2026' key")
+                print("  3. Team names in the CSV use FanGraphs abbreviations (ARI, ATL, ...)")
+                print("     Run: python misc_py/download_sbr_2026.py --validate")
+            else:
+                # Load saved production model — trained on 2021-2025, NOT on 2026
+                with open('models/log5_regression.pkl', 'rb') as _f:
+                    _bundle = _pickle.load(_f)
+                _mdl    = _bundle['model']
+                _mu     = np.array(_bundle['mu'])
+                _sig    = np.array(_bundle['sig'])
+                print(f"\n  Loaded model: C={_bundle['C']}, trained on {_bundle['n_train']:,} games")
+                print(f"  Features collected: {len(_log5_2026)} games matched odds + lineups + player stats")
+
+                _X      = _log5_2026[_LOG5_FEATURES].values.astype(float)
+                _X_s    = np.column_stack([_X[:, 0], (_X[:, 1:] - _mu) / _sig])
+                _p_home = _mdl.predict_proba(_X_s)[:, 1]
+
+                eval_2026_validation(
+                    _log5_2026, _p_home,
+                    title='2026 OUT-OF-SAMPLE VALIDATION  (production model, never saw 2026)',
+                    model_desc=f"LogisticRegression C=3.5, trained on {_bundle['n_train']:,} games (2021-2025)",
+                )
+
+    elif RUN_MODE == '2025_holdout':
+        # Isolate the terminal walk-forward fold: train 2021-2024, test 2025.
+        # Uses the same C=3.5 / Sniper >4.5% / Enforcer >4.0% production thresholds.
+        # This is the closest proxy for 2026 performance given current data constraints.
+        _h25_seasons = [2021, 2022, 2023, 2024, 2025]
+
+        print("2025 TERMINAL HOLDOUT FOLD  (train 2021-2024, test 2025, C=3.5)")
+        print("=" * 70)
+        print("  Purpose: closest available analog to 2026 out-of-sample performance.")
+        print("  The production model is trained on 2021-2025; 2025 fold was the last")
+        print("  unseen year when the sweep selected C=3.5 / Sniper 4.5% / Enforcer 4.0%.\n")
+
+        print("Step 1/5 — Loading box score lineups (2021-2025)...")
+        _lineup_cache = pull_historical_lineups(_h25_seasons)
+
+        print("\nStep 2/5 — Loading individual batter data (2021-2025)...")
+        _batter_data = load_player_batter_data(_h25_seasons)
+
+        print("\nStep 3/5 — Loading individual starter data (2021-2025)...")
+        _pitcher_data = load_player_pitcher_data(_h25_seasons)
+
+        print("\nStep 4/5 — Building rolling caches (100 PA windows)...")
+        _batter_cache, _lg_bat_avg = build_batter_rolling_cache(_batter_data)
+        _fip_consts_h25 = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                           for s in _h25_seasons}
+        _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(_pitcher_data, _fip_consts_h25)
+
+        print("\nStep 5/5 — Collecting Log5 features (2021-2025)...")
+        _log5_all = collect_game_features_log5(
+            _h25_seasons,
+            _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+        )
+
+        if _log5_all.empty:
+            print("No features collected — check player_data/ CSVs.")
+        else:
+            from sklearn.linear_model import LogisticRegression as _LR
+            _C    = 3.5
+            _tr   = _log5_all[_log5_all['season'].isin([2021, 2022, 2023, 2024])].reset_index(drop=True)
+            _te   = _log5_all[_log5_all['season'] == 2025].reset_index(drop=True)
+            print(f"\n  Train: {len(_tr):,} games (2021-2024)  |  Test: {len(_te):,} games (2025)")
+            if len(_te) < 50:
+                print("  WARNING: Fewer than 50 test games — results may be noisy.")
+
+            _Xtr  = _tr[_LOG5_FEATURES].values.astype(float)
+            _ytr  = _tr['y'].values.astype(int)
+            _Xte  = _te[_LOG5_FEATURES].values.astype(float)
+            _mu25  = _Xtr[:, 1:].mean(axis=0)
+            _sig25 = _Xtr[:, 1:].std(axis=0) + 1e-8
+            _Xtr_s = np.column_stack([_Xtr[:, 0], (_Xtr[:, 1:] - _mu25) / _sig25])
+            _Xte_s = np.column_stack([_Xte[:, 0], (_Xte[:, 1:] - _mu25) / _sig25])
+
+            _mdl25 = _LR(C=_C, solver='lbfgs', max_iter=1000, fit_intercept=True)
+            _mdl25.fit(_Xtr_s, _ytr)
+            _p25   = _mdl25.predict_proba(_Xte_s)[:, 1]
+
+            eval_2026_validation(_te, _p25)
+
+    elif RUN_MODE == 'log5_sweep':
+        _pl_seasons = [2021, 2022, 2023, 2024, 2025]
+
+        print("Step 1/5 — Loading historical box score lineups...")
+        _lineup_cache = pull_historical_lineups(_pl_seasons)
+
+        print("\nStep 2/5 — Loading individual batter data...")
+        _batter_data = load_player_batter_data(_pl_seasons)
+
+        print("\nStep 3/5 — Loading individual starter data...")
+        _pitcher_data = load_player_pitcher_data(_pl_seasons)
+
+        print("\nStep 4/5 — Building rolling caches (100 PA windows)...")
+        _batter_cache, _lg_bat_avg = build_batter_rolling_cache(_batter_data)
+        _fip_consts = {s: load_woba_fip_constants('constants/woba_fip_constants.csv', s)[1]
+                       for s in _pl_seasons}
+        _pitcher_cache, _lg_pit_avg = build_pitcher_rolling_cache(_pitcher_data, _fip_consts)
+
+        print("\nStep 5/5 — Collecting Log5 game features...")
+        _log5_feat = collect_game_features_log5(
+            _pl_seasons,
+            _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+        )
+
+        if _log5_feat.empty:
+            print("No features collected — check that player_data/ CSVs exist.")
+        else:
+            _C_values    = [1.0, 2.0, 2.5, 3.5, 5.0]
+            _edge_values = [0.020, 0.025, 0.030, 0.035, 0.040, 0.045, 0.050]
+            walk_forward_log5_sweep(
+                _log5_feat,
+                C_values=_C_values,
+                edge_values=_edge_values,
+                starting_bankroll=1000.0,
+                kelly_fraction=0.5,
+                max_exposure=0.15,
+                features=_LOG5_FEATURES,
+            )
 
 finally:
     # Always re-enable sleep when done or if an error occurs

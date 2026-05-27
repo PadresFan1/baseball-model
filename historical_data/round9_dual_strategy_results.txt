@@ -1,0 +1,96 @@
+Loading historical game logs from file...
+Loading statcast data from cache...
+Loading bullpen data from cache...
+Merged 2025 supplement: 608 additional games
+Backtest functions loaded successfully
+Precomputing rolling averages (one-time)...
+  2021: 5172 team-date entries precomputed
+  2022: 5117 team-date entries precomputed
+  2023: 5239 team-date entries precomputed
+  2024: 5253 team-date entries precomputed
+  2025: 5280 team-date entries precomputed
+Rolling precompute complete.
+Step 1/5 — Loading historical box score lineups...
+Loading game lineup cache from disk...
+Lineup cache complete for [2021, 2022, 2023, 2024, 2025].
+
+Step 2/5 — Loading individual batter data...
+
+Step 3/5 — Loading individual starter data...
+  IP lookup: 24,240 (player_id, game_pk) entries from game_lineups.json
+  2021: 4,562 rows with true IP, 422 without (no xFIP for those rows)
+  2022: 4,637 rows with true IP, 426 without (no xFIP for those rows)
+  2023: 4,577 rows with true IP, 588 without (no xFIP for those rows)
+  2024: 4,658 rows with true IP, 498 without (no xFIP for those rows)
+  2025: 4,673 rows with true IP, 540 without (no xFIP for those rows)
+
+Step 4/5 — Building rolling caches (100 PA windows)...
+  Batter cache built: 1,457,524 entries across 1,812 (hand, date) pairs
+  Pitcher cache built: 381,134 entries across 908 dates
+
+Step 5/5 — Collecting player-level game features...
+
+  Player-level features: 9,346 games
+  Skipped — no lineup: 26 | no starter stats: 1,320 | no lg avg: 0
+
+Step 5b — Brier score calibration check (no ROI)...
+
+========================================================================
+  WALK-FORWARD META MODEL  |  Features: ['logit_market_prob', 'd_woba', 'd_xwoba_bat', 'd_xfip', 'd_xwoba_pit']
+  Optimizer: Logistic Regression (log-loss, C=1.0)
+========================================================================
+
+Collecting game features for all seasons...
+  10181 games collected
+
+  Fold  Train                      Test   N (train)   N (test)   Train Brier   Test Brier   Test LogLoss
+  ------------------------------------------------------------------------------------------
+  1     [2021]                     2022   2055        2212       0.2174        0.2376       0.6683
+         intercept=-0.000  logit_market_prob=+1.248  d_woba=-0.161  d_xwoba_bat=-0.027  d_xfip=-0.113  d_xwoba_pit=+0.129
+  2     [2021, 2022]               2023   4267        2280       0.2274        0.2434       0.6801
+         intercept=-0.002  logit_market_prob=+1.118  d_woba=-0.101  d_xwoba_bat=-0.007  d_xfip=-0.041  d_xwoba_pit=+0.077
+  3     [2021, 2022, 2023]         2024   6547        2129       0.2328        0.2410       0.6745
+         intercept=-0.003  logit_market_prob=+1.018  d_woba=-0.057  d_xwoba_bat=-0.015  d_xfip=+0.005  d_xwoba_pit=+0.039
+  4     [2021, 2022, 2023, 2024]   2025   8676        1505       0.2347        0.2427       0.6778
+         intercept=-0.001  logit_market_prob=+1.001  d_woba=-0.004  d_xwoba_bat=-0.040  d_xfip=+0.032  d_xwoba_pit=+0.003
+
+  Avg train→test Brier gap: +0.0131  (positive = overfit, negative = generalizing)
+  Baseline Brier (random 50/50 guesser): 0.2500
+
+
+Step 5c — Dual strategy financial simulation...
+
+======================================================================
+  STRATEGY: The Sniper   |   C=1.0   |   edge > 5.0%   |   flat $20/game
+======================================================================
+  Fold  Year     Odds  Bets    W    L   Win%     Profit      ROI
+  --------------------------------------------------------
+  1     2022     2108    86   49   37  57.0% $  +93.35    +5.4%
+  2     2023     2090    22   12   10  54.5% $  +62.73   +14.3%
+  3     2024     2016     8    5    3  62.5% $  +33.31   +20.8%
+  4     2025     1461     6    3    3  50.0% $   -7.82    -6.5%
+  --------------------------------------------------------
+  TOTAL 22-25           122   69   53  56.6% $ +181.57    +7.4%
+  Avg bets/year: 30   Total wagered: $2,440   Total profit: $+181.57
+
+======================================================================
+  STRATEGY: The Enforcer   |   C=5.0   |   edge > 3.5%   |   flat $20/game
+======================================================================
+  Fold  Year     Odds  Bets    W    L   Win%     Profit      ROI
+  --------------------------------------------------------
+  1     2022     2108   344  179  165  52.0% $ -241.83    -3.5%
+  2     2023     2090   157   75   82  47.8% $ -172.70    -5.5%
+  3     2024     2016    44   18   26  40.9% $ -101.56   -11.5%
+  4     2025     1461    37   20   17  54.1% $ +128.56   +17.4%
+  --------------------------------------------------------
+  TOTAL 22-25           582  292  290  50.2% $ -387.54    -3.3%
+  Avg bets/year: 146   Total wagered: $11,640   Total profit: $-387.54
+
+======================================================================
+  DUAL STRATEGY SUMMARY   |   flat $20/game   |   2022-2025
+======================================================================
+  Strategy               C     Edge   Bets    Win%   4yr ROI   $/yr avg
+  ----------------------------------------------------------------
+  The Sniper           1.0  > 5.0%    122   56.6%     +7.4%  $  +45.39
+  The Enforcer         5.0  > 3.5%    582   50.2%     -3.3%  $  -96.88
+

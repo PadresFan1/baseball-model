@@ -18,7 +18,23 @@
       "Bash(py -0)",
       "Bash(python -c \"import ast; ast.parse\\(open\\('backtest.py'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")",
       "Bash(python -c \"import model\")",
-      "Bash(pip install *)"
+      "Bash(pip install *)",
+      "Bash(tee historical_data/round9_dual_strategy_results.txt)",
+      "Bash(PYTHONIOENCODING=utf-8 python backtest.py)",
+      "Bash(tee historical_data/round9_log5_results.txt)",
+      "Bash(tee historical_data/log5_sweep_results.txt)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
+      "Bash(python -c \"import pickle, json; b=pickle.load\\(open\\('models/log5_regression.pkl','rb'\\)\\); s=json.load\\(open\\('historical_data/player_snapshot.json'\\)\\); print\\('OK'\\); print\\('features:', b['features']\\); print\\('n_train:', b['n_train']\\); print\\('n_batters:', s['n_batters']\\); print\\('as_of:', s['as_of']\\)\")",
+      "Bash(python fetch_player_data.py --seasons 2026)",
+      "Bash(python -c \"import zoneinfo; import tzdata; print\\('zoneinfo+tzdata OK'\\)\")",
+      "Bash(python -c \"import zoneinfo; print\\('zoneinfo OK, no tzdata'\\)\")",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; Get-ChildItem -Recurse -Depth 1 | Where-Object { -not $_.PSIsContainer } | Select-Object FullName, Length | Sort-Object FullName)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; Get-ChildItem -Path . -Recurse -Depth 2 | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Format-List)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; python misc_py/fetch_2026_odds.py 2>&1)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; python backtest.py 2>&1)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; python misc_py/download_sbr_2026.py 2>&1)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; python misc_py/extract_log_odds.py 2>&1)",
+      "PowerShell(Set-Location C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; python misc_py/parse_action_network.py 2>&1)"
     ]
   }
 }
