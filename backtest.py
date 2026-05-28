@@ -3337,11 +3337,26 @@ def save_production_assets(batter_cache, pitcher_cache,
     model = LogisticRegression(C=3.5, solver='lbfgs', max_iter=1000, fit_intercept=True)
     model.fit(X_s, y)
 
+    # ── Platt calibration: 5-fold OOF on training data → sigmoid scaler ──────
+    from sklearn.model_selection import StratifiedKFold
+    _skf_prod  = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    _oof_pr    = np.zeros(len(y), dtype=float)
+    for _ti, _vi in _skf_prod.split(X_s, y):
+        _cv = LogisticRegression(C=3.5, solver='lbfgs', max_iter=1000, fit_intercept=True)
+        _cv.fit(X_s[_ti], y[_ti])
+        _oof_pr[_vi] = _cv.predict_proba(X_s[_vi])[:, 1]
+    _oof_lg  = np.log(np.clip(_oof_pr, 1e-7, 1 - 1e-7) /
+                      (1 - np.clip(_oof_pr, 1e-7, 1 - 1e-7))).reshape(-1, 1)
+    calibrator = LogisticRegression(C=1e10, solver='lbfgs', max_iter=1000)
+    calibrator.fit(_oof_lg, y)
+    print(f"  Platt calibrator fitted on {len(y):,} OOF predictions (5-fold)")
+
     pkl_path = 'models/log5_regression.pkl'
     with open(pkl_path, 'wb') as f:
         pickle.dump({'model': model, 'mu': mu.tolist(), 'sig': sig.tolist(),
-                     'features': _LOG5_FEATURES, 'n_train': len(y), 'C': 3.5}, f)
-    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5)")
+                     'features': _LOG5_FEATURES, 'n_train': len(y), 'C': 3.5,
+                     'calibrator': calibrator}, f)
+    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5, Platt calibrator included)")
 
     # ── Extract player snapshot ───────────────────────────────────────────────
     # Batter: most recent rolling stats per (player_id, hand)
@@ -3757,14 +3772,229 @@ def _kelly_stake_bt(bankroll, american_odds, model_prob,
     return round(bankroll * min(frac, max_exposure), 2)
 
 
+def _apply_platt(p_arr, calibrator):
+    """Map raw probability array through a fitted Platt (logistic) calibrator."""
+    logits = np.log(np.clip(p_arr, 1e-7, 1 - 1e-7) /
+                    (1 - np.clip(p_arr, 1e-7, 1 - 1e-7))).reshape(-1, 1)
+    return calibrator.predict_proba(logits)[:, 1]
+
+
+def _sim_bets(p_home_arr, feat_df, edge_min, start_br=1000.0):
+    """
+    Half-Kelly simulation for one edge threshold. Returns summary dict.
+    Reusable helper for sweep functions.
+    """
+    bets = []
+    br = start_br
+    for i in range(len(feat_df)):
+        row = feat_df.iloc[i]
+        hp  = float(p_home_arr[i])
+        ap  = 1.0 - hp
+        hml = float(row['fd_home_ml'])
+        aml = float(row['fd_away_ml'])
+        hm, am = de_vig_probs(hml, aml)
+        he, ae = hp - hm, ap - am
+        y = int(row['y'])
+
+        ml = prob = won = None
+        if he > edge_min:
+            ml, prob, won = hml, hp, (y == 1)
+        elif ae > edge_min:
+            ml, prob, won = aml, ap, (y == 0)
+        if ml is None:
+            continue
+
+        stake = _kelly_stake_bt(br, ml, prob)
+        if stake <= 0:
+            continue
+        if won:
+            net = stake * (ml / 100.0) if ml > 0 else stake * (100.0 / abs(ml))
+            br += net
+        else:
+            net = -stake
+            br  = max(br - stake, 1.0)
+        bets.append({'stake': stake, 'net': net, 'won': won})
+
+    if not bets:
+        return {'n': 0, 'win_pct': 0.0, 'roi': 0.0, 'profit': 0.0}
+    wins    = sum(1 for b in bets if b['won'])
+    wagered = sum(b['stake'] for b in bets)
+    profit  = sum(b['net']   for b in bets)
+    return {
+        'n':       len(bets),
+        'win_pct': wins / len(bets) * 100,
+        'roi':     profit / wagered * 100 if wagered > 0 else 0.0,
+        'profit':  profit,
+    }
+
+
+def sweep_market_anchor_weight(all_feat_df, C=3.5,
+                                train_seasons=None, tune_season=2025,
+                                holdout_season=2026,
+                                scales=None,
+                                starting_bankroll=1000.0):
+    """
+    Sweep a player_feat_scale parameter that uniformly multiplies the three
+    player-stat delta features (d_log5_woba, d_log5_xwoba, d_xfip) AFTER
+    standardization, leaving logit_market_prob (column 0) untouched.
+
+    scale = 1.0  →  current model (full player feature weight)
+    scale = 0.0  →  pure market model (logit_market only, no player signal)
+
+    Architecture:
+      X_scaled = [logit_market | scale*(d_woba_std) | scale*(d_xwoba_std) | scale*(d_xfip_std)]
+      LogisticRegression(C=C).fit(X_scaled, y)
+
+    When scale < 1.0, L2 regularization pushes the player-feature coefficients
+    harder toward zero while leaving the market-logit coefficient relatively
+    unpenalized — the regression naturally anchors more to the market.
+
+    Pipeline:
+      Step 1 — Tune on train_seasons → tune_season (2025 fold)
+               Prints Brier, fitted coefficients, Sniper/Enforcer ROI per scale.
+      Step 2 — Blind 2026 validation for the top 2 scales + scale=1.0 baseline.
+               Retrains on train_seasons + tune_season (all 2021-2025 data).
+    """
+    from sklearn.linear_model import LogisticRegression
+
+    if train_seasons is None:
+        train_seasons = [2021, 2022, 2023, 2024]
+    if scales is None:
+        scales = [0.0, 0.10, 0.20, 0.35, 0.50, 0.65, 0.80, 1.0]
+
+    tr_df = all_feat_df[all_feat_df['season'].isin(train_seasons)].reset_index(drop=True)
+    tu_df = all_feat_df[all_feat_df['season'] == tune_season].reset_index(drop=True)
+    ho_df = all_feat_df[all_feat_df['season'] == holdout_season].reset_index(drop=True)
+
+    X_tr = tr_df[_LOG5_FEATURES].values.astype(float)
+    y_tr = tr_df['y'].values.astype(int)
+    X_tu = tu_df[_LOG5_FEATURES].values.astype(float)
+    y_tu = tu_df['y'].values.astype(int)
+
+    # Standardize player-stat columns (1+) on training data only
+    mu  = X_tr[:, 1:].mean(axis=0)
+    sig = X_tr[:, 1:].std(axis=0) + 1e-8
+
+    feat_names = _LOG5_FEATURES   # [logit_market, d_log5_woba, d_log5_xwoba, d_xfip]
+
+    W = [7, 10, 50, 7, 9, 10, 7, 9, 10]
+    hdr = (f"  {'scale':>{W[0]}}  {'Brier(tu)':>{W[1]}}  "
+           f"  {'Fitted coefs [mkt | d_woba | d_xwoba | d_xfip]':^{W[2]}}  |"
+           f"  {'Snp N':>{W[3]}} {'Snp ROI':>{W[4]}} {'Snp P&L':>{W[5]}}  |"
+           f"  {'Enf N':>{W[6]}} {'Enf ROI':>{W[7]}} {'Enf P&L':>{W[8]}}")
+    sep = "  " + "-" * (len(hdr) - 2)
+
+    print(f"\n{'=' * len(hdr)}")
+    print(f"  MARKET ANCHOR WEIGHT SWEEP  "
+          f"(Train: {train_seasons}  →  Tune: {tune_season}  |  C={C})")
+    print(f"  scale multiplies the 3 player-stat delta features after standardization.")
+    print(f"  scale=1.0 is current behavior; scale=0.0 is pure market logit.")
+    print('=' * len(hdr))
+    print(hdr)
+    print(sep)
+
+    tune_results = []
+
+    for scale in scales:
+        Xtr_s = np.column_stack([X_tr[:, 0], scale * (X_tr[:, 1:] - mu) / sig])
+        Xtu_s = np.column_stack([X_tu[:, 0], scale * (X_tu[:, 1:] - mu) / sig])
+
+        mdl = LogisticRegression(C=C, solver='lbfgs', max_iter=1000, fit_intercept=True)
+        mdl.fit(Xtr_s, y_tr)
+        p_tu = mdl.predict_proba(Xtu_s)[:, 1]
+
+        brier = float(np.mean((p_tu - y_tu) ** 2))
+        snp   = _sim_bets(p_tu, tu_df, 0.045, starting_bankroll)
+        enf   = _sim_bets(p_tu, tu_df, 0.040, starting_bankroll)
+
+        coefs = mdl.coef_[0]
+        coef_str = (f"[{coefs[0]:+.3f} | {coefs[1]:+.3f} | "
+                    f"{coefs[2]:+.3f} | {coefs[3]:+.3f}]")
+
+        flag = '  ← baseline' if scale == 1.0 else ''
+        print(f"  {scale:>{W[0]}.2f}  {brier:>{W[1]}.4f}  "
+              f"  {coef_str:^{W[2]}}  |"
+              f"  {snp['n']:>{W[3]}} {snp['roi']:>+{W[4]}.1f}% ${snp['profit']:>+{W[5]-1}.2f}  |"
+              f"  {enf['n']:>{W[6]}} {enf['roi']:>+{W[7]}.1f}% ${enf['profit']:>+{W[8]-1}.2f}{flag}")
+
+        tune_results.append({
+            'scale': scale, 'brier_tu': brier,
+            'snp_n': snp['n'], 'snp_roi': snp['roi'], 'snp_pnl': snp['profit'],
+            'enf_n': enf['n'], 'enf_roi': enf['roi'], 'enf_pnl': enf['profit'],
+        })
+
+    print(sep)
+    print(f"  Sorted top-2 by Sniper ROI will run blind 2026 validation below.\n")
+
+    if ho_df.empty:
+        print("  No holdout data available for 2026 blind validation.")
+        return tune_results
+
+    # ── Blind 2026 validation for top 2 + baseline ───────────────────────────
+    top2 = sorted(tune_results, key=lambda r: (r['snp_roi'], r['enf_roi']), reverse=True)[:2]
+    scales_to_validate = [r['scale'] for r in top2]
+    if 1.0 not in scales_to_validate:
+        scales_to_validate.append(1.0)
+
+    # Retrain on all 2021-2025 data for the 2026 test
+    full_df = all_feat_df[all_feat_df['season'].isin(train_seasons + [tune_season])].reset_index(drop=True)
+    X_full  = full_df[_LOG5_FEATURES].values.astype(float)
+    y_full  = full_df['y'].values.astype(int)
+    mu_f    = X_full[:, 1:].mean(axis=0)
+    sig_f   = X_full[:, 1:].std(axis=0) + 1e-8
+
+    X_ho = ho_df[_LOG5_FEATURES].values.astype(float)
+    y_ho = ho_df['y'].values.astype(int)
+
+    print(f"\n{'=' * len(hdr)}")
+    print(f"  BLIND 2026 VALIDATION — top scales from {tune_season} tuning fold")
+    print(f"  Train: 2021-2025 ({len(full_df):,} games)  |  Test: 2026 ({len(ho_df)} games)")
+    print('=' * len(hdr))
+    print(f"\n  {'scale':>7}  {'Brier':>8}  "
+          f"{'Snp N':>6} {'Win%':>6} {'ROI':>9} {'P&L':>10}  "
+          f"{'Enf N':>6} {'Win%':>6} {'ROI':>9} {'P&L':>10}")
+    print(f"  {'-'*90}")
+
+    for scale in scales_to_validate:
+        Xf_s = np.column_stack([X_full[:, 0], scale * (X_full[:, 1:] - mu_f) / sig_f])
+        Xh_s = np.column_stack([X_ho[:, 0],   scale * (X_ho[:, 1:] - mu_f)  / sig_f])
+
+        mdl26 = LogisticRegression(C=C, solver='lbfgs', max_iter=1000, fit_intercept=True)
+        mdl26.fit(Xf_s, y_full)
+        p_ho = mdl26.predict_proba(Xh_s)[:, 1]
+
+        brier26 = float(np.mean((p_ho - y_ho) ** 2))
+        snp26   = _sim_bets(p_ho, ho_df, 0.045, starting_bankroll)
+        enf26   = _sim_bets(p_ho, ho_df, 0.040, starting_bankroll)
+
+        flag = '  ← baseline' if scale == 1.0 else ''
+        print(f"  {scale:>7.2f}  {brier26:>8.4f}  "
+              f"{snp26['n']:>6} {snp26['win_pct']:>6.1f} {snp26['roi']:>+9.1f}% ${snp26['profit']:>+9.2f}  "
+              f"{enf26['n']:>6} {enf26['win_pct']:>6.1f} {enf26['roi']:>+9.1f}% ${enf26['profit']:>+9.2f}"
+              f"{flag}")
+
+    print()
+    return tune_results
+
+
 def eval_2026_validation(feat_df, p_home_arr,
                          starting_bankroll=1000.0,
                          kelly_fraction=0.5, max_exposure=0.15,
-                         title=None, model_desc=None):
+                         title=None, model_desc=None,
+                         calibrator=None, alpha=None,
+                         market_extremes_filter=False,
+                         market_extreme_cap=0.62):
     """
-    Apply C=3.5 model probabilities to a test set and report
-    Sniper / Enforcer metrics with Kelly staking. Used for both
-    2025_holdout (train 2021-2024, test 2025) and 2026_validation.
+    Apply model probabilities to a test set and report Sniper / Enforcer
+    metrics with Kelly staking. Used for both 2025_holdout and 2026_validation.
+
+    calibrator             : optional Platt LogisticRegression scaler applied first.
+    alpha                  : optional edge-shrinkage factor (0 < alpha <= 1).
+                             Calibrated_Prob = Market_Prob + alpha*(Model_Prob - Market_Prob)
+    market_extremes_filter : if True, skip any game where the de-vigged market
+                             favourite has probability > market_extreme_cap (default 0.62).
+                             Restricts betting to games where no team is more than ~62%
+                             likely — the range our reliability curve showed is well-calibrated.
     """
     STRATEGIES = [
         ('The Sniper',   0.045),
@@ -3775,15 +4005,53 @@ def eval_2026_validation(feat_df, p_home_arr,
     date_min = feat_df['date'].min() if n_games else '-'
     date_max = feat_df['date'].max() if n_games else '-'
 
-    _title     = title      or 'OUT-OF-SAMPLE VALIDATION'
+    _title      = title      or 'OUT-OF-SAMPLE VALIDATION'
     _model_desc = model_desc or 'LogisticRegression C=3.5 trained on 2021-2025'
 
+    # Apply calibration if provided
+    if calibrator is not None:
+        p_home_arr = _apply_platt(p_home_arr, calibrator)
+
+    # Apply edge-shrinkage calibration: Calibrated = Market + alpha*(Model - Market)
+    # Requires per-game de-vigged market probs as the anchor.
+    if alpha is not None and n_games > 0:
+        _hml = feat_df['fd_home_ml'].values.astype(float)
+        _aml = feat_df['fd_away_ml'].values.astype(float)
+        _rh  = np.where(_hml > 0, 100. / (_hml + 100.), np.abs(_hml) / (np.abs(_hml) + 100.))
+        _ra  = np.where(_aml > 0, 100. / (_aml + 100.), np.abs(_aml) / (np.abs(_aml) + 100.))
+        _mkt = _rh / (_rh + _ra)   # de-vigged home market prob, vectorized
+        p_home_arr = _mkt + alpha * (p_home_arr - _mkt)
+
+    _alpha_str  = f" | Edge shrinkage α={alpha}" if alpha is not None else ""
+    _filter_str = f" | Market extremes filter >{market_extreme_cap:.0%}" if market_extremes_filter else ""
     print(f"\n{'='*80}")
     print(f"  {_title}")
     print(f"  {n_games} games evaluated  |  {date_min} -> {date_max}")
     print(f"  Model: {_model_desc}")
-    print(f"  Staking: ½ Kelly | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}")
+    print(f"  Staking: ½ Kelly | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}{_alpha_str}{_filter_str}")
     print(f"{'='*80}")
+
+    # ── Brier score + reliability curve ───────────────────────────────────────
+    if n_games > 0:
+        y_true   = feat_df['y'].values.astype(int)
+        brier    = float(np.mean((p_home_arr - y_true) ** 2))
+        print(f"\n  Brier Score: {brier:.4f}  (coin-flip~0.25, typical MLB model~0.23-0.24)")
+        # Symmetric reliability curve — combine home and away as independent obs
+        comb_p = np.concatenate([p_home_arr, 1.0 - p_home_arr])
+        comb_y = np.concatenate([y_true.astype(float), 1.0 - y_true.astype(float)])
+        print(f"  Reliability  {'Bin':>10}  {'N':>5}  {'Pred':>7}  {'Actual':>7}  {'Gap':>7}")
+        for lo in np.arange(0.45, 0.80, 0.05):
+            hi   = lo + 0.05
+            mask = (comb_p >= lo) & (comb_p < hi)
+            nb   = int(mask.sum())
+            if nb == 0:
+                continue
+            pred = float(comb_p[mask].mean())
+            act  = float(comb_y[mask].mean())
+            gap  = act - pred
+            flag = ' OVER' if gap < -0.04 else (' UNDER' if gap > 0.04 else '')
+            print(f"             [{lo:.0%}-{hi:.0%})  {nb:>5}  {pred:.3f}  {act:.3f}  {gap:>+.3f}{flag}")
+        print()
 
     for name, edge_min in STRATEGIES:
         bankroll     = starting_bankroll
@@ -3796,6 +4064,11 @@ def eval_2026_validation(feat_df, p_home_arr,
             home_prob  = float(p_home_arr[i])
             away_prob  = 1.0 - home_prob
             home_mkt, away_mkt = de_vig_probs(fd_home_ml, fd_away_ml)
+
+            # Market Extremes Pass Filter — skip heavy-favourite games (>62% mkt prob)
+            if market_extremes_filter and max(home_mkt, away_mkt) > market_extreme_cap:
+                continue
+
             home_edge  = home_prob - home_mkt
             away_edge  = away_prob - away_mkt
             y_actual   = int(row['y'])
@@ -4396,10 +4669,130 @@ try:
                 _X_s    = np.column_stack([_X[:, 0], (_X[:, 1:] - _mu) / _sig])
                 _p_home = _mdl.predict_proba(_X_s)[:, 1]
 
+                # ── Collect 2021-2025 training features for C-sweep + calibration cache
+                print("\n  Collecting 2021-2025 training features (C-sweep + calibration cache)...")
+                _log5_train = collect_game_features_log5(
+                    [2021, 2022, 2023, 2024, 2025],
+                    _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
+                )
+                print(f"  Training features: {len(_log5_train):,} games (2021-2025)")
+                _X_tr_raw = _log5_train[_LOG5_FEATURES].values.astype(float)
+                _y_tr     = _log5_train['y'].values.astype(int)
+                _mu_tr    = _X_tr_raw[:, 1:].mean(axis=0)
+                _sig_tr   = _X_tr_raw[:, 1:].std(axis=0) + 1e-8
+                _X_tr_s   = np.column_stack([_X_tr_raw[:, 0], (_X_tr_raw[:, 1:] - _mu_tr) / _sig_tr])
+
+                # Save calibration cache for check_calibration.py
+                import pickle as _pkl_c
+                os.makedirs('cache', exist_ok=True)
+                with open('cache/calib_2026.pkl', 'wb') as _cf:
+                    _pkl_c.dump({
+                        'log5_2026':  _log5_2026,
+                        'p_home_raw': _p_home,
+                        'mu':         _mu.tolist(),
+                        'sig':        _sig.tolist(),
+                        'mu_train':   _mu_tr.tolist(),
+                        'sig_train':  _sig_tr.tolist(),
+                        'log5_train': _log5_train,
+                        'C_base':     _bundle.get('C', 3.5),
+                    }, _cf)
+                print("  Calibration cache saved → cache/calib_2026.pkl")
+
+                # ── On-the-fly Platt calibrator (OOF on 2021-2025 training features) ─
+                from sklearn.model_selection import StratifiedKFold as _SKF
+                from sklearn.linear_model import LogisticRegression as _LRCal
+                _skf_c    = _SKF(n_splits=5, shuffle=True, random_state=42)
+                _oof_pr   = np.zeros(len(_y_tr))
+                for _ti, _vi in _skf_c.split(_X_tr_s, _y_tr):
+                    _cvm = _LRCal(C=3.5, solver='lbfgs', max_iter=1000)
+                    _cvm.fit(_X_tr_s[_ti], _y_tr[_ti])
+                    _oof_pr[_vi] = _cvm.predict_proba(_X_tr_s[_vi])[:, 1]
+                _oof_lg  = np.log(np.clip(_oof_pr, 1e-7, 1-1e-7) /
+                                  (1 - np.clip(_oof_pr, 1e-7, 1-1e-7))).reshape(-1, 1)
+                _platt_c = _LRCal(C=1e10, solver='lbfgs', max_iter=1000)
+                _platt_c.fit(_oof_lg, _y_tr)
+                print(f"  Platt calibrator fitted on {len(_y_tr):,} OOF predictions (5-fold)")
+
+                # ── C parameter sweep: retrain on 2021-2025, test on 2026 ─────────────
+                _X26_raw = _log5_2026[_LOG5_FEATURES].values.astype(float)
+                _y26     = _log5_2026['y'].values.astype(int)
+                _X26_sw  = np.column_stack([_X26_raw[:, 0], (_X26_raw[:, 1:] - _mu_tr) / _sig_tr])
+
+                print(f"\n{'='*80}")
+                print(f"  C PARAMETER SWEEP  (retrain on 2021-2025 → test 2026)")
+                print(f"  Sniper: edge > 4.5% | Half-Kelly | $1,000 bankroll")
+                print(f"{'='*80}")
+                print(f"  {'C':>5}  {'Brier':>8}  {'Bets':>6}  {'W/L':>7}  {'ROI':>9}  {'P&L':>10}")
+                print(f"  {'-'*52}")
+                for _C_sw in [0.3, 0.5, 1.0, 1.5, 2.0, 3.5]:
+                    _sw_m = _LRCal(C=_C_sw, solver='lbfgs', max_iter=1000)
+                    _sw_m.fit(_X_tr_s, _y_tr)
+                    _p_sw     = _sw_m.predict_proba(_X26_sw)[:, 1]
+                    _brier_sw = float(np.mean((_p_sw - _y26) ** 2))
+                    # Sniper sim
+                    _sb = _sw2 = 0; _swag = _spnl = 0.0; _sbr = 1000.0
+                    for _si in range(len(_log5_2026)):
+                        _sr  = _log5_2026.iloc[_si]
+                        _hp  = float(_p_sw[_si]); _ap = 1.0 - _hp
+                        _hml = float(_sr['fd_home_ml']); _aml = float(_sr['fd_away_ml'])
+                        _hm2, _am2 = de_vig_probs(_hml, _aml)
+                        _he = _hp - _hm2; _ae = _ap - _am2
+                        _bml = _bpr = _bwon = None
+                        if _he > 0.045:  _bml, _bpr, _bwon = _hml, _hp, (int(_sr['y'])==1)
+                        elif _ae > 0.045: _bml, _bpr, _bwon = _aml, _ap, (int(_sr['y'])==0)
+                        if _bml is None: continue
+                        _stk = _kelly_stake_bt(_sbr, _bml, _bpr, 0.5, 0.15)
+                        if _stk <= 0: continue
+                        _sb += 1; _swag += _stk
+                        if _bwon:
+                            _sw2 += 1
+                            _net = _stk*(_bml/100) if _bml>0 else _stk*(100/abs(_bml))
+                            _spnl += _net; _sbr += _net
+                        else:
+                            _spnl -= _stk; _sbr = max(_sbr-_stk, 1.0)
+                    _sroi = _spnl/_swag*100 if _swag>0 else 0.0
+                    _wl   = f"{_sw2}/{_sb-_sw2}"
+                    _mark = '  <-- current' if _C_sw == 3.5 else ''
+                    print(f"  {_C_sw:>5.1f}  {_brier_sw:.4f}  {_sb:>6}  {_wl:>7}  "
+                          f"{_sroi:>+9.1f}%  ${_spnl:>+9.2f}{_mark}")
+
+                # ── Market anchor weight sweep (tune on 2025, blind on 2026) ─────────
+                _all_feat_for_sweep = pd.concat(
+                    [_log5_train, _log5_2026], ignore_index=True
+                )
+                sweep_market_anchor_weight(
+                    _all_feat_for_sweep,
+                    C=3.5,
+                    train_seasons=[2021, 2022, 2023, 2024],
+                    tune_season=2025,
+                    holdout_season=2026,
+                )
+
+                # ── Final results: raw then edge-shrinkage (α=0.45) ──────────────────
                 eval_2026_validation(
                     _log5_2026, _p_home,
-                    title='2026 OUT-OF-SAMPLE VALIDATION  (production model, never saw 2026)',
+                    title='2026 OUT-OF-SAMPLE  (C=3.5, raw probabilities)',
                     model_desc=f"LogisticRegression C=3.5, trained on {_bundle['n_train']:,} games (2021-2025)",
+                    calibrator=None,
+                    alpha=None,
+                )
+                eval_2026_validation(
+                    _log5_2026, _p_home,
+                    title='2026 OUT-OF-SAMPLE  (C=3.5 + Edge Shrinkage α=0.45)',
+                    model_desc=(f"LogisticRegression C=3.5, edge shrunk 55% toward market "
+                                f"[Calibrated = Market + 0.45*(Model - Market)]"),
+                    calibrator=None,
+                    alpha=0.45,
+                )
+                eval_2026_validation(
+                    _log5_2026, _p_home,
+                    title='2026 OUT-OF-SAMPLE  (C=3.5 + Market Extremes Filter >62%)',
+                    model_desc=(f"LogisticRegression C=3.5, raw probabilities — "
+                                f"pass on any game where market favourite > 62% de-vigged"),
+                    calibrator=None,
+                    alpha=None,
+                    market_extremes_filter=True,
+                    market_extreme_cap=0.62,
                 )
 
     elif RUN_MODE == '2025_holdout':

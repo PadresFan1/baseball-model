@@ -115,6 +115,8 @@ API_KEY  = os.getenv('API_KEY')
 BANKROLL = float(os.getenv('BANKROLL', '1000'))
 KELLY_FRACTION = 0.5          # half-Kelly reduces variance vs full Kelly
 MAX_BANKROLL_EXPOSURE = 0.15  # hard cap per bet regardless of Kelly edge
+EDGE_SHRINK_ALPHA = 0.45      # Calibrated = Market + α*(Model - Market); shrinks edge 55%
+MARKET_EXTREME_CAP = 0.62    # Pass on any game where de-vigged market favourite > 62%
 OU_BETTING_ENABLED = False    # O/U shows negative ROI in backtesting — disabled until calibrated
 print(f"API Key loaded: {API_KEY is not None}")
 
@@ -276,6 +278,17 @@ def compute_log5_win_prob(home_lineup, away_lineup,
         X_s = np.column_stack([features[:, 0], (features[:, 1:] - mu) / sig])
 
         home_prob = float(log5_bundle['model'].predict_proba(X_s)[0, 1])
+
+        # Apply Platt calibration if present in bundle
+        if 'calibrator' in log5_bundle:
+            try:
+                _raw_lg   = np.log(np.clip(home_prob, 1e-7, 1-1e-7) /
+                                   (1 - np.clip(home_prob, 1e-7, 1-1e-7)))
+                home_prob = float(log5_bundle['calibrator'].predict_proba(
+                    np.array([[_raw_lg]]))[0, 1])
+            except Exception:
+                pass
+
         return home_prob, 1.0 - home_prob
 
     except Exception as e:
@@ -1237,7 +1250,7 @@ def get_final_run(game_time_str, row):
         hour = int(str(game_time_str).split(':')[0])
     except Exception:
         hour = 19
-    cutoff = 1 if hour < 11 else (2 if hour < 16 else 3)
+    cutoff = min(max(hour - 8, 1), 9)  # 9am=1, 10am=2, ..., 5pm+=9
     for run in range(cutoff, 0, -1):
         if _is_active_bet(row.get(f'run{run}_bet_team')):
             return run
@@ -1251,7 +1264,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
 
     from datetime import datetime
     hour = datetime.now().hour
-    run_num   = 1 if hour < 11 else (2 if hour < 15 else 3)
+    run_num   = min(max(hour - 8, 1), 9)  # 9am=1, 10am=2, ..., 5pm=9
     today_str = date.today().strftime('%Y-%m-%d')
     yesterday_str = (date.today() - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
 
@@ -1263,6 +1276,12 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
         'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
+        'run4_bet_team', 'run4_model_pct', 'run4_book_line', 'run4_edge', 'run4_change',
+        'run5_bet_team', 'run5_model_pct', 'run5_book_line', 'run5_edge', 'run5_change',
+        'run6_bet_team', 'run6_model_pct', 'run6_book_line', 'run6_edge', 'run6_change',
+        'run7_bet_team', 'run7_model_pct', 'run7_book_line', 'run7_edge', 'run7_change',
+        'run8_bet_team', 'run8_model_pct', 'run8_book_line', 'run8_edge', 'run8_change',
+        'run9_bet_team', 'run9_model_pct', 'run9_book_line', 'run9_edge', 'run9_change',
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
         'recommended_stake',
@@ -1316,14 +1335,14 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             row = df.loc[idx]
             bet_team = row.get('final_bet_team')
             if not _is_active_bet(bet_team):
-                for run in [3, 2, 1]:
+                for run in range(9, 0, -1):
                     t = row.get(f'run{run}_bet_team')
                     if _is_active_bet(t):
                         bet_team = t
                         break
             book_line = row.get('final_book_line')
             if not book_line or str(book_line) in ('', 'nan', 'None'):
-                for run in [3, 2, 1]:
+                for run in range(9, 0, -1):
                     bl = row.get(f'run{run}_book_line')
                     if bl and str(bl) not in ('', 'nan', 'None'):
                         book_line = bl
@@ -1354,7 +1373,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
 
         for idx in df[ou_dir_mask].index:
             row = df.loc[idx]
-            model_total = next((row.get(f'run{r}_model_pct') for r in [3, 2, 1]
+            model_total = next((row.get(f'run{r}_model_pct') for r in range(9, 0, -1)
                                 if _valid_pct(row.get(f'run{r}_model_pct'))), None)
             if not _valid_pct(model_total):
                 mt = row.get('final_model_pct')
@@ -1470,7 +1489,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         df.at[idx, 'result'] = evaluate_result(final_pred, r)
 
         if row['bet_type'] == 'Over/Under':
-            model_total = next((row.get(f'run{rn}_model_pct') for rn in [3, 2, 1]
+            model_total = next((row.get(f'run{rn}_model_pct') for rn in range(9, 0, -1)
                                 if _valid_pct(row.get(f'run{rn}_model_pct'))), None)
             if not _valid_pct(model_total):
                 mt = row.get('final_model_pct')
@@ -1502,7 +1521,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
                          or mlb_status.startswith('Suspended'))
         if not live_or_done and (mlb_status in ('Postponed', 'Cancelled') or not in_odds):
             df.at[idx, 'result'] = 'CANCELLED'
-            for run in [1, 2, 3]:
+            for run in range(1, 10):
                 df.at[idx, f'run{run}_bet_team'] = 'CANCELLED'
                 df.at[idx, f'run{run}_edge']     = 'CANCELLED'
             df.at[idx, 'final_bet_team'] = 'CANCELLED'
@@ -1618,7 +1637,7 @@ def generate_excel_log(df):
                 return None
 
         result_col   = col_idx('result')
-        change_cols  = [col_idx('run2_change'), col_idx('run3_change')]
+        change_cols  = [col_idx(f'run{n}_change') for n in range(2, 10)]
 
         change_colors = {
             'PICK CHANGED': orange,
@@ -1692,6 +1711,12 @@ def archive_existing_prediction_logs():
         'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
         'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
+        'run4_bet_team', 'run4_model_pct', 'run4_book_line', 'run4_edge', 'run4_change',
+        'run5_bet_team', 'run5_model_pct', 'run5_book_line', 'run5_edge', 'run5_change',
+        'run6_bet_team', 'run6_model_pct', 'run6_book_line', 'run6_edge', 'run6_change',
+        'run7_bet_team', 'run7_model_pct', 'run7_book_line', 'run7_edge', 'run7_change',
+        'run8_bet_team', 'run8_model_pct', 'run8_book_line', 'run8_edge', 'run8_change',
+        'run9_bet_team', 'run9_model_pct', 'run9_book_line', 'run9_edge', 'run9_change',
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
         'recommended_stake',
@@ -1922,6 +1947,184 @@ def convert_to_serializable(obj):
         return [convert_to_serializable(i) for i in obj]
     return obj
 
+def _get_rolling_batter_woba(player_id, min_pa=100, season=2026):
+    """MLB API game log → rolling woba over last min_pa plate appearances."""
+    try:
+        resp = requests.get(
+            f'https://statsapi.mlb.com/api/v1/people/{player_id}/stats',
+            params={'stats': 'gameLog', 'group': 'hitting', 'season': season, 'sportId': 1},
+            timeout=8
+        ).json()
+        splits = resp.get('stats', [{}])[0].get('splits', [])
+        bb = hbp = singles = doubles = triples = hr = ab = ibb = sf = pa = 0
+        for split in reversed(splits):
+            s     = split.get('stat', {})
+            g_pa  = int(s.get('plateAppearances', 0))
+            g_ab  = float(s.get('atBats', 0))
+            g_h   = float(s.get('hits', 0))
+            g_d   = float(s.get('doubles', 0))
+            g_t   = float(s.get('triples', 0))
+            g_hr  = float(s.get('homeRuns', 0))
+            g_bb  = float(s.get('baseOnBalls', 0))
+            g_hbp = float(s.get('hitByPitch', 0))
+            g_ibb = float(s.get('intentionalWalks', 0))
+            g_sf  = float(s.get('sacFlies', 0))
+            pa      += g_pa
+            ab      += g_ab
+            bb      += g_bb
+            hbp     += g_hbp
+            singles += g_h - g_d - g_t - g_hr
+            doubles += g_d
+            triples += g_t
+            hr      += g_hr
+            ibb     += g_ibb
+            sf      += g_sf
+            if pa >= min_pa:
+                break
+        if pa < 30:
+            return None
+        denom = ab + bb - ibb + sf + hbp
+        if denom <= 0:
+            return None
+        return round((
+            WOBA_WEIGHTS['wBB']  * (bb - ibb) +
+            WOBA_WEIGHTS['wHBP'] * hbp +
+            WOBA_WEIGHTS['w1B']  * singles +
+            WOBA_WEIGHTS['w2B']  * doubles +
+            WOBA_WEIGHTS['w3B']  * triples +
+            WOBA_WEIGHTS['wHR']  * hr
+        ) / denom, 3)
+    except Exception:
+        return None
+
+def _get_pitcher_season_xfip(player_id, lg_hr_fb=0.115, season=2026, min_ip=10):
+    """MLB API individual pitcher season stats → xFIP."""
+    try:
+        resp = statsapi.player_stat_data(player_id, group='pitching', type='season', sportId=1)
+        if not resp or not resp.get('stats'):
+            return None
+        s  = resp['stats'][0]['stats']
+        ip = ip_to_float(s.get('inningsPitched', '0'))
+        if ip < min_ip:
+            return None
+        hr       = float(s.get('homeRuns', 0))
+        bb       = float(s.get('baseOnBalls', 0))
+        hbp      = float(s.get('hitBatsmen', 0))
+        k        = float(s.get('strikeOuts', 0))
+        air_outs = float(s.get('airOuts', 0))
+        expected_hr = (air_outs + hr) * lg_hr_fb
+        return round(((13 * expected_hr) + (3 * (bb + hbp)) - (2 * k)) / ip + FIP_CONSTANT, 3)
+    except Exception:
+        return None
+
+def build_live_player_snapshot(lineup_data, splits_cache, lg_avgs, lg_hr_fb=0.115, season=2026):
+    """
+    Build a live player snapshot for the Log5 layer from current-season data.
+
+    Batter woba:      rolling last 100 PA (MLB API game log, per player)
+    Batter xwoba:     season xwoba from Baseball Savant leaderboard (one call)
+    Pitcher xFIP:     computed from MLB API individual season stats (per pitcher)
+    Pitcher xwoba_pit: season xwoba allowed from Baseball Savant pitcher leaderboard (one call)
+
+    Cached for 4 hours. Returns dict matching player_snapshot.json schema.
+    """
+    cache_file = 'cache/live_snapshot_cache.json'
+    if os.path.exists(cache_file):
+        age_hours = (datetime.now().timestamp() - os.path.getmtime(cache_file)) / 3600
+        if age_hours < 4:
+            with open(cache_file, 'r') as f:
+                data = json.load(f)
+            n_bat = data.get('n_batters', len(data.get('batters', {})))
+            n_pit = data.get('n_pitchers', len(data.get('pitchers', {})))
+            print(f"[LiveSnapshot] Cache hit ({age_hours:.1f}h old) — {n_bat} batters, {n_pit} pitchers")
+            return data
+
+    print("[LiveSnapshot] Building from live data...")
+
+    batter_ids  = set()
+    pitcher_ids = set()
+    for gd in lineup_data.values():
+        batter_ids.update(gd.get('home_lineup', []))
+        batter_ids.update(gd.get('away_lineup', []))
+        if gd.get('home_pitcher_id'): pitcher_ids.add(gd['home_pitcher_id'])
+        if gd.get('away_pitcher_id'): pitcher_ids.add(gd['away_pitcher_id'])
+
+    hdrs = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0'}
+
+    savant_bat_xwoba = {}
+    try:
+        url = (f"https://baseballsavant.mlb.com/leaderboard/expected_statistics"
+               f"?type=batter&year={season}&position=&team=&min=1&csv=true")
+        df_bat = pd.read_csv(StringIO(requests.get(url, headers=hdrs, timeout=15).text))
+        savant_bat_xwoba = dict(zip(df_bat['player_id'].astype(int), df_bat['est_woba'].astype(float)))
+        print(f"[LiveSnapshot] Savant batters: {len(savant_bat_xwoba)} players")
+    except Exception as e:
+        print(f"[LiveSnapshot] Savant batter fetch failed: {e}")
+
+    savant_pit_xwoba = {}
+    try:
+        url = (f"https://baseballsavant.mlb.com/leaderboard/expected_statistics"
+               f"?type=pitcher&year={season}&position=&team=&min=1&csv=true")
+        df_pit = pd.read_csv(StringIO(requests.get(url, headers=hdrs, timeout=15).text))
+        savant_pit_xwoba = dict(zip(df_pit['player_id'].astype(int), df_pit['est_woba'].astype(float)))
+        print(f"[LiveSnapshot] Savant pitchers: {len(savant_pit_xwoba)} players")
+    except Exception as e:
+        print(f"[LiveSnapshot] Savant pitcher fetch failed: {e}")
+
+    batters   = {}
+    n_rolling = 0
+    for pid in batter_ids:
+        rolling_woba = _get_rolling_batter_woba(pid, min_pa=100, season=season)
+        if rolling_woba is not None:
+            n_rolling += 1
+
+        bat_info   = splits_cache.get(f"bat_{pid}", {})
+        splits     = bat_info.get('splits') or {}
+        xwoba      = savant_bat_xwoba.get(pid)
+
+        entry = {}
+        for hand in ('L', 'R'):
+            split_key = 'vs_lhp' if hand == 'L' else 'vs_rhp'
+            # Platoon split woba from MLB API statSplits (min 30 PA); fall back to rolling overall
+            w = splits.get(split_key) or rolling_woba
+            if w is not None or xwoba is not None:
+                entry[hand] = {'woba': w, 'xwoba': xwoba}
+
+        if entry:
+            batters[str(pid)] = entry
+
+    print(f"[LiveSnapshot] Batters built: {len(batters)} ({n_rolling} with rolling 100-PA woba)")
+
+    pitchers = {}
+    for pid in pitcher_ids:
+        xfip      = _get_pitcher_season_xfip(pid, lg_hr_fb=lg_hr_fb, season=season)
+        xwoba_pit = savant_pit_xwoba.get(pid)
+        if xfip is not None or xwoba_pit is not None:
+            pitchers[str(pid)] = {'xfip': xfip, 'xwoba_pit': xwoba_pit}
+
+    print(f"[LiveSnapshot] Pitchers built: {len(pitchers)}")
+
+    lg_pit_xwoba = (float(np.mean(list(savant_pit_xwoba.values())))
+                    if savant_pit_xwoba else 0.315)
+
+    snapshot = {
+        'batters':   batters,
+        'pitchers':  pitchers,
+        'lg_avgs': {
+            'L':   {'woba': lg_avgs['lg_woba'], 'xwoba': lg_avgs['lg_xwoba']},
+            'R':   {'woba': lg_avgs['lg_woba'], 'xwoba': lg_avgs['lg_xwoba']},
+            'pit': {'xfip': lg_avgs['lg_xfip'], 'xwoba_pit': lg_pit_xwoba},
+        },
+        'as_of':     datetime.now().strftime('%Y-%m-%d %H:%M'),
+        'n_batters': len(batters),
+        'n_pitchers': len(pitchers),
+    }
+
+    with open(cache_file, 'w') as f:
+        json.dump(convert_to_serializable(snapshot), f)
+
+    return snapshot
+
 def update_google_sheets(df):
     try:
         import gspread
@@ -1939,7 +2142,7 @@ def update_google_sheets(df):
         # Clear cell values only from row 2 downward — preserves Row 1 headers,
         # custom background colors, borders, data validation dropdowns, and
         # conditional formatting rules (values.clear does not touch formatting).
-        sheet.batch_clear(["A2:AK2000"])
+        sheet.batch_clear(["A2:BN2000"])
 
         headers = df.columns.tolist()
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
@@ -2286,6 +2489,13 @@ injury_adj    = get_injury_adjustments(team_ids, all_woba, all_fip, lg_avgs)
 lineups       = get_confirmed_lineups(first_game_date)
 platoon_splits = get_all_platoon_splits(lineups) if lineups else {}
 
+# Build live player snapshot for Log5 layer — replaces static player_snapshot.json
+# Uses rolling 100 PA woba (MLB game log per player) + season xwoba (Savant leaderboard)
+_live_snapshot = None
+if lineups and _log5_bundle:
+    _lg_hr_fb = next((v.get('lg_hr_fb', 0.115) for v in all_fip.values() if v.get('lg_hr_fb')), 0.115)
+    _live_snapshot = build_live_player_snapshot(lineups, platoon_splits, lg_avgs, lg_hr_fb=_lg_hr_fb)
+
 for key, status in game_statuses.items():
     parts = key.split('_')
     away_fg = parts[0]
@@ -2480,7 +2690,8 @@ for game in upcoming:
     total_data = get_total_line(game)
 
     # Use Log5 regression for win probability when lineup is confirmed and assets are loaded
-    if _log5_bundle and _player_snapshot and not _pre_lineup:
+    _active_snapshot = _live_snapshot or _player_snapshot
+    if _log5_bundle and _active_snapshot and not _pre_lineup:
         gd = lineups.get(game_key_plat, {})
         _h_pid = gd.get('home_pitcher_id')
         _a_pid = gd.get('away_pitcher_id')
@@ -2490,10 +2701,20 @@ for game in upcoming:
             gd.get('home_lineup', []), gd.get('away_lineup', []),
             _h_pid, _a_pid, _h_hand, _a_hand,
             home_market_line, away_market_line,
-            _log5_bundle, _player_snapshot,
+            _log5_bundle, _active_snapshot,
         )
         if _log5_result is not None:
             home_win_pct, away_win_pct = _log5_result
+
+    # Edge-shrinkage: compress claimed edge toward the de-vigged market by (1-alpha).
+    # Calibrated_Prob = Market_Prob + EDGE_SHRINK_ALPHA * (Model_Prob - Market_Prob)
+    _dv_total    = home_market_prob + away_market_prob
+    _dv_home_mkt = home_market_prob / _dv_total
+    _dv_away_mkt = away_market_prob / _dv_total
+    _pre_shrink_home = home_win_pct
+    _pre_shrink_away = away_win_pct
+    home_win_pct = _dv_home_mkt + EDGE_SHRINK_ALPHA * (home_win_pct - _dv_home_mkt)
+    away_win_pct = _dv_away_mkt + EDGE_SHRINK_ALPHA * (away_win_pct - _dv_away_mkt)
 
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
@@ -2519,9 +2740,12 @@ for game in upcoming:
     _best_is_home = home_edge >= away_edge
     _best_edge    = home_edge if _best_is_home else away_edge
 
-    if _best_edge > _SNIPER_MIN:
+    # Market Extremes Pass Filter — skip heavy-favourite games
+    _market_extreme = max(_dv_home_mkt, _dv_away_mkt) > MARKET_EXTREME_CAP
+
+    if not _market_extreme and _best_edge > _SNIPER_MIN:
         _ml_tier = 'SNIPER'
-    elif _best_edge > _ENFORCER_MIN:
+    elif not _market_extreme and _best_edge > _ENFORCER_MIN:
         _ml_tier = 'ENFORCER'
 
     if _ml_tier and _best_is_home:
@@ -2549,7 +2773,11 @@ for game in upcoming:
         bet_line = away_market_line
         bet_edge = away_edge
     else:
-        moneyline_text = f"   ➖ Moneyline: No edge found"
+        if _market_extreme:
+            _fav_pct = max(_dv_home_mkt, _dv_away_mkt)
+            moneyline_text = f"   ➖ Moneyline: Market Extreme - No Bet ({_fav_pct:.1%} favourite)"
+        else:
+            moneyline_text = f"   ➖ Moneyline: No edge found"
 
     ml_stake = kelly_amt  # 0.0 when no edge
 
@@ -2591,6 +2819,58 @@ for game in upcoming:
         ou_text = f"   ➖ Over/Under: No line available"
 
     proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
+
+    # Breakdown lines for email transparency
+    _h_woba  = all_woba.get(home_fg, {}).get('woba', 0.0)
+    _a_woba  = all_woba.get(away_fg, {}).get('woba', 0.0)
+    _h_xwoba = team_xwoba.get(home_fg, 0.0)
+    _a_xwoba = team_xwoba.get(away_fg, 0.0)
+    _h_xfip  = all_fip.get(home_fg, {}).get('xfip', 0.0)
+    _a_xfip  = all_fip.get(away_fg, {}).get('xfip', 0.0)
+
+    mkt_model_text = (
+        f"\n   📊 Mkt (de-vig): {home_name} {_dv_home_mkt:.1%} / {away_name} {_dv_away_mkt:.1%}"
+        f" | Model: {home_name} {home_win_pct:.1%} / {away_name} {away_win_pct:.1%}"
+        f" | Pre-guard: {_pre_shrink_home:.1%} / {_pre_shrink_away:.1%}"
+    )
+    stats_text = (
+        f"\n   🔢 {home_name}: wOBA {_h_woba:.3f} / xwOBA {_h_xwoba:.3f} / xFIP {_h_xfip:.2f}"
+        f"  |  {away_name}: wOBA {_a_woba:.3f} / xwOBA {_a_xwoba:.3f} / xFIP {_a_xfip:.2f}"
+    )
+
+    _hs_name = home_starter['name'] if home_starter else 'TBD'
+    _hs_era  = f"{home_starter['era']:.2f}" if home_starter else 'N/A'
+    _hs_ip   = f"{home_starter['innings']:.1f}" if home_starter else '0.0'
+    _as_name = away_starter['name'] if away_starter else 'TBD'
+    _as_era  = f"{away_starter['era']:.2f}" if away_starter else 'N/A'
+    _as_ip   = f"{away_starter['innings']:.1f}" if away_starter else '0.0'
+    starters_text = (
+        f"\n   ⚾  Starters: {_hs_name} {_hs_era} ERA ({_hs_ip} IP)"
+        f"  vs  {_as_name} {_as_era} ERA ({_as_ip} IP)"
+    )
+
+    if moneyline_edge:
+        _ev_stake     = kelly_amt
+        _ev_win_pct   = bet_pct
+        _ev_line      = bet_line
+        _ev_team_name = home_name if bet_fg == home_fg else away_name
+        _ev_label     = f"${kelly_amt:.2f} stake"
+    else:
+        _ev_stake     = 20.0
+        _ev_win_pct   = home_win_pct if home_win_pct >= away_win_pct else away_win_pct
+        _ev_line      = home_market_line if home_win_pct >= away_win_pct else away_market_line
+        _ev_team_name = home_name if home_win_pct >= away_win_pct else away_name
+        _ev_label     = "$20 flat"
+    if _ev_line:
+        _ev_dec = (1 + _ev_line / 100) if _ev_line > 0 else (1 + 100 / abs(_ev_line))
+        _ev_net = _ev_stake * (_ev_dec - 1)
+        _ev_val = _ev_win_pct * _ev_net - (1 - _ev_win_pct) * _ev_stake
+        _ev_sign = '+' if _ev_val >= 0 else ''
+        ev_text = f"\n   💵 EV ({_ev_label} on {_ev_team_name}): {_ev_sign}${_ev_val:.2f}"
+    else:
+        ev_text = "\n   💵 EV: N/A"
+
+    _breakdown = f"{mkt_model_text}{stats_text}{starters_text}{ev_text}"
 
     # Log moneyline for all games
     if moneyline_edge:
@@ -2707,14 +2987,14 @@ for game in upcoming:
     if _pre_lineup:
         _pre_icon = "✅" if moneyline_edge else "➖"
         pre_lineup_games.append(
-            f"{_pre_icon} {game_text}  [PRE-LINEUP ESTIMATE]\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}"
+            f"{_pre_icon} {game_text}  [PRE-LINEUP ESTIMATE]\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}"
         )
     elif moneyline_edge or ou_edge:
         edge_games.append({
-            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}"
+            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}"
         })
     else:
-        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}")
+        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}")
 
 # Print change summary (only on runs 2+ when prior data exists)
 _change_parts = []
