@@ -1828,7 +1828,8 @@ def calculate_roi(bets_df, bet_col, odds_col, result_col):
 # Feature 0: de-vigged market logit (unscaled anchor).
 # Features 1–4: league-normalized Statcast difference metrics (standardized).
 _META_FEATURES = ['logit_market_prob', 'd_woba', 'd_xwoba_bat', 'd_xfip', 'd_xwoba_pit']
-_LOG5_FEATURES = ['logit_market_prob', 'd_log5_woba', 'd_log5_xwoba', 'd_xfip']
+_LOG5_FEATURES        = ['logit_market_prob', 'd_log5_woba', 'd_log5_xwoba', 'd_xfip']
+_LOG5_PLAYER_FEATURES = ['d_log5_woba', 'd_log5_xwoba', 'd_xfip']  # no market anchor
 
 
 def _sigmoid(z):
@@ -3308,11 +3309,18 @@ def collect_game_features_log5(seasons, game_lineup_cache,
 
 
 def save_production_assets(batter_cache, pitcher_cache,
-                           lg_batter_avg, lg_pitcher_avg, log5_feat_df):
+                           lg_batter_avg, lg_pitcher_avg, log5_feat_df,
+                           features=None):
     """
     Trains the production logistic regression (C=3.5) on all available Log5
     features and extracts a per-player rolling stats snapshot for daily
     inference in model.py.
+
+    features: which columns to train on. Defaults to _LOG5_FEATURES (includes
+              market logit). Pass _LOG5_PLAYER_FEATURES to train without it.
+              When the market logit is included it is left unscaled (col 0);
+              all other features are standardized. When it is absent, all
+              features are standardized.
 
     Writes:
       models/log5_regression.pkl            — model + scaler params
@@ -3327,12 +3335,20 @@ def save_production_assets(batter_cache, pitcher_cache,
         print("  ERROR: No Log5 features available — cannot train production model.")
         return
 
+    features   = features or _LOG5_FEATURES
+    has_market = features[0] == 'logit_market_prob'
+
     # ── Train on all available data ───────────────────────────────────────────
-    X = log5_feat_df[_LOG5_FEATURES].values.astype(float)
+    X = log5_feat_df[features].values.astype(float)
     y = log5_feat_df['y'].values.astype(int)
-    mu  = X[:, 1:].mean(axis=0)
-    sig = X[:, 1:].std(axis=0) + 1e-8
-    X_s = np.column_stack([X[:, 0], (X[:, 1:] - mu) / sig])
+    if has_market:
+        mu  = X[:, 1:].mean(axis=0)
+        sig = X[:, 1:].std(axis=0) + 1e-8
+        X_s = np.column_stack([X[:, 0], (X[:, 1:] - mu) / sig])
+    else:
+        mu  = X.mean(axis=0)
+        sig = X.std(axis=0) + 1e-8
+        X_s = (X - mu) / sig
 
     model = LogisticRegression(C=3.5, solver='lbfgs', max_iter=1000, fit_intercept=True)
     model.fit(X_s, y)
@@ -3354,9 +3370,9 @@ def save_production_assets(batter_cache, pitcher_cache,
     pkl_path = 'models/log5_regression.pkl'
     with open(pkl_path, 'wb') as f:
         pickle.dump({'model': model, 'mu': mu.tolist(), 'sig': sig.tolist(),
-                     'features': _LOG5_FEATURES, 'n_train': len(y), 'C': 3.5,
+                     'features': features, 'n_train': len(y), 'C': 3.5,
                      'calibrator': calibrator}, f)
-    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5, Platt calibrator included)")
+    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5, features={features})")
 
     # ── Extract player snapshot ───────────────────────────────────────────────
     # Batter: most recent rolling stats per (player_id, hand)
@@ -4577,7 +4593,8 @@ try:
             _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
         )
         save_production_assets(
-            _batter_cache, _pitcher_cache, _lg_bat_avg, _lg_pit_avg, _log5_feat
+            _batter_cache, _pitcher_cache, _lg_bat_avg, _lg_pit_avg, _log5_feat,
+            features=_LOG5_PLAYER_FEATURES,  # origination model: player-only, no market anchor
         )
 
     elif RUN_MODE == '2026_validation':
@@ -4794,6 +4811,98 @@ try:
                     market_extremes_filter=True,
                     market_extreme_cap=0.62,
                 )
+
+                # ── ORIGINATION MODEL  ─────────────────────────────────────────────────
+                # Drop the market logit entirely. Train on player physics only.
+                # Evaluate edge vs OPENING lines so we see what the model is worth
+                # before the market fully adjusts.
+                _sbr_path = 'SBR Odds/MLB_Odds_through_May26.csv'
+                if not os.path.exists(_sbr_path):
+                    print(f"\n  Skipping origination model test — {_sbr_path} not found.")
+                else:
+                    print(f"\n{'='*80}")
+                    print(f"  ORIGINATION MODEL  —  Player-Only  —  vs Opening Lines")
+                    print(f"  Features: {_LOG5_PLAYER_FEATURES}")
+                    print(f"  Rationale: drop market anchor entirely; measure edge vs openers")
+                    print(f"{'='*80}")
+
+                    # Load and normalise SBR opener lines
+                    _sbr_raw = pd.read_csv(_sbr_path)
+                    _sbr_raw['home_team'] = _sbr_raw['Home Team'].apply(
+                        lambda t: normalize_team(str(t).strip())
+                    )
+                    _sbr_raw['away_team'] = _sbr_raw['Away Team'].apply(
+                        lambda t: normalize_team(str(t).strip())
+                    )
+                    _sbr_raw['date'] = pd.to_datetime(
+                        _sbr_raw['Date'], errors='coerce'
+                    ).dt.strftime('%Y-%m-%d')
+                    _sbr_raw['opener_home_ml'] = pd.to_numeric(
+                        _sbr_raw['Opener Home ML'], errors='coerce'
+                    )
+                    _sbr_raw['opener_away_ml'] = pd.to_numeric(
+                        _sbr_raw['Opener Away ML'], errors='coerce'
+                    )
+                    _sbr_open = _sbr_raw[
+                        ['date','home_team','away_team','opener_home_ml','opener_away_ml']
+                    ].dropna(subset=['opener_home_ml','opener_away_ml']).reset_index(drop=True)
+                    print(f"  SBR opener lines loaded: {len(_sbr_open)} games")
+
+                    # Join opener lines to 2026 feature set (inner — require both sides)
+                    _log5_w_open = _log5_2026.merge(
+                        _sbr_open, on=['date','home_team','away_team'], how='inner'
+                    )
+                    print(f"  Matched to Log5 features: {len(_log5_w_open)} / {len(_log5_2026)} 2026 games")
+
+                    if _log5_w_open.empty:
+                        print("  No opener lines matched — check team name mapping in SBR CSV.")
+                    else:
+                        # Train on 2021-2025 player features only (no market logit)
+                        _Xpl_tr   = _log5_train[_LOG5_PLAYER_FEATURES].values.astype(float)
+                        _mu_pl    = _Xpl_tr.mean(axis=0)
+                        _sig_pl   = _Xpl_tr.std(axis=0) + 1e-8
+                        _Xpl_tr_s = (_Xpl_tr - _mu_pl) / _sig_pl
+
+                        from sklearn.linear_model import LogisticRegression as _LR_pl
+                        _mdl_pl = _LR_pl(C=3.5, solver='lbfgs', max_iter=1000)
+                        _mdl_pl.fit(_Xpl_tr_s, _y_tr)
+                        _coef_str = ' | '.join(
+                            f"{f}={c:+.3f}"
+                            for f, c in zip(_LOG5_PLAYER_FEATURES, _mdl_pl.coef_[0])
+                        )
+                        print(f"\n  Player-only coefs: {_coef_str}")
+                        print(f"  Intercept: {_mdl_pl.intercept_[0]:+.3f}")
+
+                        # Score 2026 games that have opener lines
+                        _Xpl_26   = _log5_w_open[_LOG5_PLAYER_FEATURES].values.astype(float)
+                        _Xpl_26_s = (_Xpl_26 - _mu_pl) / _sig_pl
+                        _p_home_pl = _mdl_pl.predict_proba(_Xpl_26_s)[:, 1]
+
+                        # Build evaluation df: substitute opener lines for fd_home/away_ml
+                        # so edge and payout both use the opening price (true origination scenario)
+                        _log5_opener_eval = _log5_w_open.copy()
+                        _log5_opener_eval['fd_home_ml'] = _log5_opener_eval['opener_home_ml']
+                        _log5_opener_eval['fd_away_ml'] = _log5_opener_eval['opener_away_ml']
+
+                        eval_2026_validation(
+                            _log5_opener_eval.reset_index(drop=True), _p_home_pl,
+                            title='2026 ORIGINATION MODEL  (player-only, vs opening lines)',
+                            model_desc=(
+                                f"NO market anchor — {_LOG5_PLAYER_FEATURES} only — "
+                                f"C=3.5 trained on {len(_log5_train):,} games (2021-2025)"
+                            ),
+                        )
+
+                        # Overwrite production pkl with the player-only model
+                        print("\n  Saving player-only model to models/log5_regression.pkl ...")
+                        save_production_assets(
+                            _batter_cache, _pitcher_cache,
+                            _lg_bat_avg, _lg_pit_avg,
+                            _log5_train,
+                            features=_LOG5_PLAYER_FEATURES,
+                        )
+                        print("  NOTE: model.py must be updated to exclude logit_market_prob "
+                              "from its feature vector before the next live run.")
 
     elif RUN_MODE == '2025_holdout':
         # Isolate the terminal walk-forward fold: train 2021-2024, test 2025.

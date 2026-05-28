@@ -44,7 +44,11 @@
       "Bash(findstr -i \"baseball\\\\|model\\\\|python\\\\|Task Name\\\\|Status\\\\|Next Run\\\\|Last Run\\\\|Last Result\\\\|Run As\\\\|Logon Mode\")",
       "PowerShell(schtasks /query /fo LIST /v | Select-String -Pattern \"Task Name|Status|Next Run|Last Run|Last Result|Run As|Logon Mode|Scheduled Task\" -Context 0,0 | Where-Object { $_.Line -match \"model|baseball|python\" -or $_.Context.PostContext -match \"model|baseball\" })",
       "PowerShell(Get-ScheduledTask | Where-Object { $_.TaskName -match \"baseball|model|python\" -or $_.TaskPath -match \"baseball|model\" } | Format-List TaskName, TaskPath, State)",
-      "PowerShell(Get-ScheduledTask -TaskName \"Baseball Model 9am\")"
+      "PowerShell(Get-ScheduledTask -TaskName \"Baseball Model 9am\")",
+      "Bash(cd /d C:\\\\Users\\\\super\\\\baseball-model)",
+      "Bash(C:\\\\Python314\\\\python.exe backtest.py)",
+      "PowerShell(cd C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; C:\\\\Python314\\\\python.exe backtest.py 2>&1)",
+      "Bash(PYTHONIOENCODING=utf-8 python3 -)"
     ]
   }
 }

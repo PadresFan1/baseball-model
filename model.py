@@ -115,8 +115,6 @@ API_KEY  = os.getenv('API_KEY')
 BANKROLL = float(os.getenv('BANKROLL', '1000'))
 KELLY_FRACTION = 0.5          # half-Kelly reduces variance vs full Kelly
 MAX_BANKROLL_EXPOSURE = 0.15  # hard cap per bet regardless of Kelly edge
-EDGE_SHRINK_ALPHA = 0.45      # Calibrated = Market + α*(Model - Market); shrinks edge 55%
-MARKET_EXTREME_CAP = 0.62    # Pass on any game where de-vigged market favourite > 62%
 OU_BETTING_ENABLED = False    # O/U shows negative ROI in backtesting — disabled until calibrated
 print(f"API Key loaded: {API_KEY is not None}")
 
@@ -155,7 +153,7 @@ NUM_SIMULATIONS = 5000
 import pickle as _pickle
 
 _LOG5_PA_WEIGHTS = np.array([0.123, 0.120, 0.117, 0.114, 0.111, 0.108, 0.105, 0.102, 0.100])
-_LOG5_FEATURES   = ['logit_market_prob', 'd_log5_woba', 'd_log5_xwoba', 'd_xfip']
+_LOG5_FEATURES   = ['d_log5_woba', 'd_log5_xwoba', 'd_xfip']  # player-only; no market anchor
 
 def _log5_matchup(B, P, L):
     B = float(np.clip(B, 0.001, 0.999))
@@ -192,13 +190,58 @@ def load_log5_assets():
         print(f"[Log5] Failed to load assets: {e}. Falling back to Poisson.")
         return None, None
 
+_lineup_history_cache = None  # loaded once per run; shared across all build_projected_lineup calls
+
+def build_projected_lineup(team_fg, n_games=10):
+    """
+    Returns a 9-slot projected batting order for team_fg based on the most
+    frequently used player at each slot across the last n_games confirmed
+    lineups from the historical lineup cache.
+
+    Slots with no data stay as 0 — compute_log5_win_prob treats those as
+    league-average batters via its fallback path.
+    """
+    global _lineup_history_cache
+    if _lineup_history_cache is None:
+        try:
+            with open('historical_data/game_lineups.json') as _f:
+                _lineup_history_cache = json.load(_f)
+        except Exception:
+            _lineup_history_cache = {}
+
+    team_games = []
+    for season_data in _lineup_history_cache.values():
+        for gdata in season_data.values():
+            if gdata.get('home_fg') == team_fg:
+                raw = gdata.get('home_lineup', [])
+            elif gdata.get('away_fg') == team_fg:
+                raw = gdata.get('away_lineup', [])
+            else:
+                continue
+            if raw and len(raw) >= 9 and gdata.get('date'):
+                team_games.append((gdata['date'], [int(p) for p in raw[:9]]))
+
+    if not team_games:
+        return []
+
+    team_games.sort(key=lambda x: x[0], reverse=True)
+    recent = [lu for _, lu in team_games[:n_games]]
+
+    from collections import Counter
+    projected = []
+    for slot in range(9):
+        votes = Counter(lu[slot] for lu in recent if slot < len(lu))
+        projected.append(votes.most_common(1)[0][0] if votes else 0)
+    return projected
+
+
 def compute_log5_win_prob(home_lineup, away_lineup,
                           home_pitcher_id, away_pitcher_id,
                           home_pitcher_hand, away_pitcher_hand,
-                          home_ml, away_ml,
                           log5_bundle, player_snapshot):
     """
-    Compute P(home win) from the Log5 logistic regression for one game.
+    Compute P(home win) from the player-only Log5 logistic regression.
+    Features: d_log5_woba, d_log5_xwoba, d_xfip — no market anchor.
     Returns (home_prob, away_prob) or None if data is insufficient.
 
     home/away_pitcher_hand: 'L' or 'R' — the hand the opposing lineup faces.
@@ -227,22 +270,34 @@ def compute_log5_win_prob(home_lineup, away_lineup,
         # Home offense vs away pitcher hand
         h_log5_woba  = {}
         h_log5_xwoba = {}
+        h_raw_woba   = {}
+        h_raw_xwoba  = {}
         for pid in home_lineup:
             entry = batters.get(str(pid), {}).get(away_pitcher_hand, {})
             bw  = entry.get('woba')
             bxw = entry.get('xwoba')
-            if bw  is not None: h_log5_woba[pid]  = _log5_matchup(bw,  away_xwoba_pit, lg_woba_h)
-            if bxw is not None: h_log5_xwoba[pid] = _log5_matchup(bxw, away_xwoba_pit, lg_xwoba_h)
+            if bw  is not None:
+                h_raw_woba[pid]  = bw
+                h_log5_woba[pid] = _log5_matchup(bw,  away_xwoba_pit, lg_woba_h)
+            if bxw is not None:
+                h_raw_xwoba[pid]  = bxw
+                h_log5_xwoba[pid] = _log5_matchup(bxw, away_xwoba_pit, lg_xwoba_h)
 
         # Away offense vs home pitcher hand
         a_log5_woba  = {}
         a_log5_xwoba = {}
+        a_raw_woba   = {}
+        a_raw_xwoba  = {}
         for pid in away_lineup:
             entry = batters.get(str(pid), {}).get(home_pitcher_hand, {})
             bw  = entry.get('woba')
             bxw = entry.get('xwoba')
-            if bw  is not None: a_log5_woba[pid]  = _log5_matchup(bw,  home_xwoba_pit, lg_woba_a)
-            if bxw is not None: a_log5_xwoba[pid] = _log5_matchup(bxw, home_xwoba_pit, lg_xwoba_a)
+            if bw  is not None:
+                a_raw_woba[pid]  = bw
+                a_log5_woba[pid] = _log5_matchup(bw,  home_xwoba_pit, lg_woba_a)
+            if bxw is not None:
+                a_raw_xwoba[pid]  = bxw
+                a_log5_xwoba[pid] = _log5_matchup(bxw, home_xwoba_pit, lg_xwoba_a)
 
         # Fallbacks for missing batters
         h_fb_woba  = _log5_matchup(lg_woba_h,  away_xwoba_pit, lg_woba_h)
@@ -258,24 +313,16 @@ def compute_log5_win_prob(home_lineup, away_lineup,
         home_xfip_r = lg_xfip / home_xfip if home_xfip > 0 else 1.0
         away_xfip_r = lg_xfip / away_xfip if away_xfip > 0 else 1.0
 
-        # Market logit anchor
-        raw_h = (100 / (home_ml + 100)) if home_ml > 0 else (abs(home_ml) / (abs(home_ml) + 100))
-        raw_a = (100 / (away_ml + 100)) if away_ml > 0 else (abs(away_ml) / (abs(away_ml) + 100))
-        total = raw_h + raw_a
-        p_home_dv = float(np.clip(raw_h / total, 0.001, 0.999))
-        logit_mp  = float(np.log(p_home_dv / (1.0 - p_home_dv)))
-
+        # Player-only feature vector — all 3 features standardized, no market anchor
         features = np.array([[
-            logit_mp,
             home_log5_woba  - away_log5_woba,
             home_log5_xwoba - away_log5_xwoba,
             home_xfip_r     - away_xfip_r,
         ]], dtype=float)
 
-        # Apply saved scaler (col 0 unscaled, cols 1+ standardized)
         mu  = np.array(log5_bundle['mu'])
         sig = np.array(log5_bundle['sig'])
-        X_s = np.column_stack([features[:, 0], (features[:, 1:] - mu) / sig])
+        X_s = (features - mu) / sig
 
         home_prob = float(log5_bundle['model'].predict_proba(X_s)[0, 1])
 
@@ -289,7 +336,17 @@ def compute_log5_win_prob(home_lineup, away_lineup,
             except Exception:
                 pass
 
-        return home_prob, 1.0 - home_prob
+        disp_stats = {
+            'h_bat_woba':  _aggregate_log5(h_raw_woba,  home_lineup, lg_woba_h),
+            'h_bat_xwoba': _aggregate_log5(h_raw_xwoba, home_lineup, lg_xwoba_h),
+            'a_bat_woba':  _aggregate_log5(a_raw_woba,  away_lineup, lg_woba_a),
+            'a_bat_xwoba': _aggregate_log5(a_raw_xwoba, away_lineup, lg_xwoba_a),
+            'h_pit_xfip':  home_xfip,
+            'a_pit_xfip':  away_xfip,
+            'h_pit_hand':  home_pitcher_hand,
+            'a_pit_hand':  away_pitcher_hand,
+        }
+        return home_prob, 1.0 - home_prob, disp_stats
 
     except Exception as e:
         return None
@@ -317,8 +374,28 @@ def load_constants(year=2026):
 
 WOBA_WEIGHTS, FIP_CONSTANT, PARK_FACTORS, PARK_FACTORS_HAND = load_constants(2026)
 
-# Run schedule for predictions log
-RUN_SCHEDULE = {1: '9am', 2: '12pm', 3: '4pm'}
+# Run schedule for predictions log — 5 windows (all times MST)
+RUN_SCHEDULE = {
+    1: '6PM_Overnight',   # 6:00 PM MST night-before: opening lines drop
+    2: '11PM_Overnight',  # 11:00 PM MST night-before: late/west-coast lines
+    3: '5AM_Morning',     # 5:00 AM MST day-of: overnight line movement
+    4: '11AM_Midday',     # 11:00 AM MST day-of: pre-slate check
+    5: '3PM_Afternoon',   # 3:00 PM MST day-of: final before evening games
+}
+
+_OVERNIGHT_WINDOWS = {'6PM_Overnight', '11PM_Overnight'}
+
+def _compute_run_context():
+    """Return (run_num, run_window, target_date) based on current local time."""
+    from datetime import datetime as _dtnow, timedelta
+    hour = _dtnow.now().hour
+    if 17 <= hour <= 20:        run_num, run_window = 1, '6PM_Overnight'
+    elif hour >= 21 or hour <= 2: run_num, run_window = 2, '11PM_Overnight'
+    elif 3 <= hour <= 7:        run_num, run_window = 3, '5AM_Morning'
+    elif 8 <= hour <= 13:       run_num, run_window = 4, '11AM_Midday'
+    else:                       run_num, run_window = 5, '3PM_Afternoon'
+    target_date = date.today() + timedelta(days=1) if run_window in _OVERNIGHT_WINDOWS else date.today()
+    return run_num, run_window, target_date
 
 def american_to_prob(line):
     if line < 0:
@@ -343,7 +420,7 @@ def calculate_kelly_stake(bankroll, market_odds, model_prob, odds_type='american
     if fraction <= 0:
         return 0.0
     fraction = min(fraction, MAX_BANKROLL_EXPOSURE)
-    return round(bankroll * fraction, 2)
+    return float(math.floor(bankroll * fraction + 0.5))
 
 def kelly_bet_size(model_prob, american_odds, bankroll=None, fraction=KELLY_FRACTION):
     """Returns (kelly_pct, bet_amount) using calculate_kelly_stake as the canonical engine."""
@@ -387,19 +464,20 @@ def get_cached_odds():
 
     return data
 
-def get_upcoming_games(odds_data):
+def get_upcoming_games(odds_data, target_date=None):
     now = datetime.now(timezone.utc)
-    today_mst = now.astimezone(MT).date()
+    if target_date is None:
+        target_date = now.astimezone(MT).date()
     upcoming = []
     for game in odds_data:
         game_time = datetime.strptime(game['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
         game_time_mst = game_time.astimezone(MT)
-        if game_time > now and game_time_mst.date() == today_mst:
+        if game_time > now and game_time_mst.date() == target_date:
             upcoming.append(game)
     return upcoming
 
-def get_todays_game_statuses():
-    today = date.today().strftime('%Y-%m-%d')
+def get_todays_game_statuses(target_date=None):
+    today = (target_date or date.today()).strftime('%Y-%m-%d')
     schedule = statsapi.schedule(date=today)
     schedule = sorted(schedule, key=lambda g: g.get('game_datetime', ''))
     statuses = {}
@@ -993,10 +1071,13 @@ def get_confirmed_lineups(game_date):
                 lineups     = game.get('lineups', {})
                 home_lineup = [p['id'] for p in lineups.get('homePlayers', [])]
                 away_lineup = [p['id'] for p in lineups.get('awayPlayers', [])]
-                if not home_lineup and not away_lineup:
-                    continue
+                # Read probable pitchers before the skip check so pre-lineup
+                # games with a known starter still enter the lineups dict.
                 home_pid = teams.get('home', {}).get('probablePitcher', {}).get('id')
                 away_pid = teams.get('away', {}).get('probablePitcher', {}).get('id')
+                # Skip only if there is truly nothing useful (no lineup AND no probables)
+                if not home_lineup and not away_lineup and not home_pid and not away_pid:
+                    continue
                 result[(home_fg, away_fg)] = {
                     'home_lineup':    home_lineup,
                     'away_lineup':    away_lineup,
@@ -1245,26 +1326,31 @@ def compute_run_change(prev_bet, new_bet):
     return '—'
 
 def get_final_run(game_time_str, row):
-    """Return the run number that was the last scheduled run before game time."""
+    """Return the first run that had an active bet for this game.
+    Falls back to the last scheduled run before game time if no active bets found yet.
+    Schedule (MST): run1=6PM, run2=11PM, run3=5AM, run4=11AM, run5=3PM.
+    """
+    for run in range(1, 6):
+        if _is_active_bet(row.get(f'run{run}_bet_team')):
+            return run
+    # No active bets yet — return last scheduled run before game time as placeholder
     try:
         hour = int(str(game_time_str).split(':')[0])
     except Exception:
         hour = 19
-    cutoff = min(max(hour - 8, 1), 9)  # 9am=1, 10am=2, ..., 5pm+=9
-    for run in range(cutoff, 0, -1):
-        if _is_active_bet(row.get(f'run{run}_bet_team')):
-            return run
-    return cutoff
+    if hour < 11:  return 3
+    if hour < 15:  return 4
+    return 5
 
-def log_predictions(predictions, results, postponed=None, statuses=None, active_game_keys=None):
+def log_predictions(predictions, results, postponed=None, statuses=None, active_game_keys=None,
+                    run_num=None, run_window=None):
     log_file = 'predictions/predictions_log.csv'
 
     def _game_num_str(val):
         return '1' if (val is None or pd.isna(val) or str(val) in ('', 'nan', 'None')) else str(val)
 
-    from datetime import datetime
-    hour = datetime.now().hour
-    run_num   = min(max(hour - 8, 1), 9)  # 9am=1, 10am=2, ..., 5pm=9
+    if run_num is None or run_window is None:
+        run_num, run_window, _ = _compute_run_context()
     today_str = date.today().strftime('%Y-%m-%d')
     yesterday_str = (date.today() - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
 
@@ -1273,6 +1359,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
 
     columns = [
         'date', 'game_time', 'game_num', 'home_team', 'away_team', 'bet_type', 'model_strategy',
+        'run_window_mst',
         'run1_bet_team', 'run1_model_pct', 'run1_book_line', 'run1_edge',
         'run2_bet_team', 'run2_model_pct', 'run2_book_line', 'run2_edge', 'run2_change',
         'run3_bet_team', 'run3_model_pct', 'run3_book_line', 'run3_edge', 'run3_change',
@@ -1416,6 +1503,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             new_row['away_team']      = away_fg
             new_row['bet_type']       = bet_type
             new_row['model_strategy'] = pred.get('model_strategy', 'SNIPER')
+            new_row['run_window_mst']          = run_window
             new_row[f'run{run_num}_bet_team']  = pred['bet_team']
             new_row[f'run{run_num}_model_pct'] = pred['model_pct']
             new_row[f'run{run_num}_book_line'] = pred['book_line']
@@ -1442,6 +1530,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             existing_gn = df.at[idx, 'game_num']
             if pd.isna(existing_gn) or str(existing_gn) in ('', 'nan', 'None'):
                 df.at[idx, 'game_num'] = game_num
+            df.at[idx, 'run_window_mst'] = run_window
             if run_num > 1:
                 prev_bet = df.at[idx, f'run{run_num - 1}_bet_team']
                 df.at[idx, f'run{run_num}_change'] = compute_run_change(prev_bet, pred['bet_team'])
@@ -1458,12 +1547,15 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             if pred.get('recommended_stake') is not None:
                 df.at[idx, 'recommended_stake'] = str(pred['recommended_stake'])
             gt = df.at[idx, 'game_time'] or game_time
-            final_run = get_final_run(gt, df.loc[idx])
-            df.at[idx, 'final_run']       = str(final_run)
-            df.at[idx, 'final_bet_team']  = df.at[idx, f'run{final_run}_bet_team']
-            df.at[idx, 'final_model_pct'] = df.at[idx, f'run{final_run}_model_pct']
-            df.at[idx, 'final_book_line'] = df.at[idx, f'run{final_run}_book_line']
-            df.at[idx, 'final_edge']      = df.at[idx, f'run{final_run}_edge']
+            # Only update final_* if no active bet has been established yet —
+            # final_* locks to the FIRST run with an active bet (the opening-line bet).
+            if not _is_active_bet(df.at[idx, 'final_bet_team']):
+                final_run = get_final_run(gt, df.loc[idx])
+                df.at[idx, 'final_run']       = str(final_run)
+                df.at[idx, 'final_bet_team']  = df.at[idx, f'run{final_run}_bet_team']
+                df.at[idx, 'final_model_pct'] = df.at[idx, f'run{final_run}_model_pct']
+                df.at[idx, 'final_book_line'] = df.at[idx, f'run{final_run}_book_line']
+                df.at[idx, 'final_edge']      = df.at[idx, f'run{final_run}_edge']
 
     # ── Pass 2: fill actual results for yesterday's rows ──────────────────────
     # Completely separate from today's predictions — eliminates the bug where
@@ -2142,7 +2234,7 @@ def update_google_sheets(df):
         # Clear cell values only from row 2 downward — preserves Row 1 headers,
         # custom background colors, borders, data validation dropdowns, and
         # conditional formatting rules (values.clear does not touch formatting).
-        sheet.batch_clear(["A2:BN2000"])
+        sheet.batch_clear(["A2:BO2000"])
 
         headers = df.columns.tolist()
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
@@ -2377,7 +2469,7 @@ def print_accuracy_report():
         edge      = row.get('final_edge')
         book_line = row.get('final_book_line')
         if not _is_active_bet(bet_team):
-            for run in [3, 2, 1]:
+            for run in range(1, 6):
                 t = row.get(f'run{run}_bet_team')
                 if _is_active_bet(t):
                     bet_team  = t
@@ -2462,11 +2554,16 @@ def print_accuracy_report():
 # ── Step 1: Archive old prediction logs if they pre-date the dual-strategy schema ──
 archive_existing_prediction_logs()
 
+# Determine run window and target date for this execution
+_run_num, _run_window, _target_date = _compute_run_context()
+_target_date_str = _target_date.strftime('%Y-%m-%d')
+print(f"[Run context] Window: {_run_window} | Target date: {_target_date_str}")
+
 odds_data = get_cached_odds()
 
-upcoming=get_upcoming_games(odds_data)
+upcoming = get_upcoming_games(odds_data, target_date=_target_date)
 
-game_statuses = get_todays_game_statuses()
+game_statuses = get_todays_game_statuses(target_date=_target_date)
 
 in_progress_games = []
 completed_games = []
@@ -2476,7 +2573,7 @@ team_ids = get_all_team_ids()
 _log5_bundle, _player_snapshot = load_log5_assets()
 
 from datetime import date
-first_game_date = date.today().strftime('%Y-%m-%d')
+first_game_date = _target_date_str
 cached_stats = get_cached_stats(team_ids, game_date=first_game_date)
 
 all_woba = cached_stats['all_woba']
@@ -2534,7 +2631,7 @@ print(f"Bankroll: ${BANKROLL:,.0f} | Effective: ${effective_bankroll:,.0f} | Kel
 edge_games = []
 no_edge_games = []
 skipped_games = []
-pre_lineup_games = []
+summary_lines = []
 
 # Load today's prior predictions for change detection (run N-1 vs current run)
 prior_picks_today = {}  # {(home_fg, away_fg, game_num_str): last_bet_team}
@@ -2689,9 +2786,12 @@ for game in upcoming:
     home_win_pct, away_win_pct, avg_total, home_lambda, away_lambda = result
     total_data = get_total_line(game)
 
-    # Use Log5 regression for win probability when lineup is confirmed and assets are loaded
+    # Use Log5 regression for win probability — confirmed lineup or projected order
     _active_snapshot = _live_snapshot or _player_snapshot
+    _proj_lineup_used = False
+    _log5_stats = None
     if _log5_bundle and _active_snapshot and not _pre_lineup:
+        # ── Confirmed lineups: full Log5 with actual batting order ────────────
         gd = lineups.get(game_key_plat, {})
         _h_pid = gd.get('home_pitcher_id')
         _a_pid = gd.get('away_pitcher_id')
@@ -2700,26 +2800,56 @@ for game in upcoming:
         _log5_result = compute_log5_win_prob(
             gd.get('home_lineup', []), gd.get('away_lineup', []),
             _h_pid, _a_pid, _h_hand, _a_hand,
-            home_market_line, away_market_line,
             _log5_bundle, _active_snapshot,
         )
         if _log5_result is not None:
-            home_win_pct, away_win_pct = _log5_result
+            home_win_pct, away_win_pct, _log5_stats = _log5_result
 
-    # Edge-shrinkage: compress claimed edge toward the de-vigged market by (1-alpha).
-    # Calibrated_Prob = Market_Prob + EDGE_SHRINK_ALPHA * (Model_Prob - Market_Prob)
+    elif _log5_bundle and _active_snapshot and _pre_lineup:
+        # ── Pre-lineup: probable pitchers + projected batting order ──────────
+        # Only runs when both probable starters have been announced. Batting
+        # order is the most-common player per slot across the last 10 games.
+        # Bet rec from this run is automatically compared against the later
+        # confirmed-lineup run by the existing change-detection logic.
+        _prob_gd = lineups.get(game_key_plat, {})
+        _h_pid   = _prob_gd.get('home_pitcher_id')
+        _a_pid   = _prob_gd.get('away_pitcher_id')
+        if _h_pid and _a_pid:
+            _h_hand   = (platoon_splits.get(f"pit_{_h_pid}") or {}).get('hand', 'R')
+            _a_hand   = (platoon_splits.get(f"pit_{_a_pid}") or {}).get('hand', 'R')
+            _proj_home = build_projected_lineup(home_fg)
+            _proj_away = build_projected_lineup(away_fg)
+            if len(_proj_home) >= 5 and len(_proj_away) >= 5:
+                _log5_result = compute_log5_win_prob(
+                    _proj_home, _proj_away,
+                    _h_pid, _a_pid, _h_hand, _a_hand,
+                    _log5_bundle, _active_snapshot,
+                )
+                if _log5_result is not None:
+                    home_win_pct, away_win_pct, _log5_stats = _log5_result
+                    _proj_lineup_used = True
+
+    # Reflect projected-lineup status in the platoon display line
+    if _proj_lineup_used:
+        _prob_gd = lineups.get(game_key_plat, {})
+        _h_starter = todays_starters.get(home_fg, {})
+        _a_starter = todays_starters.get(away_fg, {})
+        _h_pname = _h_starter.get('name', 'TBD') if _h_starter else 'TBD'
+        _a_pname = _a_starter.get('name', 'TBD') if _a_starter else 'TBD'
+        platoon_text = (
+            f"\n   📐 Projected order (last 10 games) | "
+            f"Probable: {_h_pname} vs {_a_pname} | "
+            f"Platoon pending lineup confirmation"
+        )
+
+    # De-vig market probabilities (display only — edge is vs raw implied prob to account for vig)
     _dv_total    = home_market_prob + away_market_prob
     _dv_home_mkt = home_market_prob / _dv_total
     _dv_away_mkt = away_market_prob / _dv_total
-    _pre_shrink_home = home_win_pct
-    _pre_shrink_away = away_win_pct
-    home_win_pct = _dv_home_mkt + EDGE_SHRINK_ALPHA * (home_win_pct - _dv_home_mkt)
-    away_win_pct = _dv_away_mkt + EDGE_SHRINK_ALPHA * (away_win_pct - _dv_away_mkt)
 
     home_edge = home_win_pct - home_market_prob
     away_edge = away_win_pct - away_market_prob
 
-    warning = f"\n   ⚠️  Low sample: {', '.join(low_sample)}" if low_sample else ""
 
     # Collect injury notes for both teams
     inj_notes = []
@@ -2740,20 +2870,20 @@ for game in upcoming:
     _best_is_home = home_edge >= away_edge
     _best_edge    = home_edge if _best_is_home else away_edge
 
-    # Market Extremes Pass Filter — skip heavy-favourite games
-    _market_extreme = max(_dv_home_mkt, _dv_away_mkt) > MARKET_EXTREME_CAP
-
-    if not _market_extreme and _best_edge > _SNIPER_MIN:
+    if _best_edge > _SNIPER_MIN:
         _ml_tier = 'SNIPER'
-    elif not _market_extreme and _best_edge > _ENFORCER_MIN:
+    elif _best_edge > _ENFORCER_MIN:
         _ml_tier = 'ENFORCER'
 
     if _ml_tier and _best_is_home:
         kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line, bankroll=effective_bankroll)
+        _ev_dec = (1 + home_market_line / 100) if home_market_line > 0 else (1 + 100 / abs(home_market_line))
+        _ev_val = home_win_pct * kelly_amt * (_ev_dec - 1) - (1 - home_win_pct) * kelly_amt
+        _ev_sign = '+' if _ev_val >= 0 else ''
         moneyline_text = (
-            f"   [ACTION: {_ml_tier} BET] 💰 Bet {home_name} | Model: {home_win_pct:.1%} | "
-            f"{best_home_book}: {home_market_line} | Edge: +{home_edge:.1%} | "
-            f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
+            f"   [ACTION: {_ml_tier} BET] 💰 Bet {home_name} | Kelly: {kelly_pct}% (${kelly_amt:.2f})\n"
+            f"      💵 EV (${kelly_amt:.2f} stake on {home_name}): {_ev_sign}${_ev_val:.2f}\n"
+            f"      Model: {home_win_pct:.1%} | {best_home_book}: {home_market_line} | Edge: +{home_edge:.1%}"
         )
         moneyline_edge = True
         bet_fg   = home_fg
@@ -2762,10 +2892,13 @@ for game in upcoming:
         bet_edge = home_edge
     elif _ml_tier:
         kelly_pct, kelly_amt = kelly_bet_size(away_win_pct, away_market_line, bankroll=effective_bankroll)
+        _ev_dec = (1 + away_market_line / 100) if away_market_line > 0 else (1 + 100 / abs(away_market_line))
+        _ev_val = away_win_pct * kelly_amt * (_ev_dec - 1) - (1 - away_win_pct) * kelly_amt
+        _ev_sign = '+' if _ev_val >= 0 else ''
         moneyline_text = (
-            f"   [ACTION: {_ml_tier} BET] 💰 Bet {away_name} | Model: {away_win_pct:.1%} | "
-            f"{best_away_book}: {away_market_line} | Edge: +{away_edge:.1%} | "
-            f"Kelly: {kelly_pct}% (${kelly_amt:.2f})"
+            f"   [ACTION: {_ml_tier} BET] 💰 Bet {away_name} | Kelly: {kelly_pct}% (${kelly_amt:.2f})\n"
+            f"      💵 EV (${kelly_amt:.2f} stake on {away_name}): {_ev_sign}${_ev_val:.2f}\n"
+            f"      Model: {away_win_pct:.1%} | {best_away_book}: {away_market_line} | Edge: +{away_edge:.1%}"
         )
         moneyline_edge = True
         bet_fg   = away_fg
@@ -2773,11 +2906,20 @@ for game in upcoming:
         bet_line = away_market_line
         bet_edge = away_edge
     else:
-        if _market_extreme:
-            _fav_pct = max(_dv_home_mkt, _dv_away_mkt)
-            moneyline_text = f"   ➖ Moneyline: Market Extreme - No Bet ({_fav_pct:.1%} favourite)"
-        else:
-            moneyline_text = f"   ➖ Moneyline: No edge found"
+        _nb_model = home_win_pct if _best_is_home else away_win_pct
+        _nb_book  = best_home_book if _best_is_home else best_away_book
+        _nb_line  = home_market_line if _best_is_home else away_market_line
+        _nb_edge  = home_edge if _best_is_home else away_edge
+        moneyline_text = f"   [NO BET] | Model: {_nb_model:.1%} | {_nb_book}: {_nb_line} | Edge: {_nb_edge:+.1%}"
+
+    if moneyline_edge:
+        _sum_team     = home_fg if bet_fg == home_fg else away_fg
+        _sum_book     = best_home_book if bet_fg == home_fg else best_away_book
+        _sum_odds     = home_market_line if bet_fg == home_fg else away_market_line
+        _sum_odds_str = f"+{_sum_odds}" if _sum_odds > 0 else str(_sum_odds)
+        summary_lines.append(f"✅ {away_fg} @ {home_fg}    {_ml_tier}    Bet {_sum_team}    {_sum_book} {_sum_odds_str}    ${kelly_amt:.2f}")
+    else:
+        summary_lines.append(f"❌ {away_fg} @ {home_fg}    No bet  ({_nb_edge:+.1%})")
 
     ml_stake = kelly_amt  # 0.0 when no edge
 
@@ -2818,25 +2960,27 @@ for game in upcoming:
     else:
         ou_text = f"   ➖ Over/Under: No line available"
 
-    proj_text = f"   {home_name} est: {home_lambda:.1f} | {away_name} est: {away_lambda:.1f} | Model total: {avg_total:.1f}"
-
     # Breakdown lines for email transparency
-    _h_woba  = all_woba.get(home_fg, {}).get('woba', 0.0)
-    _a_woba  = all_woba.get(away_fg, {}).get('woba', 0.0)
-    _h_xwoba = team_xwoba.get(home_fg, 0.0)
-    _a_xwoba = team_xwoba.get(away_fg, 0.0)
-    _h_xfip  = all_fip.get(home_fg, {}).get('xfip', 0.0)
-    _a_xfip  = all_fip.get(away_fg, {}).get('xfip', 0.0)
-
     mkt_model_text = (
         f"\n   📊 Mkt (de-vig): {home_name} {_dv_home_mkt:.1%} / {away_name} {_dv_away_mkt:.1%}"
-        f" | Model: {home_name} {home_win_pct:.1%} / {away_name} {away_win_pct:.1%}"
-        f" | Pre-guard: {_pre_shrink_home:.1%} / {_pre_shrink_away:.1%}"
+        f" | Model (player-only): {home_name} {home_win_pct:.1%} / {away_name} {away_win_pct:.1%}"
     )
-    stats_text = (
-        f"\n   🔢 {home_name}: wOBA {_h_woba:.3f} / xwOBA {_h_xwoba:.3f} / xFIP {_h_xfip:.2f}"
-        f"  |  {away_name}: wOBA {_a_woba:.3f} / xwOBA {_a_xwoba:.3f} / xFIP {_a_xfip:.2f}"
-    )
+    if _log5_stats:
+        _h_vs = _log5_stats['a_pit_hand']
+        _a_vs = _log5_stats['h_pit_hand']
+        stats_text = (
+            f"\n   🔢 {home_name} bat vs {_h_vs}HP: wOBA {_log5_stats['h_bat_woba']:.3f} / xwOBA {_log5_stats['h_bat_xwoba']:.3f}"
+            f"  |  {away_name} bat vs {_a_vs}HP: wOBA {_log5_stats['a_bat_woba']:.3f} / xwOBA {_log5_stats['a_bat_xwoba']:.3f}"
+        )
+    else:
+        _h_woba  = all_woba.get(home_fg, {}).get('woba', 0.0)
+        _a_woba  = all_woba.get(away_fg, {}).get('woba', 0.0)
+        _h_xwoba = team_xwoba.get(home_fg, 0.0)
+        _a_xwoba = team_xwoba.get(away_fg, 0.0)
+        stats_text = (
+            f"\n   🔢 {home_name}: wOBA {_h_woba:.3f} / xwOBA {_h_xwoba:.3f}"
+            f"  |  {away_name}: wOBA {_a_woba:.3f} / xwOBA {_a_xwoba:.3f}"
+        )
 
     _hs_name = home_starter['name'] if home_starter else 'TBD'
     _hs_era  = f"{home_starter['era']:.2f}" if home_starter else 'N/A'
@@ -2844,33 +2988,22 @@ for game in upcoming:
     _as_name = away_starter['name'] if away_starter else 'TBD'
     _as_era  = f"{away_starter['era']:.2f}" if away_starter else 'N/A'
     _as_ip   = f"{away_starter['innings']:.1f}" if away_starter else '0.0'
+    if _log5_stats:
+        _hs_xfip = f" / {_log5_stats['h_pit_xfip']:.2f} xFIP"
+        _as_xfip = f" / {_log5_stats['a_pit_xfip']:.2f} xFIP"
+    else:
+        _hs_xfip = ""
+        _as_xfip = ""
     starters_text = (
-        f"\n   ⚾  Starters: {_hs_name} {_hs_era} ERA ({_hs_ip} IP)"
-        f"  vs  {_as_name} {_as_era} ERA ({_as_ip} IP)"
+        f"\n   ⚾  Starters: {_hs_name} {_hs_era} ERA{_hs_xfip} ({_hs_ip} IP)"
+        f"  vs  {_as_name} {_as_era} ERA{_as_xfip} ({_as_ip} IP)"
     )
 
-    if moneyline_edge:
-        _ev_stake     = kelly_amt
-        _ev_win_pct   = bet_pct
-        _ev_line      = bet_line
-        _ev_team_name = home_name if bet_fg == home_fg else away_name
-        _ev_label     = f"${kelly_amt:.2f} stake"
-    else:
-        _ev_stake     = 20.0
-        _ev_win_pct   = home_win_pct if home_win_pct >= away_win_pct else away_win_pct
-        _ev_line      = home_market_line if home_win_pct >= away_win_pct else away_market_line
-        _ev_team_name = home_name if home_win_pct >= away_win_pct else away_name
-        _ev_label     = "$20 flat"
-    if _ev_line:
-        _ev_dec = (1 + _ev_line / 100) if _ev_line > 0 else (1 + 100 / abs(_ev_line))
-        _ev_net = _ev_stake * (_ev_dec - 1)
-        _ev_val = _ev_win_pct * _ev_net - (1 - _ev_win_pct) * _ev_stake
-        _ev_sign = '+' if _ev_val >= 0 else ''
-        ev_text = f"\n   💵 EV ({_ev_label} on {_ev_team_name}): {_ev_sign}${_ev_val:.2f}"
-    else:
-        ev_text = "\n   💵 EV: N/A"
+    _post_starters = ""
+    if low_sample:
+        _post_starters += f"\n      ⚠️  Low sample: {', '.join(low_sample)}"
 
-    _breakdown = f"{mkt_model_text}{stats_text}{starters_text}{ev_text}"
+    _breakdown = f"{mkt_model_text}{stats_text}{starters_text}{_post_starters}"
 
     # Log moneyline for all games
     if moneyline_edge:
@@ -2910,6 +3043,7 @@ for game in upcoming:
     else:
         raw_ml_pct = f"{max(raw_home_pct, raw_away_pct):.1%}"
 
+    _ml_strategy_tag = f"{_ml_tier} — LISTED PITCHERS ONLY" if _ml_tier else ''
     todays_predictions.append({
         'date':               first_game_date,
         'game_time':          game_time_24h,
@@ -2918,7 +3052,7 @@ for game in upcoming:
         'home_fg':            home_fg,
         'away_fg':            away_fg,
         'bet_type':           'Moneyline',
-        'model_strategy':     _ml_tier,
+        'model_strategy':     _ml_strategy_tag,
         'bet_team':           ml_bet_team,
         'model_pct':          ml_model_pct,
         'raw_model_pct':      raw_ml_pct,
@@ -2984,17 +3118,22 @@ for game in upcoming:
             'recommended_stake':  0.0,
         })
 
-    if _pre_lineup:
-        _pre_icon = "✅" if moneyline_edge else "➖"
-        pre_lineup_games.append(
-            f"{_pre_icon} {game_text}  [PRE-LINEUP ESTIMATE]\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}"
-        )
-    elif moneyline_edge or ou_edge:
+    if moneyline_edge or ou_edge:
         edge_games.append({
-            'text': f"✅ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}"
+            'text': f"✅ {game_text}\n{moneyline_text}{injury_text}{change_text}{_breakdown}"
         })
     else:
-        no_edge_games.append(f"❌ {game_text}\n{proj_text}\n{moneyline_text}{warning}{injury_text}{change_text}{_breakdown}")
+        no_edge_games.append(f"❌ {game_text}\n{moneyline_text}{injury_text}{change_text}{_breakdown}")
+
+# Print compact summary (mobile-friendly top section)
+from datetime import date as _date
+_today_str = _date.today().strftime('%a %b %d').replace(' 0', ' ')
+_bets_today = [l for l in summary_lines if l.startswith('✅')]
+_n_bets = len(_bets_today)
+print(f"=== TODAY'S PICKS — {_today_str} | {_n_bets} bet{'s' if _n_bets != 1 else ''} ===\n")
+for _sl in summary_lines:
+    print(_sl)
+print(f"\n{'═' * 54}\n")
 
 # Print change summary (only on runs 2+ when prior data exists)
 _change_parts = []
@@ -3003,6 +3142,8 @@ if n_new_edge:     _change_parts.append(f"{n_new_edge} new edge{'s' if n_new_edg
 if n_edge_lost:    _change_parts.append(f"{n_edge_lost} edge{'s' if n_edge_lost > 1 else ''} lost")
 if _change_parts:
     print(f"📋 Changes from prior run: {' | '.join(_change_parts)}\n")
+
+print("=== DETAIL ===\n")
 
 # Print edges
 if edge_games:
@@ -3026,12 +3167,6 @@ if skipped_games:
         print(game)
         print()
 
-# Print pre-lineup estimates (no platoon adjustment applied)
-if pre_lineup_games:
-    print("=== PRE-LINEUP ESTIMATES (no platoon) ===\n")
-    for msg in pre_lineup_games:
-        print(msg)
-        print()
 
 if in_progress_games:
     print("\n=== IN PROGRESS ===\n")
@@ -3047,32 +3182,38 @@ if completed_games:
 
 todays_starters = get_todays_starters()
 
-log_predictions(todays_predictions, yesterdays_results, yesterdays_postponed, game_statuses, active_game_keys)
+log_predictions(todays_predictions, yesterdays_results, yesterdays_postponed, game_statuses, active_game_keys,
+                run_num=_run_num, run_window=_run_window)
 
 # Capture email body before accuracy report runs
 from datetime import datetime as _dt
-_hour = _dt.now().hour
-_run_label = '9am' if _hour < 11 else ('12pm' if _hour < 15 else '4pm')
 print_accuracy_report()
 _email_body = _tee.getvalue()
 
-# Only send email if at least one game starts within the next 3 hours
 _now_utc = _dt.now(timezone.utc)
-_email_window_hours = 3
-_has_game_soon = any(
-    (_dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) - _now_utc).total_seconds()
-    <= _email_window_hours * 3600
-    for g in upcoming
-)
-if _has_game_soon:
-    send_email_report(_email_body, _run_label)
+if _run_window in _OVERNIGHT_WINDOWS:
+    # Overnight runs target tomorrow's opening lines — always send if games were found
+    if upcoming:
+        send_email_report(_email_body, _run_window)
+    else:
+        print(f"[Email skipped] No games found for {_target_date_str}.")
 else:
-    _next_times = sorted(
-        _dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+    # Day-of runs: only send if a game starts within 3 hours
+    _email_window_hours = 3
+    _has_game_soon = any(
+        (_dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) - _now_utc).total_seconds()
+        <= _email_window_hours * 3600
         for g in upcoming
     )
-    if _next_times:
-        _hrs_until = (_next_times[0] - _now_utc).total_seconds() / 3600
-        print(f"[Email skipped] No games within {_email_window_hours}h. Next game in {_hrs_until:.1f}h.")
+    if _has_game_soon:
+        send_email_report(_email_body, _run_window)
     else:
-        print(f"[Email skipped] No upcoming games today.")
+        _next_times = sorted(
+            _dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+            for g in upcoming
+        )
+        if _next_times:
+            _hrs_until = (_next_times[0] - _now_utc).total_seconds() / 3600
+            print(f"[Email skipped] No games within {_email_window_hours}h. Next game in {_hrs_until:.1f}h.")
+        else:
+            print(f"[Email skipped] No upcoming games for {_target_date_str}.")
