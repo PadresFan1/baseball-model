@@ -1373,6 +1373,7 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
         'recommended_stake',
+        'locked_home_pitcher_id', 'locked_away_pitcher_id', 'locked_model_prob',
         'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
     ]
 
@@ -1514,6 +1515,10 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
             new_row['away_platoon_factor']     = pred.get('away_platoon_factor', '')
             new_row['platoon_confirmed']       = pred.get('platoon_confirmed', 'No')
             new_row['recommended_stake']       = pred.get('recommended_stake', 0.0)
+            if pred.get('locked_home_pitcher_id'):
+                new_row['locked_home_pitcher_id'] = pred['locked_home_pitcher_id']
+                new_row['locked_away_pitcher_id'] = pred['locked_away_pitcher_id']
+                new_row['locked_model_prob']      = pred['locked_model_prob']
             final_run = get_final_run(game_time, new_row)
             new_row['final_run']       = str(final_run)
             new_row['final_bet_team']  = new_row.get(f'run{final_run}_bet_team')
@@ -1547,6 +1552,16 @@ def log_predictions(predictions, results, postponed=None, statuses=None, active_
                 df.at[idx, 'platoon_confirmed'] = 'Yes'
             if pred.get('recommended_stake') is not None:
                 df.at[idx, 'recommended_stake'] = str(pred['recommended_stake'])
+            # Write locked pitcher/prob fields on first lock or explicit re-lock (lineup confirmed)
+            _is_relock  = pred.get('relock', False)
+            _has_locked = (
+                'locked_home_pitcher_id' in df.columns and
+                str(df.at[idx, 'locked_home_pitcher_id'] or '') not in ('', 'nan', 'None')
+            )
+            if pred.get('locked_home_pitcher_id') and (not _has_locked or _is_relock):
+                df.at[idx, 'locked_home_pitcher_id'] = pred['locked_home_pitcher_id']
+                df.at[idx, 'locked_away_pitcher_id'] = pred['locked_away_pitcher_id']
+                df.at[idx, 'locked_model_prob']      = pred['locked_model_prob']
             gt = df.at[idx, 'game_time'] or game_time
             # Only update final_* if no active bet has been established yet —
             # final_* locks to the FIRST run with an active bet (the opening-line bet).
@@ -1813,6 +1828,7 @@ def archive_existing_prediction_logs():
         'final_run', 'final_bet_team', 'final_model_pct', 'final_book_line', 'final_edge',
         'raw_model_pct', 'home_platoon_factor', 'away_platoon_factor', 'platoon_confirmed',
         'recommended_stake',
+        'locked_home_pitcher_id', 'locked_away_pitcher_id', 'locked_model_prob',
         'actual_home_score', 'actual_away_score', 'winner', 'result', 'ou_direction',
     ]
 
@@ -2241,7 +2257,7 @@ def update_google_sheets(df):
         # Clear cell values only from row 2 downward — preserves Row 1 headers,
         # custom background colors, borders, data validation dropdowns, and
         # conditional formatting rules (values.clear does not touch formatting).
-        sheet.batch_clear(["A2:BO2000"])
+        sheet.batch_clear(["A2:BR2000"])
 
         headers = df.columns.tolist()
         rows = [[str(x) if x is not None else '' for x in row.tolist()] for _, row in df.iterrows()]
@@ -2641,7 +2657,8 @@ skipped_games = []
 summary_lines = []
 
 # Load today's prior predictions for change detection (run N-1 vs current run)
-prior_picks_today = {}  # {(home_fg, away_fg, game_num_str): last_bet_team}
+prior_picks_today = {}   # {(home_fg, away_fg, game_num_str): last_bet_team}
+prior_locked_today = {}  # {(home_fg, away_fg, game_num_str): locked bet info for carry-forward}
 _prior_log = 'predictions/predictions_log.csv'
 if os.path.exists(_prior_log):
     try:
@@ -2655,11 +2672,25 @@ if os.path.exists(_prior_log):
             if _gn in ('', 'nan', 'None'):
                 _gn = '1'
             _key = (_row['home_team'], _row['away_team'], _gn)
-            for _r in [3, 2, 1]:
+            for _r in [5, 4, 3, 2, 1]:
                 _bt = _row.get(f'run{_r}_bet_team')
                 if pd.notna(_bt) and str(_bt) not in ('', 'nan', 'None'):
                     prior_picks_today[_key] = str(_bt)
                     break
+            # Load locked bet info for carry-forward logic
+            _fb = str(_row.get('final_bet_team', '') or '')
+            if _fb and _fb not in ('', 'nan', 'None', 'No Bet', 'CANCELLED'):
+                _strat = str(_row.get('model_strategy', '') or '')
+                _locked_tier = 'SNIPER' if 'SNIPER' in _strat else 'ENFORCER'
+                prior_locked_today[_key] = {
+                    'bet_team':          _fb,
+                    'home_pitcher_id':   str(_row.get('locked_home_pitcher_id', '') or ''),
+                    'away_pitcher_id':   str(_row.get('locked_away_pitcher_id', '') or ''),
+                    'model_prob':        str(_row.get('locked_model_prob', '') or ''),
+                    'locked_edge':       str(_row.get('final_edge', '') or ''),
+                    'platoon_confirmed': str(_row.get('platoon_confirmed', 'No') or 'No'),
+                    'tier':              _locked_tier,
+                }
     except Exception:
         pass
 
@@ -2752,6 +2783,9 @@ for game in upcoming:
     platoon_data  = None
     platoon_text  = ""
     game_key_plat = (home_fg, away_fg)
+    _cur_lineup_gd = lineups.get(game_key_plat, {})
+    _cur_h_pid     = str(_cur_lineup_gd.get('home_pitcher_id') or '')
+    _cur_a_pid     = str(_cur_lineup_gd.get('away_pitcher_id') or '')
     if game_key_plat in lineups and platoon_splits:
         gd = lineups[game_key_plat]
         if gd['home_lineup'] and gd['away_lineup']:
@@ -2919,14 +2953,99 @@ for game in upcoming:
         _nb_edge  = home_edge if _best_is_home else away_edge
         moneyline_text = f"   [NO BET] | Model: {_nb_model:.1%} | {_nb_book}: {_nb_line} | Edge: {_nb_edge:+.1%}"
 
+    # --- Carry-forward: keep bet alive if only the line moved ---
+    _locked_info       = prior_locked_today.get((home_fg, away_fg, str(game_num)))
+    _carry_forward     = False
+    _lineup_confirm_note = ''
+
+    if _locked_info and _is_active_bet(_locked_info['bet_team']):
+        _locked_bet_team = _locked_info['bet_team']
+        _locked_h_pid    = str(_locked_info.get('home_pitcher_id') or '')
+        _locked_a_pid    = str(_locked_info.get('away_pitcher_id') or '')
+        _locked_prob_str = str(_locked_info.get('model_prob') or '')
+        _locked_edge_str = str(_locked_info.get('locked_edge') or '')
+        _locked_platoon  = str(_locked_info.get('platoon_confirmed') or 'No')
+
+        try:
+            _locked_prob_val = float(_locked_prob_str.strip('%')) / 100
+        except (ValueError, AttributeError):
+            _locked_prob_val = None
+        try:
+            _locked_edge_val = float(_locked_edge_str.strip('+%')) / 100
+        except (ValueError, AttributeError):
+            _locked_edge_val = None
+
+        _pitcher_changed = bool(
+            (_locked_h_pid and _cur_h_pid and _locked_h_pid != _cur_h_pid) or
+            (_locked_a_pid and _cur_a_pid and _locked_a_pid != _cur_a_pid)
+        )
+        _lineup_just_confirmed = (_locked_platoon != 'Yes' and _lineup_confirmed)
+
+        if not _pitcher_changed and not _lineup_just_confirmed and not moneyline_edge:
+            # Line moved only — carry the original bet forward
+            _carry_forward = True
+
+        elif not _pitcher_changed and _lineup_just_confirmed:
+            _cur_prob     = home_win_pct if _locked_bet_team == home_fg else away_win_pct
+            _prob_went_down = _locked_prob_val is not None and _cur_prob < _locked_prob_val
+            if not _prob_went_down:
+                # Win prob up or unchanged — carry forward
+                _carry_forward = True
+            elif moneyline_edge:
+                # Win prob down but edge still clears threshold — re-lock with confirmed lineup
+                _lineup_confirm_note = 'Confirmed lineup updated'
+    else:
+        _locked_edge_val = None
+
+    if _carry_forward:
+        if _locked_bet_team == home_fg:
+            _cf_win_pct = home_win_pct
+            _cf_line    = home_market_line
+            _cf_book    = best_home_book
+            _cf_edge    = home_edge
+        else:
+            _cf_win_pct = away_win_pct
+            _cf_line    = away_market_line
+            _cf_book    = best_away_book
+            _cf_edge    = away_edge
+        _display_edge = max(_cf_edge, _locked_edge_val) if _locked_edge_val is not None else _cf_edge
+        if _display_edge > _SNIPER_MIN:
+            _ml_tier = 'SNIPER'
+        elif _display_edge > _ENFORCER_MIN:
+            _ml_tier = 'ENFORCER'
+        else:
+            _ml_tier = _locked_info.get('tier', 'ENFORCER')
+        kelly_pct, kelly_amt = kelly_bet_size(_cf_win_pct, _cf_line, bankroll=effective_bankroll)
+        _ev_dec  = (1 + _cf_line / 100) if _cf_line > 0 else (1 + 100 / abs(_cf_line))
+        _ev_val  = _cf_win_pct * kelly_amt * (_ev_dec - 1) - (1 - _cf_win_pct) * kelly_amt
+        _ev_sign = '+' if _ev_val >= 0 else ''
+        _cf_name = home_name if _locked_bet_team == home_fg else away_name
+        moneyline_text = (
+            f"   [ACTION: {_ml_tier} BET] 💰 Bet {_cf_name} | Kelly: {kelly_pct}% (${kelly_amt:.2f})\n"
+            f"      💵 EV (${kelly_amt:.2f} stake on {_cf_name}): {_ev_sign}${_ev_val:.2f}\n"
+            f"      Model: {_cf_win_pct:.1%} | {_cf_book}: {_cf_line} | Edge: +{_display_edge:.1%}"
+        )
+        moneyline_edge = True
+        bet_fg   = _locked_bet_team
+        bet_pct  = _cf_win_pct
+        bet_line = _cf_line
+        bet_edge = _display_edge
+
+    _prior_sum_bet    = prior_picks_today.get((home_fg, away_fg, str(game_num)))
+    _direction_changed = (
+        _prior_sum_bet is not None and
+        bool(_is_active_bet(_prior_sum_bet)) != bool(moneyline_edge)
+    )
+    _sum_warn = '⚠️' if _direction_changed else ''
+
     if moneyline_edge:
         _sum_team     = home_fg if bet_fg == home_fg else away_fg
         _sum_book     = best_home_book if bet_fg == home_fg else best_away_book
         _sum_odds     = home_market_line if bet_fg == home_fg else away_market_line
         _sum_odds_str = f"+{_sum_odds}" if _sum_odds > 0 else str(_sum_odds)
-        summary_lines.append(f"✅ {away_fg} @ {home_fg}    {_ml_tier}    Bet {_sum_team}    {_sum_book} {_sum_odds_str}    ${kelly_amt:.2f}")
+        summary_lines.append(f"✅{_sum_warn} {away_fg} @ {home_fg}    {_ml_tier}    Bet {_sum_team}    {_sum_book} {_sum_odds_str}    ${kelly_amt:.2f}")
     else:
-        summary_lines.append(f"❌ {away_fg} @ {home_fg}    No bet  ({_nb_edge:+.1%})")
+        summary_lines.append(f"❌{_sum_warn} {away_fg} @ {home_fg}    No bet  ({_nb_edge:+.1%})")
 
     ml_stake = kelly_amt  # 0.0 when no edge
 
@@ -3025,19 +3144,19 @@ for game in upcoming:
         ml_edge = 'No Edge'
 
     # Detect changes from the most recent prior run logged today (ml_bet_team must be set first)
-    change_text = ""
+    change_text = f"\n   📋 {_lineup_confirm_note}" if _lineup_confirm_note else ""
     _prior_bet = prior_picks_today.get((home_fg, away_fg, str(game_num)))
     if _prior_bet is not None:
         _prev_active = _is_active_bet(_prior_bet)
-        if _prev_active and moneyline_edge and _prior_bet != ml_bet_team:
+        if _prev_active and moneyline_edge and not _carry_forward and _prior_bet != ml_bet_team:
             n_pick_changed += 1
-            change_text = f"\n   🔄 PICK CHANGED: {_prior_bet} → {ml_bet_team}"
+            change_text += f"\n   🔄 PICK CHANGED: {_prior_bet} → {ml_bet_team}"
         elif _prev_active and not moneyline_edge:
             n_edge_lost += 1
-            change_text = f"\n   ⚠️  EDGE LOST: Previously bet {_prior_bet}"
+            change_text += f"\n   ⚠️  EDGE LOST: Previously bet {_prior_bet}"
         elif not _prev_active and moneyline_edge:
             n_new_edge += 1
-            change_text = f"\n   🆕 NEW EDGE: {ml_bet_team} (not flagged in prior run)"
+            change_text += f"\n   🆕 NEW EDGE: {ml_bet_team} (not flagged in prior run)"
 
     game_time_24h = game_time.strftime('%H:%M')
 
@@ -3051,6 +3170,7 @@ for game in upcoming:
         raw_ml_pct = f"{max(raw_home_pct, raw_away_pct):.1%}"
 
     _ml_strategy_tag = f"{_ml_tier} — LISTED PITCHERS ONLY" if _ml_tier else ''
+    _should_lock = moneyline_edge and not _carry_forward
     todays_predictions.append({
         'date':               first_game_date,
         'game_time':          game_time_24h,
@@ -3069,6 +3189,10 @@ for game in upcoming:
         'away_platoon_factor': str(away_pf) if away_pf is not None else '',
         'platoon_confirmed':  'Yes' if platoon_data else 'No',
         'recommended_stake':  ml_stake,
+        'locked_home_pitcher_id': _cur_h_pid if _should_lock else '',
+        'locked_away_pitcher_id': _cur_a_pid if _should_lock else '',
+        'locked_model_prob':      ml_model_pct if _should_lock else '',
+        'relock':                 bool(_lineup_confirm_note),
     })
 
     # Log O/U for all games
@@ -3135,7 +3259,11 @@ for game in upcoming:
 # Print compact summary (mobile-friendly top section)
 from datetime import date as _date
 _today_str = _date.today().strftime('%a %b %d').replace(' 0', ' ')
-_bets_today = [l for l in summary_lines if l.startswith('✅')]
+# If any line has a ⚠️, insert 1 extra space after the icon on non-warning lines so team names align
+if any('⚠️' in l for l in summary_lines):
+    summary_lines = [l if '⚠️' in l else l[0] + '  ' + l[1:] for l in summary_lines]
+
+_bets_today = [l for l in summary_lines if l.lstrip().startswith('✅')]
 _n_bets = len(_bets_today)
 print(f"=== TODAY'S PICKS — {_today_str} | {_n_bets} bet{'s' if _n_bets != 1 else ''} ===\n")
 for _sl in summary_lines:
