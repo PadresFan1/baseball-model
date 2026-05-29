@@ -48,7 +48,9 @@
       "Bash(cd /d C:\\\\Users\\\\super\\\\baseball-model)",
       "Bash(C:\\\\Python314\\\\python.exe backtest.py)",
       "PowerShell(cd C:\\\\Users\\\\super\\\\baseball-model; $env:PYTHONIOENCODING='utf-8'; C:\\\\Python314\\\\python.exe backtest.py 2>&1)",
-      "Bash(PYTHONIOENCODING=utf-8 python3 -)"
+      "Bash(PYTHONIOENCODING=utf-8 python3 -)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\super\\\\baseball-model\\\\cache\\\\live_snapshot_cache.json\" -Force)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }

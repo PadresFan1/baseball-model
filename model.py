@@ -177,11 +177,6 @@ def load_log5_assets():
             bundle = _pickle.load(f)
         with open('historical_data/player_snapshot.json', 'r') as f:
             snapshot = json.load(f)
-        as_of = snapshot.get('as_of', 'unknown')
-        n_bat = snapshot.get('n_batters', 0)
-        n_pit = snapshot.get('n_pitchers', 0)
-        print(f"[Log5] Model loaded (C={bundle['C']}, trained on {bundle['n_train']:,} games)")
-        print(f"[Log5] Player snapshot: {n_bat:,} batters, {n_pit:,} pitchers, as_of {as_of}")
         return bundle, snapshot
     except FileNotFoundError:
         print("[Log5] Production assets not found — run backtest.py with RUN_MODE='build_production_model' first. Falling back to Poisson.")
@@ -1193,9 +1188,15 @@ def get_all_platoon_splits(lineup_data, season=2026):
 
     all_batter_ids  = set()
     all_pitcher_ids = set()
-    for gd in lineup_data.values():
-        all_batter_ids.update(gd.get('home_lineup', []))
-        all_batter_ids.update(gd.get('away_lineup', []))
+    for key, gd in lineup_data.items():
+        home_lineup = gd.get('home_lineup', [])
+        away_lineup = gd.get('away_lineup', [])
+        if not home_lineup and isinstance(key, tuple):
+            home_lineup = [p for p in build_projected_lineup(key[0]) if p]
+        if not away_lineup and isinstance(key, tuple):
+            away_lineup = [p for p in build_projected_lineup(key[1]) if p]
+        all_batter_ids.update(home_lineup)
+        all_batter_ids.update(away_lineup)
         if gd.get('home_pitcher_id'): all_pitcher_ids.add(gd['home_pitcher_id'])
         if gd.get('away_pitcher_id'): all_pitcher_ids.add(gd['away_pitcher_id'])
 
@@ -2135,9 +2136,15 @@ def build_live_player_snapshot(lineup_data, splits_cache, lg_avgs, lg_hr_fb=0.11
 
     batter_ids  = set()
     pitcher_ids = set()
-    for gd in lineup_data.values():
-        batter_ids.update(gd.get('home_lineup', []))
-        batter_ids.update(gd.get('away_lineup', []))
+    for key, gd in lineup_data.items():
+        home_lineup = gd.get('home_lineup', [])
+        away_lineup = gd.get('away_lineup', [])
+        if not home_lineup and isinstance(key, tuple):
+            home_lineup = [p for p in build_projected_lineup(key[0]) if p]
+        if not away_lineup and isinstance(key, tuple):
+            away_lineup = [p for p in build_projected_lineup(key[1]) if p]
+        batter_ids.update(home_lineup)
+        batter_ids.update(away_lineup)
         if gd.get('home_pitcher_id'): pitcher_ids.add(gd['home_pitcher_id'])
         if gd.get('away_pitcher_id'): pitcher_ids.add(gd['away_pitcher_id'])
 
@@ -2335,7 +2342,7 @@ def send_email_report(body, run_label):
         return
 
     try:
-        subject = f"Baseball Model - {date.today().strftime('%#m/%#d')}"
+        subject = f"Baseball Model - {_target_date.strftime('%#m/%#d')}"
 
         escaped = _html.escape(body)
         html_body = f"""\
@@ -2390,7 +2397,7 @@ def send_email_report(body, run_label):
     except Exception as e:
         print(f"Email failed: {e}")
 
-MODEL_V2_START = '2026-05-24'   # date all major changes went live
+MODEL_V2_START = '2026-05-28'   # origination model fully operational (batter snapshot fix)
 
 def _edge_tier(e):
     try:
@@ -3190,30 +3197,7 @@ from datetime import datetime as _dt
 print_accuracy_report()
 _email_body = _tee.getvalue()
 
-_now_utc = _dt.now(timezone.utc)
-if _run_window in _OVERNIGHT_WINDOWS:
-    # Overnight runs target tomorrow's opening lines — always send if games were found
-    if upcoming:
-        send_email_report(_email_body, _run_window)
-    else:
-        print(f"[Email skipped] No games found for {_target_date_str}.")
+if upcoming:
+    send_email_report(_email_body, _run_window)
 else:
-    # Day-of runs: only send if a game starts within 3 hours
-    _email_window_hours = 3
-    _has_game_soon = any(
-        (_dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) - _now_utc).total_seconds()
-        <= _email_window_hours * 3600
-        for g in upcoming
-    )
-    if _has_game_soon:
-        send_email_report(_email_body, _run_window)
-    else:
-        _next_times = sorted(
-            _dt.strptime(g['commence_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-            for g in upcoming
-        )
-        if _next_times:
-            _hrs_until = (_next_times[0] - _now_utc).total_seconds() / 3600
-            print(f"[Email skipped] No games within {_email_window_hours}h. Next game in {_hrs_until:.1f}h.")
-        else:
-            print(f"[Email skipped] No upcoming games for {_target_date_str}.")
+    print(f"[Email skipped] No games found for {_target_date_str}.")
