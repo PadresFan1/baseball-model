@@ -5,10 +5,8 @@
 
 $TaskName   = "Baseball Model"
 $TaskPath   = "\"               # root task folder
-$ScriptDir  = "C:\Users\super\baseball-model"
+$ScriptDir  = $PSScriptRoot     # resolves to the folder containing this script
 $BatFile    = "$ScriptDir\run_model.bat"
-$LogFile    = "$ScriptDir\logs\model_out.txt"
-$ErrFile    = "$ScriptDir\logs\model_err.txt"
 
 # --- Remove any existing tasks with the old or new name ---
 foreach ($name in @("Baseball Model 9am", "Baseball Model")) {
@@ -18,10 +16,10 @@ foreach ($name in @("Baseball Model 9am", "Baseball Model")) {
     }
 }
 
-# --- Action: run_model.bat (which cd /d and calls python model.py) ---
+# --- Action: run_model.bat (log redirects are inside the bat file; do NOT add >> here) ---
 $Action = New-ScheduledTaskAction `
     -Execute "cmd.exe" `
-    -Argument "/c `"$BatFile`" >> `"$LogFile`" 2>> `"$ErrFile`""
+    -Argument "/c `"$BatFile`""
 
 # --- Principal: run as current user, highest privileges ---
 $Principal = New-ScheduledTaskPrincipal `

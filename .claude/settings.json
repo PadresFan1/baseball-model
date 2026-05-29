@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(exist \"c:\\\\Users\\\\super\\\\baseball-model\\\\historical_data\\\\statcast_cache.json\" del \"c:\\\\Users\\\\super\\\\baseball-model\\\\historical_data\\\\statcast_cache.json\")",
-      "Bash(exist \"c:\\\\Users\\\\super\\\\baseball-model\\\\historical_data\\\\historical_game_logs.json\" del \"c:\\\\Users\\\\super\\\\baseball-model\\\\historical_data\\\\historical_game_logs.json\")"
-    ]
-  }
-}
