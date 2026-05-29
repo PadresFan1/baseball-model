@@ -14,6 +14,22 @@ historical_data/bullpen_cache.json
 cache/mlb_odds_dataset.json
 historical_data/odds_2025_supplement.csv
 
+# Trained model weights
+models/*.pkl
+
+# Computed calibration & live snapshot caches
+cache/calib_2026.pkl
+cache/live_snapshot_cache.json
+
+# Computed backtest feature datasets
+historical_data/backtest_2021.csv
+historical_data/backtest_all_years.csv
+historical_data/player_snapshot.json
+
+# Backtest/tuning result logs
+historical_data/log5_sweep_results.txt
+historical_data/round9_*.txt
+
 # Large historical data
 historical_data/historical_game_logs.json
 historical_data/player_team_map.json

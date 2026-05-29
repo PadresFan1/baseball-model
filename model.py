@@ -2981,19 +2981,25 @@ for game in upcoming:
         )
         _lineup_just_confirmed = (_locked_platoon != 'Yes' and _lineup_confirmed)
 
-        if not _pitcher_changed and not _lineup_just_confirmed and not moneyline_edge:
-            # Line moved only — carry the original bet forward
+        if not _pitcher_changed and not _lineup_just_confirmed:
+            # No fundamental change — carry forward regardless of line movement
             _carry_forward = True
 
-        elif not _pitcher_changed and _lineup_just_confirmed:
-            _cur_prob     = home_win_pct if _locked_bet_team == home_fg else away_win_pct
+        else:
+            # Pitcher changed or lineup just confirmed — recompute win prob first
+            _cur_prob = home_win_pct if _locked_bet_team == home_fg else away_win_pct
             _prob_went_down = _locked_prob_val is not None and _cur_prob < _locked_prob_val
             if not _prob_went_down:
-                # Win prob up or unchanged — carry forward
+                # Win prob same or better — carry forward
                 _carry_forward = True
-            elif moneyline_edge:
-                # Win prob down but edge still clears threshold — re-lock with confirmed lineup
-                _lineup_confirm_note = 'Confirmed lineup updated'
+            else:
+                # Win prob worse — pull current odds, recompute edge, give new recommendation
+                _new_edge_val = home_edge if _locked_bet_team == home_fg else away_edge
+                _reason = 'Lineup confirmed' if _lineup_just_confirmed else 'Pitcher change'
+                _lineup_confirm_note = (
+                    f"📉 {_reason}: win prob {_locked_prob_val:.1%} → {_cur_prob:.1%} "
+                    f"| New edge: {_new_edge_val:+.1%}"
+                )
     else:
         _locked_edge_val = None
 
@@ -3008,7 +3014,7 @@ for game in upcoming:
             _cf_line    = away_market_line
             _cf_book    = best_away_book
             _cf_edge    = away_edge
-        _display_edge = max(_cf_edge, _locked_edge_val) if _locked_edge_val is not None else _cf_edge
+        _display_edge = _locked_edge_val if _locked_edge_val is not None else _cf_edge
         if _display_edge > _SNIPER_MIN:
             _ml_tier = 'SNIPER'
         elif _display_edge > _ENFORCER_MIN:
@@ -3144,7 +3150,7 @@ for game in upcoming:
         ml_edge = 'No Edge'
 
     # Detect changes from the most recent prior run logged today (ml_bet_team must be set first)
-    change_text = f"\n   📋 {_lineup_confirm_note}" if _lineup_confirm_note else ""
+    change_text = f"\n   {_lineup_confirm_note}" if _lineup_confirm_note else ""
     _prior_bet = prior_picks_today.get((home_fg, away_fg, str(game_num)))
     if _prior_bet is not None:
         _prev_active = _is_active_bet(_prior_bet)
