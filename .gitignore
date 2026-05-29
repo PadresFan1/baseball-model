@@ -66,5 +66,5 @@ logs/model_err.txt
 __pycache__/
 *.pyc
 
-# Claude settings
-.claude/settings.local.json
+# Claude Code settings (local only)
+.claude/
