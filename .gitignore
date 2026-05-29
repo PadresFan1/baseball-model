@@ -66,5 +66,8 @@ logs/model_err.txt
 __pycache__/
 *.pyc
 
+# Local-only config (contains personal paths)
+run_model.bat
+
 # Claude Code settings (local only)
 .claude/
