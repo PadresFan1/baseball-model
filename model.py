@@ -2501,6 +2501,8 @@ def print_accuracy_report():
                     break
         rows.append({
             'date':      row.get('date', ''),
+            'home_team': row.get('home_team', ''),
+            'away_team': row.get('away_team', ''),
             'bet_type':  row.get('bet_type', ''),
             'bet_team':  bet_team,
             'edge':      edge,
@@ -2517,6 +2519,7 @@ def print_accuracy_report():
         return
 
     analysis = pd.DataFrame(rows)
+    analysis = analysis[~((analysis['home_team'] == 'SDP') | (analysis['away_team'] == 'SDP'))]
     bets     = analysis[analysis['bet_team'].apply(_is_active_bet)]
     settled  = bets[bets['result'].isin(['WIN', 'LOSS', 'PUSH'])]
     pending  = bets[bets['result'] == 'PENDING']
@@ -2916,6 +2919,12 @@ for game in upcoming:
     elif _best_edge > _ENFORCER_MIN:
         _ml_tier = 'ENFORCER'
 
+    # Padres fan rule — no moneyline bet when SD is playing; model still tracks everything
+    _padres_game  = home_fg == 'SDP' or away_fg == 'SDP'
+    _ml_tier_raw  = _ml_tier   # preserve for display label
+    if _padres_game:
+        _ml_tier = ''
+
     if _ml_tier and _best_is_home:
         kelly_pct, kelly_amt = kelly_bet_size(home_win_pct, home_market_line, bankroll=effective_bankroll)
         _ev_dec = (1 + home_market_line / 100) if home_market_line > 0 else (1 + 100 / abs(home_market_line))
@@ -2951,7 +2960,10 @@ for game in upcoming:
         _nb_book  = best_home_book if _best_is_home else best_away_book
         _nb_line  = home_market_line if _best_is_home else away_market_line
         _nb_edge  = home_edge if _best_is_home else away_edge
-        moneyline_text = f"   [NO BET] | Model: {_nb_model:.1%} | {_nb_book}: {_nb_line} | Edge: {_nb_edge:+.1%}"
+        if _padres_game and _ml_tier_raw:
+            moneyline_text = f"   [NO BET — Padres ({_ml_tier_raw})] | Model: {_nb_model:.1%} | {_nb_book}: {_nb_line} | Edge: {_nb_edge:+.1%}"
+        else:
+            moneyline_text = f"   [NO BET] | Model: {_nb_model:.1%} | {_nb_book}: {_nb_line} | Edge: {_nb_edge:+.1%}"
 
     # --- Carry-forward: keep bet alive if only the line moved ---
     _locked_info       = prior_locked_today.get((home_fg, away_fg, str(game_num)))
@@ -3002,6 +3014,9 @@ for game in upcoming:
                 )
     else:
         _locked_edge_val = None
+
+    if _padres_game:
+        _carry_forward = False
 
     if _carry_forward:
         if _locked_bet_team == home_fg:
