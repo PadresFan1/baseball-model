@@ -12,6 +12,7 @@ historical_data/bullpen_cache.json
 
 # Proprietary odds data
 cache/mlb_odds_dataset.json
+cache/odds_snapshots.csv
 historical_data/odds_2025_supplement.csv
 
 # Trained model weights
@@ -61,6 +62,24 @@ logs/bt_out.txt
 logs/bt_err.txt
 logs/model_out.txt
 logs/model_err.txt
+logs/odds_logger_out.txt
+logs/odds_logger_err.txt
+
+# Odds snapshot logging (append-only, growing data files)
+odds_snapshots_2026.csv
+logs/odds_credit_log.txt
+logs/captured_closers.json
+
+# Historical odds backfill outputs
+historical_data/backfill_schedule_cache.json
+historical_data/odds_snapshots_backfill.csv
+historical_data/backfill_checkpoint.json
+historical_data/backfill_gaps.csv
+
+# F5 linescore dataset outputs
+historical_data/f5_linescores.csv
+historical_data/f5_skipped.csv
+historical_data/f5_progress.json
 
 # Python
 __pycache__/
@@ -68,6 +87,7 @@ __pycache__/
 
 # Local-only config (contains personal paths)
 run_model.bat
+run_odds_logger.bat
 
 # Claude Code settings (local only)
 .claude/

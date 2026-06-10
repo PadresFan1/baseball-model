@@ -1,3 +1,6 @@
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
+
 import json
 import pandas as pd
 import statsapi
@@ -302,7 +305,7 @@ def run_holdout_evaluation(param_sets, label='Holdout'):
         roi = (ret - wagered) / wagered * 100
 
         role = year_labels[year]
-        flag = ' ← out-of-sample' if role not in ('train',) else ''
+        flag = ' <-- out-of-sample' if role not in ('train',) else ''
         print(f"  {year:<6} {role:<12} {n:<8} {win_pct:<8.1%} {roi:+.1f}%{flag}")
 
         if year == 2025:
@@ -374,7 +377,7 @@ def walk_forward_validation(n_trials_per_fold=100, n_runs_per_fold=3):
     """
     True walk-forward cross-validation — runs a fresh parameter search for each
     expanding training window, then evaluates on the next unseen year.
-    Folds: [2021]→2022, [2021-22]→2023, [2021-22-23]→2024, [2021-22-23-24]→2025
+    Folds: [2021]->2022, [2021-22]->2023, [2021-22-23]->2024, [2021-22-23-24]->2025
     Note: takes approximately 4× as long as a single training run.
     """
     import time as _time
@@ -432,7 +435,7 @@ def walk_forward_validation(n_trials_per_fold=100, n_runs_per_fold=3):
     if wf_rows:
         avg_gap    = np.mean([r['best_train_roi'] - r['test_roi'] for r in wf_rows])
         profitable = sum(1 for r in wf_rows if r['test_roi'] > 0)
-        print(f"\n  Avg train→test degradation: {avg_gap:+.1f}%")
+        print(f"\n  Avg train->test degradation: {avg_gap:+.1f}%")
         print(f"  Profitable test folds: {profitable}/{len(wf_rows)}")
     print()
     return wf_rows
@@ -1246,7 +1249,7 @@ def precompute_all_rolling(seasons, game_logs, odds_df):
             if not hitting or not pitching:
                 continue
 
-            # Prefix sums → O(1) sliding-window averages
+            # Prefix sums -> O(1) sliding-window averages
             cum_hit = [0]
             for g in hitting:
                 cum_hit.append(cum_hit[-1] + g['runs'])
@@ -1498,7 +1501,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024, 2025], ret
             away_xba_bat_r    = sc_bat_r(away_sc_bat, 'xba',  'xba_bat')
             home_hh_bat_r     = sc_bat_r(home_sc_bat, 'hardhit_percent', 'hardhit_bat')
             away_hh_bat_r     = sc_bat_r(away_sc_bat, 'hardhit_percent', 'hardhit_bat')
-            # swing_miss batting: lower = better → use sc_pit_r formula (invert)
+            # swing_miss batting: lower = better -> use sc_pit_r formula (invert)
             home_sm_bat_r     = sc_pit_r(home_sc_bat, 'swmiss', 'swmiss_bat')
             away_sm_bat_r     = sc_pit_r(away_sc_bat, 'swmiss', 'swmiss_bat')
             # batter run value: higher = better, offset to handle near-zero league avg
@@ -1518,7 +1521,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024, 2025], ret
             away_babip_pit_r  = sc_pit_r(away_sc_pit, 'babip',      'babip_pit')
             home_barrel_pit_r = sc_pit_r(home_sc_pit, 'barrel_pct', 'barrel_pit')
             away_barrel_pit_r = sc_pit_r(away_sc_pit, 'barrel_pct', 'barrel_pit')
-            # New statcast pitching ratings (lower stat = better for pitching → sc_pit_r)
+            # New statcast pitching ratings (lower stat = better for pitching -> sc_pit_r)
             home_slg_pit_r    = sc_pit_r(home_sc_pit, 'slg',  'slg_pit')
             away_slg_pit_r    = sc_pit_r(away_sc_pit, 'slg',  'slg_pit')
             home_xslg_pit_r   = sc_pit_r(home_sc_pit, 'xslg', 'xslg_pit')
@@ -1529,7 +1532,7 @@ def run_backtest_with_params(params, seasons=[2021, 2022, 2023, 2024, 2025], ret
             away_xba_pit_r    = sc_pit_r(away_sc_pit, 'xba',  'xba_pit')
             home_hh_pit_r     = sc_pit_r(home_sc_pit, 'hardhit_percent', 'hardhit_pit')
             away_hh_pit_r     = sc_pit_r(away_sc_pit, 'hardhit_percent', 'hardhit_pit')
-            # swing_miss pitching: higher = better → sc_bat_r formula (non-invert)
+            # swing_miss pitching: higher = better -> sc_bat_r formula (non-invert)
             home_sm_pit_r     = sc_bat_r(home_sc_pit, 'swmiss', 'swmiss_pit')
             away_sm_pit_r     = sc_bat_r(away_sc_pit, 'swmiss', 'swmiss_pit')
             # pitcher run value: lower = better, offset to handle near-zero league avg
@@ -2014,7 +2017,7 @@ def walk_forward_meta_model(C=1.0):
 
     if rows:
         avg_gap = np.mean([r['test_brier'] - r['train_brier'] for r in rows])
-        print(f"\n  Avg train→test Brier gap: {avg_gap:+.4f}  (positive = overfit, negative = generalizing)")
+        print(f"\n  Avg train->test Brier gap: {avg_gap:+.4f}  (positive = overfit, negative = generalizing)")
         print(f"  Baseline Brier (random 50/50 guesser): 0.2500")
     print()
     return rows
@@ -2025,10 +2028,10 @@ def walk_forward_financial_sim(C=1.0, flat_bet=20.0, edge_min=0.07, all_feat=Non
     Fold-aware financial simulation using meta model (logistic regression) probabilities.
     Each fold trains exclusively on its training years, then generates out-of-sample
     probabilities for the held-out test year:
-      Fold 1: train [2021]              → test 2022
-      Fold 2: train [2021, 2022]        → test 2023
-      Fold 3: train [2021, 2022, 2023]  → test 2024
-      Fold 4: train [2021–2024]         → test 2025
+      Fold 1: train [2021]              -> test 2022
+      Fold 2: train [2021, 2022]        -> test 2023
+      Fold 3: train [2021, 2022, 2023]  -> test 2024
+      Fold 4: train [2021–2024]         -> test 2025
 
     Edge = model_prob − de-vigged market_implied_prob.
     Bets placed when edge > edge_min (no upper cap).
@@ -2350,7 +2353,7 @@ def walk_forward_dual_strategy(all_feat, flat_bet=20.0, features=None):
 #
 # Generated cache files:
 #   historical_data/game_lineups.json       — box score batting orders + starter IDs
-#   historical_data/pitcher_hand_cache.json — pitcher_id → throw hand (L/R)
+#   historical_data/pitcher_hand_cache.json — pitcher_id -> throw hand (L/R)
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Structural PA weights for batting order spots 1–9.
@@ -2401,7 +2404,7 @@ def log5_matchup(B, P, L):
     return num / den if den > 0 else L
 
 
-# ── Reverse map: MLB team ID → FanGraphs abbreviation ────────────────────────
+# ── Reverse map: MLB team ID -> FanGraphs abbreviation ────────────────────────
 _MLB_ID_TO_FG = {v: k for k, v in TEAM_MAP.items()}
 
 
@@ -3006,7 +3009,7 @@ def collect_game_features_player_level(seasons, game_lineup_cache,
       • Select each batter's rolling wOBA / xwOBA vs that pitcher's hand type.
       • Aggregate across the batting order using aggregate_lineup_metric().
       • Look up the starter's rolling xFIP and xwOBA allowed.
-      • Normalize by league average → compute 4 difference features.
+      • Normalize by league average -> compute 4 difference features.
       • Attach de-vigged market logit as the market anchor (same as meta model).
 
     Features returned (same schema as collect_game_features_for_meta):
@@ -3015,7 +3018,7 @@ def collect_game_features_player_level(seasons, game_lineup_cache,
     Pitching features use the HOME team's pitcher rating vs the AWAY team's,
     so a positive d_xfip means the home starter has a better (lower) xFIP.
     """
-    # Build (date, home_fg, away_fg) → lineup_data lookup
+    # Build (date, home_fg, away_fg) -> lineup_data lookup
     # Doubleheaders: keep a list; caller gets the first match.
     lineup_by_teams = {}
     for season_cache in game_lineup_cache.values():
@@ -3120,7 +3123,7 @@ def collect_game_features_player_level(seasons, game_lineup_cache,
             home_xwoba_bat_r = home_xwoba_bat / lg_xwoba_h if lg_xwoba_h > 0 else 1.0
             away_xwoba_bat_r = away_xwoba_bat / lg_xwoba_a if lg_xwoba_a > 0 else 1.0
 
-            # ── Pitcher ratings (lower stat = better → invert) ─────────────
+            # ── Pitcher ratings (lower stat = better -> invert) ─────────────
             lg_xfip      = lg_pit['xfip']
             lg_xwoba_pit = lg_pit['xwoba_pit']
 
@@ -3168,7 +3171,7 @@ def collect_game_features_log5(seasons, game_lineup_cache,
       log5_woba_i  = log5_matchup(batter_woba_i,  pitcher_xwoba_pit, lg_woba)
       log5_xwoba_i = log5_matchup(batter_xwoba_i, pitcher_xwoba_pit, lg_xwoba)
 
-    These are PA-weighted across the 9-man lineup → one score per team.
+    These are PA-weighted across the 9-man lineup -> one score per team.
     Feature set (_LOG5_FEATURES):
       logit_market_prob, d_log5_woba, d_log5_xwoba, d_xfip
     Pitcher xwOBA is already baked into the Log5 calc, so d_xwoba_pit is
@@ -3353,7 +3356,7 @@ def save_production_assets(batter_cache, pitcher_cache,
     model = LogisticRegression(C=3.5, solver='lbfgs', max_iter=1000, fit_intercept=True)
     model.fit(X_s, y)
 
-    # ── Platt calibration: 5-fold OOF on training data → sigmoid scaler ──────
+    # ── Platt calibration: 5-fold OOF on training data -> sigmoid scaler ──────
     from sklearn.model_selection import StratifiedKFold
     _skf_prod  = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     _oof_pr    = np.zeros(len(y), dtype=float)
@@ -3372,7 +3375,7 @@ def save_production_assets(batter_cache, pitcher_cache,
         pickle.dump({'model': model, 'mu': mu.tolist(), 'sig': sig.tolist(),
                      'features': features, 'n_train': len(y), 'C': 3.5,
                      'calibrator': calibrator}, f)
-    print(f"  Model saved → {pkl_path}  (n={len(y):,} games, C=3.5, features={features})")
+    print(f"  Model saved -> {pkl_path}  (n={len(y):,} games, C=3.5, features={features})")
 
     # ── Extract player snapshot ───────────────────────────────────────────────
     # Batter: most recent rolling stats per (player_id, hand)
@@ -3435,7 +3438,7 @@ def save_production_assets(batter_cache, pitcher_cache,
     snap_path = 'historical_data/player_snapshot.json'
     with open(snap_path, 'w') as f:
         json.dump(snapshot, f)
-    print(f"  Snapshot saved → {snap_path}  "
+    print(f"  Snapshot saved -> {snap_path}  "
           f"({len(batter_snap):,} batters, {len(pitcher_snap):,} pitchers, as_of {as_of})")
 
 
@@ -3795,10 +3798,17 @@ def _apply_platt(p_arr, calibrator):
     return calibrator.predict_proba(logits)[:, 1]
 
 
-def _sim_bets(p_home_arr, feat_df, edge_min, start_br=1000.0):
+def _sim_bets(p_home_arr, feat_df, edge_min, start_br=1000.0,
+              market_floor=None, max_model_mkt_div=None, xfip_gate=None):
     """
     Half-Kelly simulation for one edge threshold. Returns summary dict.
     Reusable helper for sweep functions.
+
+    market_floor      : skip bet if opening-line implied prob for bet team < this.
+    max_model_mkt_div : skip bet if |model_prob - market_prob| > this.
+    xfip_gate         : skip bet if the bet team's starter is materially worse.
+                        Home bets filtered when d_xfip < -xfip_gate;
+                        away bets filtered when d_xfip > +xfip_gate.
     """
     bets = []
     br = start_br
@@ -3813,12 +3823,32 @@ def _sim_bets(p_home_arr, feat_df, edge_min, start_br=1000.0):
         y = int(row['y'])
 
         ml = prob = won = None
+        bet_is_home = False
         if he > edge_min:
             ml, prob, won = hml, hp, (y == 1)
+            bet_is_home = True
         elif ae > edge_min:
             ml, prob, won = aml, ap, (y == 0)
         if ml is None:
             continue
+
+        bet_mkt = hm if bet_is_home else am
+
+        # Filter 2: market floor — skip if market also thinks the bet team is too weak
+        if market_floor is not None and bet_mkt < market_floor:
+            continue
+
+        # Filter 3: model/market divergence cap — skip if model and market disagree too much
+        if max_model_mkt_div is not None and abs(prob - bet_mkt) > max_model_mkt_div:
+            continue
+
+        # Filter 4: xFIP pitcher gate — skip if the bet team has a materially worse starter
+        if xfip_gate is not None:
+            d_xfip_val = float(row.get('d_xfip', 0.0))
+            if bet_is_home and d_xfip_val < -xfip_gate:
+                continue
+            if not bet_is_home and d_xfip_val > xfip_gate:
+                continue
 
         stake = _kelly_stake_bt(br, ml, prob)
         if stake <= 0:
@@ -3854,8 +3884,8 @@ def sweep_market_anchor_weight(all_feat_df, C=3.5,
     player-stat delta features (d_log5_woba, d_log5_xwoba, d_xfip) AFTER
     standardization, leaving logit_market_prob (column 0) untouched.
 
-    scale = 1.0  →  current model (full player feature weight)
-    scale = 0.0  →  pure market model (logit_market only, no player signal)
+    scale = 1.0  ->  current model (full player feature weight)
+    scale = 0.0  ->  pure market model (logit_market only, no player signal)
 
     Architecture:
       X_scaled = [logit_market | scale*(d_woba_std) | scale*(d_xwoba_std) | scale*(d_xfip_std)]
@@ -3866,7 +3896,7 @@ def sweep_market_anchor_weight(all_feat_df, C=3.5,
     unpenalized — the regression naturally anchors more to the market.
 
     Pipeline:
-      Step 1 — Tune on train_seasons → tune_season (2025 fold)
+      Step 1 — Tune on train_seasons -> tune_season (2025 fold)
                Prints Brier, fitted coefficients, Sniper/Enforcer ROI per scale.
       Step 2 — Blind 2026 validation for the top 2 scales + scale=1.0 baseline.
                Retrains on train_seasons + tune_season (all 2021-2025 data).
@@ -3902,7 +3932,7 @@ def sweep_market_anchor_weight(all_feat_df, C=3.5,
 
     print(f"\n{'=' * len(hdr)}")
     print(f"  MARKET ANCHOR WEIGHT SWEEP  "
-          f"(Train: {train_seasons}  →  Tune: {tune_season}  |  C={C})")
+          f"(Train: {train_seasons}  ->  Tune: {tune_season}  |  C={C})")
     print(f"  scale multiplies the 3 player-stat delta features after standardization.")
     print(f"  scale=1.0 is current behavior; scale=0.0 is pure market logit.")
     print('=' * len(hdr))
@@ -3927,7 +3957,7 @@ def sweep_market_anchor_weight(all_feat_df, C=3.5,
         coef_str = (f"[{coefs[0]:+.3f} | {coefs[1]:+.3f} | "
                     f"{coefs[2]:+.3f} | {coefs[3]:+.3f}]")
 
-        flag = '  ← baseline' if scale == 1.0 else ''
+        flag = '  <-- baseline' if scale == 1.0 else ''
         print(f"  {scale:>{W[0]}.2f}  {brier:>{W[1]}.4f}  "
               f"  {coef_str:^{W[2]}}  |"
               f"  {snp['n']:>{W[3]}} {snp['roi']:>+{W[4]}.1f}% ${snp['profit']:>+{W[5]-1}.2f}  |"
@@ -3983,7 +4013,7 @@ def sweep_market_anchor_weight(all_feat_df, C=3.5,
         snp26   = _sim_bets(p_ho, ho_df, 0.045, starting_bankroll)
         enf26   = _sim_bets(p_ho, ho_df, 0.040, starting_bankroll)
 
-        flag = '  ← baseline' if scale == 1.0 else ''
+        flag = '  <-- baseline' if scale == 1.0 else ''
         print(f"  {scale:>7.2f}  {brier26:>8.4f}  "
               f"{snp26['n']:>6} {snp26['win_pct']:>6.1f} {snp26['roi']:>+9.1f}% ${snp26['profit']:>+9.2f}  "
               f"{enf26['n']:>6} {enf26['win_pct']:>6.1f} {enf26['roi']:>+9.1f}% ${enf26['profit']:>+9.2f}"
@@ -3999,7 +4029,8 @@ def eval_2026_validation(feat_df, p_home_arr,
                          title=None, model_desc=None,
                          calibrator=None, alpha=None,
                          market_extremes_filter=False,
-                         market_extreme_cap=0.62):
+                         market_extreme_cap=0.62,
+                         xfip_gate=None):
     """
     Apply model probabilities to a test set and report Sniper / Enforcer
     metrics with Kelly staking. Used for both 2025_holdout and 2026_validation.
@@ -4011,6 +4042,11 @@ def eval_2026_validation(feat_df, p_home_arr,
                              favourite has probability > market_extreme_cap (default 0.62).
                              Restricts betting to games where no team is more than ~62%
                              likely — the range our reliability curve showed is well-calibrated.
+    xfip_gate              : if set, skip bets where the bet team has a materially worse
+                             starting pitcher. d_xfip = home_xfip_ratio - away_xfip_ratio.
+                             Home bets filtered when d_xfip < -xfip_gate;
+                             away bets filtered when d_xfip > +xfip_gate.
+                             Addresses the d_xfip≈0 structural blind spot in the player model.
     """
     STRATEGIES = [
         ('The Sniper',   0.045),
@@ -4040,11 +4076,12 @@ def eval_2026_validation(feat_df, p_home_arr,
 
     _alpha_str  = f" | Edge shrinkage α={alpha}" if alpha is not None else ""
     _filter_str = f" | Market extremes filter >{market_extreme_cap:.0%}" if market_extremes_filter else ""
+    _xfip_str   = f" | xFIP gate ±{xfip_gate:.2f}" if xfip_gate is not None else ""
     print(f"\n{'='*80}")
     print(f"  {_title}")
     print(f"  {n_games} games evaluated  |  {date_min} -> {date_max}")
     print(f"  Model: {_model_desc}")
-    print(f"  Staking: ½ Kelly | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}{_alpha_str}{_filter_str}")
+    print(f"  Staking: ½ Kelly | {max_exposure:.0%} bankroll cap | starting ${starting_bankroll:,.0f}{_alpha_str}{_filter_str}{_xfip_str}")
     print(f"{'='*80}")
 
     # ── Brier score + reliability curve ───────────────────────────────────────
@@ -4091,13 +4128,23 @@ def eval_2026_validation(feat_df, p_home_arr,
 
             bet_ml = bet_prob = None
             bet_won = None
+            bet_is_home = False
             if home_edge > edge_min:
                 bet_ml, bet_prob, bet_won = fd_home_ml, home_prob, (y_actual == 1)
+                bet_is_home = True
             elif away_edge > edge_min:
                 bet_ml, bet_prob, bet_won = fd_away_ml, away_prob, (y_actual == 0)
 
             if bet_ml is None:
                 continue
+
+            # xFIP gate — skip bets where the bet team's starter is materially worse
+            if xfip_gate is not None:
+                _d_xfip = float(row.get('d_xfip', 0.0))
+                if bet_is_home and _d_xfip < -xfip_gate:
+                    continue
+                if not bet_is_home and _d_xfip > xfip_gate:
+                    continue
 
             stake = _kelly_stake_bt(bankroll, bet_ml, bet_prob, kelly_fraction, max_exposure)
             if stake <= 0:
@@ -4679,11 +4726,21 @@ try:
                 _mdl    = _bundle['model']
                 _mu     = np.array(_bundle['mu'])
                 _sig    = np.array(_bundle['sig'])
+                # Use whichever feature set the saved model was trained on
+                _saved_features = _bundle.get('features', _LOG5_FEATURES)
+                _player_only_saved = (
+                    _saved_features is not None and
+                    'logit_market_prob' not in _saved_features
+                )
                 print(f"\n  Loaded model: C={_bundle['C']}, trained on {_bundle['n_train']:,} games")
+                print(f"  Saved features: {_saved_features}")
                 print(f"  Features collected: {len(_log5_2026)} games matched odds + lineups + player stats")
 
-                _X      = _log5_2026[_LOG5_FEATURES].values.astype(float)
-                _X_s    = np.column_stack([_X[:, 0], (_X[:, 1:] - _mu) / _sig])
+                _X      = _log5_2026[_saved_features].values.astype(float)
+                if _player_only_saved:
+                    _X_s = (_X - _mu) / _sig     # all features standardized (player-only)
+                else:
+                    _X_s = np.column_stack([_X[:, 0], (_X[:, 1:] - _mu) / _sig])  # col 0 unscaled
                 _p_home = _mdl.predict_proba(_X_s)[:, 1]
 
                 # ── Collect 2021-2025 training features for C-sweep + calibration cache
@@ -4693,11 +4750,16 @@ try:
                     _lineup_cache, _batter_cache, _lg_bat_avg, _pitcher_cache, _lg_pit_avg,
                 )
                 print(f"  Training features: {len(_log5_train):,} games (2021-2025)")
-                _X_tr_raw = _log5_train[_LOG5_FEATURES].values.astype(float)
+                _X_tr_raw = _log5_train[_saved_features].values.astype(float)
                 _y_tr     = _log5_train['y'].values.astype(int)
-                _mu_tr    = _X_tr_raw[:, 1:].mean(axis=0)
-                _sig_tr   = _X_tr_raw[:, 1:].std(axis=0) + 1e-8
-                _X_tr_s   = np.column_stack([_X_tr_raw[:, 0], (_X_tr_raw[:, 1:] - _mu_tr) / _sig_tr])
+                if _player_only_saved:
+                    _mu_tr  = _X_tr_raw.mean(axis=0)
+                    _sig_tr = _X_tr_raw.std(axis=0) + 1e-8
+                    _X_tr_s = (_X_tr_raw - _mu_tr) / _sig_tr
+                else:
+                    _mu_tr  = _X_tr_raw[:, 1:].mean(axis=0)
+                    _sig_tr = _X_tr_raw[:, 1:].std(axis=0) + 1e-8
+                    _X_tr_s = np.column_stack([_X_tr_raw[:, 0], (_X_tr_raw[:, 1:] - _mu_tr) / _sig_tr])
 
                 # Save calibration cache for check_calibration.py
                 import pickle as _pkl_c
@@ -4713,7 +4775,7 @@ try:
                         'log5_train': _log5_train,
                         'C_base':     _bundle.get('C', 3.5),
                     }, _cf)
-                print("  Calibration cache saved → cache/calib_2026.pkl")
+                print("  Calibration cache saved -> cache/calib_2026.pkl")
 
                 # ── On-the-fly Platt calibrator (OOF on 2021-2025 training features) ─
                 from sklearn.model_selection import StratifiedKFold as _SKF
@@ -4731,12 +4793,15 @@ try:
                 print(f"  Platt calibrator fitted on {len(_y_tr):,} OOF predictions (5-fold)")
 
                 # ── C parameter sweep: retrain on 2021-2025, test on 2026 ─────────────
-                _X26_raw = _log5_2026[_LOG5_FEATURES].values.astype(float)
+                _X26_raw = _log5_2026[_saved_features].values.astype(float)
                 _y26     = _log5_2026['y'].values.astype(int)
-                _X26_sw  = np.column_stack([_X26_raw[:, 0], (_X26_raw[:, 1:] - _mu_tr) / _sig_tr])
+                if _player_only_saved:
+                    _X26_sw = (_X26_raw - _mu_tr) / _sig_tr
+                else:
+                    _X26_sw = np.column_stack([_X26_raw[:, 0], (_X26_raw[:, 1:] - _mu_tr) / _sig_tr])
 
                 print(f"\n{'='*80}")
-                print(f"  C PARAMETER SWEEP  (retrain on 2021-2025 → test 2026)")
+                print(f"  C PARAMETER SWEEP  (retrain on 2021-2025 -> test 2026)")
                 print(f"  Sniper: edge > 4.5% | Half-Kelly | $1,000 bankroll")
                 print(f"{'='*80}")
                 print(f"  {'C':>5}  {'Brier':>8}  {'Bets':>6}  {'W/L':>7}  {'ROI':>9}  {'P&L':>10}")
@@ -4878,6 +4943,18 @@ try:
                         _Xpl_26_s = (_Xpl_26 - _mu_pl) / _sig_pl
                         _p_home_pl = _mdl_pl.predict_proba(_Xpl_26_s)[:, 1]
 
+                        # ── Predicted probability distribution diagnostic ───────────────
+                        print(f"\n  Predicted home win probability — {len(_p_home_pl)} 2026 games")
+                        print(f"  Mean : {_p_home_pl.mean():.4f}")
+                        print(f"  Std  : {_p_home_pl.std():.4f}")
+                        print(f"  Min  : {_p_home_pl.min():.4f}   Max: {_p_home_pl.max():.4f}")
+                        print(f"  Distribution:")
+                        for _lo in np.arange(0.35, 0.80, 0.05):
+                            _hi  = _lo + 0.05
+                            _nb  = int(((_p_home_pl >= _lo) & (_p_home_pl < _hi)).sum())
+                            _bar = '#' * (_nb // 3)
+                            print(f"    [{_lo:.0%}-{_hi:.0%})  {_nb:>4}  {_bar}")
+
                         # Build evaluation df: substitute opener lines for fd_home/away_ml
                         # so edge and payout both use the opening price (true origination scenario)
                         _log5_opener_eval = _log5_w_open.copy()
@@ -4892,6 +4969,109 @@ try:
                                 f"C=3.5 trained on {len(_log5_train):,} games (2021-2025)"
                             ),
                         )
+
+                        eval_2026_validation(
+                            _log5_opener_eval.reset_index(drop=True), _p_home_pl,
+                            title='2026 ORIGINATION MODEL  + xFIP gate ±0.20',
+                            model_desc=(
+                                f"NO market anchor — {_LOG5_PLAYER_FEATURES} only — "
+                                f"C=3.5 trained on {len(_log5_train):,} games (2021-2025) "
+                                f"| skip bets where bet team starter xFIP ratio disadvantage > 0.20"
+                            ),
+                            xfip_gate=0.20,
+                        )
+
+                        # ── Filter sweeps ─────────────────────────────────────────────────
+                        # Test three optional guards against the origination model's
+                        # systematic underdog bias caused by d_xfip ≈ 0:
+                        #   F2 — market floor: skip bet if opening-line market gives the
+                        #        bet team < X% (catches extreme underdogs the market
+                        #        has correctly assessed as very weak)
+                        #   F3 — divergence cap: skip if |model_prob − market_prob| > Y
+                        #        (catches games where model and market strongly disagree)
+                        #   F4 — xFIP gate: skip if the bet team's starter is materially
+                        #        worse (home d_xfip < −gate, away d_xfip > +gate)
+                        _eval_df = _log5_opener_eval.reset_index(drop=True)
+
+                        def _sr(lbl, snp, enf):
+                            def _f(d):
+                                if d['n'] == 0:
+                                    return f"{'0':>5}  {'--':>6}  {'--':>9}  {'--':>9}"
+                                return (f"{d['n']:>5}  {d['win_pct']:>5.1f}%  "
+                                        f"{d['roi']:>+8.1f}%  ${d['profit']:>+7.0f}")
+                            return f"  {lbl:<33}  {_f(snp)}    {_f(enf)}"
+
+                        _hdr2 = (
+                            f"  {'Filter':<33}  "
+                            f"{'SNP':>5}  {'Win%':>6}  {'ROI':>9}  {'P&L':>9}    "
+                            f"{'ENF':>5}  {'Win%':>6}  {'ROI':>9}  {'P&L':>9}"
+                        )
+                        _div2 = "  " + "-" * 88
+
+                        print(f"\n{'='*80}")
+                        print(f"  FILTER SWEEPS — origination model vs 2026 opening lines")
+                        print(f"  Sniper >4.5% (SNP) | Enforcer >4.0% (ENF) | ½ Kelly | $1k start")
+                        print(f"  d_xfip = home_xfip_ratio − away_xfip_ratio  (positive -> home starter better)")
+                        print(f"  market_floor / max_div use opening-line de-vigged implied probs")
+                        print(f"{'='*80}")
+
+                        # Baseline
+                        _s0 = _sim_bets(_p_home_pl, _eval_df, 0.045)
+                        _e0 = _sim_bets(_p_home_pl, _eval_df, 0.040)
+                        print(_hdr2); print(_div2)
+                        print(_sr("Baseline (no filter)", _s0, _e0))
+
+                        # Filter 2: market floor
+                        print(f"\n  — F2: market floor (min opening-line prob for bet team) —")
+                        print(_hdr2); print(_div2)
+                        for _fl in [0.35, 0.38, 0.40, 0.42, 0.45]:
+                            _s = _sim_bets(_p_home_pl, _eval_df, 0.045, market_floor=_fl)
+                            _e = _sim_bets(_p_home_pl, _eval_df, 0.040, market_floor=_fl)
+                            print(_sr(f"  Mkt floor >= {_fl:.0%}", _s, _e))
+
+                        # Filter 3: model/market divergence cap
+                        print(f"\n  — F3: max |model − opening-line market| divergence —")
+                        print(_hdr2); print(_div2)
+                        for _dv in [0.10, 0.12, 0.15, 0.18, 0.20]:
+                            _s = _sim_bets(_p_home_pl, _eval_df, 0.045, max_model_mkt_div=_dv)
+                            _e = _sim_bets(_p_home_pl, _eval_df, 0.040, max_model_mkt_div=_dv)
+                            print(_sr(f"  Max divergence <= {_dv:.0%}", _s, _e))
+
+                        # Filter 4: xFIP gate
+                        print(f"\n  — F4: xFIP gate (skip if bet team's starter materially worse) —")
+                        print(_hdr2); print(_div2)
+                        for _xg in [0.15, 0.20, 0.25, 0.30, 0.35]:
+                            _s = _sim_bets(_p_home_pl, _eval_df, 0.045, xfip_gate=_xg)
+                            _e = _sim_bets(_p_home_pl, _eval_df, 0.040, xfip_gate=_xg)
+                            print(_sr(f"  xFIP gate {_xg:.2f}", _s, _e))
+
+                        # Combined filters
+                        print(f"\n  — Combined filters —")
+                        print(_hdr2); print(_div2)
+                        _combos = [
+                            (None,  None,  None),
+                            (0.40,  None,  None),
+                            (None,  0.15,  None),
+                            (None,  None,  0.25),
+                            (0.40,  0.15,  None),
+                            (0.40,  None,  0.25),
+                            (None,  0.15,  0.25),
+                            (0.40,  0.15,  0.25),
+                            (0.38,  0.15,  0.20),
+                            (0.42,  0.12,  0.20),
+                            (0.38,  0.18,  0.30),
+                        ]
+                        for _fl, _dv, _xg in _combos:
+                            _parts = []
+                            if _fl is not None: _parts.append(f"Fl{_fl:.0%}")
+                            if _dv is not None: _parts.append(f"Div{_dv:.0%}")
+                            if _xg is not None: _parts.append(f"xFIP{_xg:.2f}")
+                            _lbl = "+".join(_parts) if _parts else "Baseline"
+                            _s = _sim_bets(_p_home_pl, _eval_df, 0.045,
+                                           market_floor=_fl, max_model_mkt_div=_dv, xfip_gate=_xg)
+                            _e = _sim_bets(_p_home_pl, _eval_df, 0.040,
+                                           market_floor=_fl, max_model_mkt_div=_dv, xfip_gate=_xg)
+                            print(_sr(f"  {_lbl}", _s, _e))
 
                         # Overwrite production pkl with the player-only model
                         print("\n  Saving player-only model to models/log5_regression.pkl ...")

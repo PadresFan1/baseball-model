@@ -23,6 +23,7 @@ import requests
 import statsapi
 import json
 import os
+import csv
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=r'C:\Users\super\baseball-model\.env')
 from datetime import date
@@ -436,7 +437,65 @@ def ip_to_float(ip_str):
     except (ValueError, AttributeError):
         return 0.0
 
-def get_cached_odds():
+ODDS_SNAPSHOT_COLUMNS = [
+    'snapshot_ts_utc', 'run_window_mst', 'event_id', 'commence_time_utc',
+    'home_team', 'away_team', 'book_key', 'book_title', 'market',
+    'outcome_name', 'american_odds', 'point'
+]
+
+def _log_odds_snapshot(data, run_window_mst, out_path='odds_snapshots_2026.csv'):
+    """Append one row per game+book+market+outcome from a fresh odds API response."""
+    if not isinstance(data, list):
+        return
+
+    snapshot_ts = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    rows = []
+    for game in data:
+        event_id = game.get('id')
+        commence_time = game.get('commence_time')
+        home_team = game.get('home_team')
+        away_team = game.get('away_team')
+        for book in game.get('bookmakers', []):
+            book_key = book.get('key')
+            book_title = book.get('title')
+            for market in book.get('markets', []):
+                market_key = market.get('key')
+                for outcome in market.get('outcomes', []):
+                    rows.append({
+                        'snapshot_ts_utc': snapshot_ts,
+                        'run_window_mst': run_window_mst,
+                        'event_id': event_id,
+                        'commence_time_utc': commence_time,
+                        'home_team': home_team,
+                        'away_team': away_team,
+                        'book_key': book_key,
+                        'book_title': book_title,
+                        'market': market_key,
+                        'outcome_name': outcome.get('name'),
+                        'american_odds': outcome.get('price'),
+                        'point': outcome.get('point', '')
+                    })
+
+    if not rows:
+        return
+
+    file_exists = os.path.exists(out_path)
+    with open(out_path, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=ODDS_SNAPSHOT_COLUMNS)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerows(rows)
+
+def _log_odds_credit(headers, out_path='logs/odds_credit_log.txt'):
+    """Append remaining/used request credits from an odds API response to the credit log."""
+    remaining = headers.get('x-requests-remaining', '')
+    used = headers.get('x-requests-used', '')
+    ts = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, 'a', encoding='utf-8') as f:
+        f.write(f"{ts} | remaining: {remaining} | used: {used}\n")
+
+def get_cached_odds(run_window_mst=None):
     cache_file='cache/odds_cache.json'
 
     # Check if cache exists and is fresh
@@ -448,10 +507,10 @@ def get_cached_odds():
             print ("Loading odds from cache. . .")
             with open(cache_file,'r') as f:
                 return json.load(f)
-            
+
     # Cache is old or doesn't exist - call the API
     print("Fetching fresh odds from API . . .")
-    data = get_mlb_odds()
+    data = get_mlb_odds(run_window_mst)
 
     # Save to cache
     with open(cache_file,'w') as f:
@@ -491,11 +550,26 @@ def get_todays_game_statuses(target_date=None):
             }
     return statuses
 
-def get_mlb_odds():
-    url = f'https://api.the-odds-api.com/v4/sports/baseball_mlb/odds/?apiKey={API_KEY}&regions=us&markets=h2h,totals&oddsFormat=american&bookmakers=draftkings,fanduel'
+MODEL_BOOKMAKER_KEYS = ('draftkings', 'fanduel')
+
+def _filter_bookmakers(data, allowed_keys=MODEL_BOOKMAKER_KEYS):
+    """Restrict each game's bookmakers list to the given keys (used by the model)."""
+    if not isinstance(data, list):
+        return data
+    filtered = []
+    for game in data:
+        game_copy = dict(game)
+        game_copy['bookmakers'] = [b for b in game.get('bookmakers', []) if b.get('key') in allowed_keys]
+        filtered.append(game_copy)
+    return filtered
+
+def get_mlb_odds(run_window_mst=None):
+    url = f'https://api.the-odds-api.com/v4/sports/baseball_mlb/odds/?apiKey={API_KEY}&regions=us&markets=h2h,totals&oddsFormat=american'
     response = requests.get(url)
     data = response.json()
-    return data
+    _log_odds_credit(response.headers)
+    _log_odds_snapshot(data, run_window_mst)
+    return _filter_bookmakers(data)
 
 def get_park_factor(home_team, season=2025):
     pf_df = PARK_FACTORS[PARK_FACTORS['Season'] == season]
@@ -2585,7 +2659,7 @@ _run_num, _run_window, _target_date = _compute_run_context()
 _target_date_str = _target_date.strftime('%Y-%m-%d')
 print(f"[Run context] Window: {_run_window} | Target date: {_target_date_str}")
 
-odds_data = get_cached_odds()
+odds_data = get_cached_odds(_run_window)
 
 upcoming = get_upcoming_games(odds_data, target_date=_target_date)
 
