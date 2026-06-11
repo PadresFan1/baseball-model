@@ -6,7 +6,7 @@ import csv
 import json
 import calendar
 import requests
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
@@ -21,7 +21,6 @@ CAPTURED_CLOSERS_PATH = 'logs/captured_closers.json'
 RUN_WINDOW = 'WAVE_LOGGER'
 MIN_REMAINING_CREDITS = 40
 CAPTURE_WINDOW_MINUTES = 16
-CAPTURED_RETENTION_DAYS = 2
 PACE_CREDITS_PER_DAY = 12
 
 ODDS_SNAPSHOT_COLUMNS = [
@@ -41,13 +40,14 @@ def get_schedule_games(date_str):
 
 
 def load_captured_closers():
-    if not os.path.exists(CAPTURED_CLOSERS_PATH):
-        return {}
-    with open(CAPTURED_CLOSERS_PATH, 'r', encoding='utf-8') as f:
-        try:
+    os.makedirs("logs", exist_ok=True)
+    try:
+        with open(CAPTURED_CLOSERS_PATH, 'r', encoding='utf-8') as f:
             return json.load(f)
-        except json.JSONDecodeError:
-            return {}
+    except (FileNotFoundError, json.JSONDecodeError):
+        captured = {}
+        save_captured_closers(captured)
+        return captured
 
 
 def save_captured_closers(captured):
@@ -56,17 +56,9 @@ def save_captured_closers(captured):
         json.dump(captured, f, indent=2)
 
 
-def prune_captured_closers(captured, today):
-    cutoff = today - timedelta(days=CAPTURED_RETENTION_DAYS)
-    pruned = {}
-    for date_str, game_pks in captured.items():
-        try:
-            d = datetime.strptime(date_str, '%Y-%m-%d').date()
-        except ValueError:
-            continue
-        if d >= cutoff:
-            pruned[date_str] = game_pks
-    return pruned
+def prune_captured_closers(captured, today_str):
+    """Keep only gamePks captured on today's MST date."""
+    return {game_pk: date_str for game_pk, date_str in captured.items() if date_str == today_str}
 
 
 def days_remaining_in_month(today):
@@ -151,18 +143,18 @@ def main():
 
     schedule_games = get_schedule_games(today_str)
 
-    captured = prune_captured_closers(load_captured_closers(), today_mst)
-    captured_today = set(captured.get(today_str, []))
+    captured = prune_captured_closers(load_captured_closers(), today_str)
+    save_captured_closers(captured)
 
     target_game_pks = []
     for game in schedule_games:
         game_pk = game.get('gamePk')
         game_date_str = game.get('gameDate')
-        if game_pk is None or game_date_str is None or game_pk in captured_today:
+        if game_pk is None or game_date_str is None or str(game_pk) in captured:
             continue
         start_time_utc = datetime.strptime(game_date_str, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
         minutes_until_start = (start_time_utc - now_utc).total_seconds() / 60
-        if 0 <= minutes_until_start <= CAPTURE_WINDOW_MINUTES:
+        if -2 <= minutes_until_start <= CAPTURE_WINDOW_MINUTES:
             target_game_pks.append(game_pk)
 
     if not target_game_pks:
@@ -185,10 +177,8 @@ def main():
     log_odds_credit(response.headers)
     log_odds_snapshot(data, RUN_WINDOW)
 
-    captured.setdefault(today_str, [])
     for game_pk in target_game_pks:
-        if game_pk not in captured[today_str]:
-            captured[today_str].append(game_pk)
+        captured[str(game_pk)] = today_str
     save_captured_closers(captured)
 
     n_games = len(data) if isinstance(data, list) else 0
