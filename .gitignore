@@ -91,3 +91,6 @@ run_odds_logger.bat
 
 # Claude Code settings (local only)
 .claude/
+
+# Simulator subsystem (large raw/derived data, local only)
+simulator/
